@@ -19,7 +19,7 @@ $menu = '
                 <button class="uk-offcanvas-close" type="button" uk-close></button>
                 <br>
                 <a class="uk-margin-small uk-button uk-button-default" href="/">Домашняя страница</a>
-                <a class="uk-margin-small uk-button uk-button-default" href="/zakaz/">Заказ</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-novyi/">Новый заказ</a>
                 <a class="uk-margin-small uk-button uk-button-default" href="">Движение</a>
                 <a class="uk-margin-small uk-button uk-button-default" href="">Автомобили</a>
                 <a class="uk-margin-small uk-button uk-button-default" href="">Клиенты</a>

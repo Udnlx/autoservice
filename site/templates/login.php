@@ -37,7 +37,7 @@ if ($login == 'on') {
     	
     	            
         <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
-            <form class="uk-flex uk-flex-column" id="select_bus" action="/login/" method="post">
+            <form class="uk-flex uk-flex-column" id="login_system" action="/login/" method="post">
                 <div class="uk-margin-small-top">
                     <input class="uk-input" id="user_login" type="text" name="user_login" placeholder="Логин" required>
                 </div>

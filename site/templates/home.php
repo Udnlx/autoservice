@@ -22,7 +22,7 @@ if ($operator == 'no_operator') {
 $menu = '';
 if ($operator == 'admin') {
     $menu = '
-        <a class="uk-margin-small uk-button uk-button-default" href="/zakaz/">Заказ</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-novyi/">Новый заказ</a>
         <a class="uk-margin-small uk-button uk-button-default" href="">Движение</a>
         <a class="uk-margin-small uk-button uk-button-default" href="">Автомобили</a>
         <a class="uk-margin-small uk-button uk-button-default" href="">Клиенты</a>

@@ -1,9 +1,8 @@
+/*База*/
 * {
     box-sizing: border-box;}
-
 html {
     min-height: 100%;}
-
 body {
     margin: 0;
     min-height: 100vh;
@@ -13,9 +12,11 @@ body {
     color: #1f2937;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;}
 
+
+
+/*Навигация*/
 .uk-container {
     max-width: 1040px;}
-
 .uk-navbar-container {
     margin-top: 12px;
     margin-bottom: 18px;
@@ -23,11 +24,9 @@ body {
     background: rgba(255, 255, 255, 0.94) !important;
     border: 1px solid #e5e7eb;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);}
-
 .uk-navbar-left {
     display: flex;
     align-items: center;}
-
 .uk-navbar-left a {
     display: inline-flex;
     justify-content: center;
@@ -38,15 +37,12 @@ body {
     color: #1f2937;
     text-decoration: none;
     transition: 0.2s ease;}
-
 .uk-navbar-left a:hover {
     background: #eef6ff;
     color: #1e87f0;
     text-decoration: none;}
-
 .uk-navbar-left i {
     font-size: 17px;}
-
 .uk-navbar-left p {
     padding: 8px 12px;
     border-radius: 999px;
@@ -54,17 +50,17 @@ body {
     border: 1px solid #e5e7eb;
     color: #374151;}
 
+
+
+/*Боковое меню*/
 .uk-offcanvas-bar {
     background-color: #ffffff;
     color: #374151;
     box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);}
-
 .uk-offcanvas-bar .uk-offcanvas-close {
     color: #6b7280;}
-
 .uk-offcanvas-bar .uk-offcanvas-close:hover {
     color: #111827;}
-
 .uk-offcanvas-bar a.uk-margin-small {
     width: 100%;
     margin-top: 8px;
@@ -74,40 +70,36 @@ body {
     border-radius: 12px;
     text-align: left;
     box-shadow: none;}
-
 .uk-offcanvas-bar a.uk-margin-small:hover {
     background-color: #eef6ff;
     color: #1e87f0;
     border-color: #bfdbfe;}
 
+
+
+/*Основной контент*/
 #content {
     width: 100%;
     margin: 0 auto 30px auto;
     padding: 8px 10px 30px;}
-
 #content[style*="max-width: 700px"] {
     margin-left: auto;
     margin-right: auto;}
-
 #content h1 {
     margin-top: 10px;
     margin-bottom: 24px !important;
     color: #111827;
     letter-spacing: -1.5px;
     line-height: 1;}
-
 .uk-heading-hero {
     font-weight: 800;}
-
 .uk-card.uk-card-default {
     border-radius: 18px;
     border: 1px solid #e5e7eb;
     background: rgba(255, 255, 255, 0.98);
     box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);}
-
 .uk-card-body {
     padding: 28px;}
-
 h3.uk-card-title {
     margin-top: 0;
     margin-bottom: 18px;
@@ -115,17 +107,22 @@ h3.uk-card-title {
     line-height: 1.2;
     color: #1f2937;
     font-weight: 700;}
+#content > div > div > .uk-card.uk-card-default {
+    max-width: 780px;
+    margin-left: auto;
+    margin-right: auto;}
 
+
+
+/*Формы и поля*/
 form.uk-flex.uk-flex-column {
     gap: 4px;}
-
 label {
     display: inline-block;
     margin-bottom: 6px;
     color: #374151;
     font-size: 14px;
     font-weight: 600;}
-
 .uk-input,
 .uk-select,
 .uk-textarea {
@@ -134,39 +131,41 @@ label {
     background-color: #ffffff;
     color: #111827;
     transition: 0.2s ease;}
-
 .uk-input,
 .uk-select {
     height: 42px;}
-
 .uk-input:focus,
 .uk-select:focus,
 .uk-textarea:focus {
     border-color: #1e87f0;
     box-shadow: 0 0 0 3px rgba(30, 135, 240, 0.13);
     background-color: #ffffff;}
-
 .uk-input::placeholder,
 .uk-textarea::placeholder {
     color: #9ca3af;}
-
 .uk-input:disabled,
 .uk-select:disabled,
 .uk-textarea:disabled {
     background-color: #f3f4f6;
     color: #6b7280;
     border-color: #d1d5db;}
-
 #selected_date,
 #selected_worker {
     background-color: #f9fafb !important;
     color: #4b5563 !important;}
+#work_select,
+#part_select {
+    min-width: 0;}
+#payment_type {
+    font-weight: 700;}
 
+
+
+/*Кнопки*/
 .uk-button {
     border-radius: 12px;
     font-weight: 700;
     transition: 0.2s ease;}
-
 .uk-button-default {
     min-height: 42px;
     line-height: 1.2 !important;
@@ -174,12 +173,10 @@ label {
     background: #ffffff;
     color: #1f2937;
     border: 1px solid #d1d5db;}
-
 .uk-button-default:hover {
     background: #eef6ff;
     color: #1e87f0;
     border-color: #bfdbfe;}
-
 form button[type="submit"] {
     margin-top: 18px !important;
     min-height: 48px;
@@ -190,13 +187,11 @@ form button[type="submit"] {
     font-weight: 800;
     font-size: 15px;
     box-shadow: 0 10px 22px rgba(30, 135, 240, 0.25);}
-
 form button[type="submit"]:hover {
     transform: translateY(-1px);
     box-shadow: 0 14px 28px rgba(30, 135, 240, 0.32);
     background: linear-gradient(135deg, #0f7ae5, #075eb5);
     color: #ffffff;}
-
 .uk-card a.uk-button-default {
     display: flex;
     justify-content: center;
@@ -204,14 +199,11 @@ form button[type="submit"]:hover {
     min-height: 46px;
     margin-top: 8px !important;
     text-decoration: none;}
-
 .uk-card a.uk-margin-small.uk-button-default {
     letter-spacing: 0.3px;}
-
 .uk-card a.uk-margin-small.uk-button-default:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 18px rgba(30, 135, 240, 0.12);}
-
 #add_work,
 #add_part {
     min-height: 42px;
@@ -221,21 +213,28 @@ form button[type="submit"]:hover {
     border-color: #d1d5db;
     background: #ffffff;
     color: #111827;}
-
 #add_work:hover {
     background: #1e87f0;
     color: #ffffff;
     border-color: #1e87f0;}
-
 #add_part:hover {
     background: #32d296;
     color: #ffffff;
     border-color: #32d296;}
+.remove-work,
+.remove-part {
+    min-width: 34px;
+    border-radius: 9px;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    font-weight: 800;}
 
+
+
+/*Меню страницы*/
 .pagemenu {
     max-width: 780px;
     margin: 20px auto 20px auto;}
-
 .pagemenu a.menu-link {
     display: inline-flex;
     justify-content: center;
@@ -254,44 +253,35 @@ form button[type="submit"]:hover {
     text-align: center;
     box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
     transition: 0.2s ease;}
-
 .pagemenu a.menu-link:hover {
     background-color: #1e87f0;
     color: #ffffff;
     border-color: #1e87f0;
     text-decoration: none;}
 
+
+
+/*Новая заявка*/
 #select_seat {
     width: 100%;}
-
 #select_seat .uk-margin-small-top {
     margin-top: 12px !important;}
-
 #select_seat.closest-order {
     max-width: 780px;}
 
-#content > div > div > .uk-card.uk-card-default {
-    max-width: 780px;
-    margin-left: auto;
-    margin-right: auto;}
 
-#work_select,
-#part_select {
-    min-width: 0;}
 
+/*Корзины заказа*/
 .order-cart-box {
     border-radius: 16px;
     border: 1px solid #e5e7eb;
     background: #ffffff;
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);}
-
 .works-cart-box {
     border-left: 5px solid #1e87f0;}
-
 .parts-cart-box {
     border-left: 5px solid #32d296;}
-
 .order-cart-header {
     display: flex;
     align-items: center;
@@ -301,22 +291,18 @@ form button[type="submit"]:hover {
     border-bottom: 1px solid #edf0f5;
     color: #1f2937;
     font-weight: 800;}
-
 .order-cart-header-title {
     display: flex;
     align-items: center;
     gap: 9px;}
-
 .order-cart-body {
     padding: 14px;
     background: #ffffff;
     min-height: 62px;}
-
 .order-cart-empty {
     padding: 10px 0;
     color: #9ca3af;
     font-size: 14px;}
-
 .order-cart-item {
     padding: 11px 12px;
     border: 1px solid #edf0f5;
@@ -325,27 +311,21 @@ form button[type="submit"]:hover {
     margin-bottom: 9px;
     box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
     transition: 0.2s ease;}
-
 .order-cart-item:hover {
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(15, 23, 42, 0.07);}
-
 .order-cart-item:last-child {
     margin-bottom: 0;}
-
 .order-cart-price {
     margin-top: 3px;
     font-size: 13px;
     color: #6b7280;}
-
 .order-cart-badge-work {
     background: #1e87f0;
     color: #ffffff;}
-
 .order-cart-badge-part {
     background: #32d296;
     color: #ffffff;}
-
 .order-section-title {
     margin-top: 20px;
     margin-bottom: 8px;
@@ -353,14 +333,76 @@ form button[type="submit"]:hover {
     font-weight: 800;
     font-size: 16px;}
 
-.remove-work,
-.remove-part {
-    min-width: 34px;
-    border-radius: 9px;
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-    font-weight: 800;}
 
+
+/*Просмотр заказа*/
+.order-view-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);}
+.order-view-number {
+    color: #111827;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.1;}
+.order-view-subtitle {
+    margin-top: 5px;
+    color: #6b7280;
+    font-size: 14px;}
+.order-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #eef6ff;
+    color: #1e87f0;
+    border: 1px solid #bfdbfe;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;}
+.order-view-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;}
+.order-info-box {
+    padding: 14px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);}
+.order-info-label {
+    margin-bottom: 5px;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;}
+.order-info-value {
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;}
+.order-view-section {
+    margin-top: 22px;}
+.order-view-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 9px;
+    color: #111827;
+    font-size: 16px;
+    font-weight: 900;}
+
+
+
+/*Стоимость заказа*/
 #selected_price,
 #parts_price,
 #total_price {
@@ -368,40 +410,36 @@ form button[type="submit"]:hover {
     font-weight: 800;
     font-size: 17px;
     background: #f9fafb !important;}
-
 #selected_price {
     border-left: 5px solid #1e87f0 !important;}
-
 #parts_price {
     border-left: 5px solid #32d296 !important;}
-
 #total_price {
     border-left: 5px solid #faa05a !important;
     background: #fffaf3 !important;
     color: #111827 !important;
     font-size: 19px;}
 
-#payment_type {
-    font-weight: 700;}
 
-#select_bus {
+
+/*Вход в систему*/
+#login_system {
     gap: 5px;}
-
-#select_bus .uk-input {
+#login_system .uk-input {
     height: 46px;
     font-size: 15px;}
-
-#select_bus button[type="submit"] {
+#login_system button[type="submit"] {
     min-height: 48px;}
 
+
+
+/*Страница доступа*/
 #content[style*="max-width: 700px"] .uk-card {
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;}
-
 #content[style*="max-width: 700px"] h1 {
     margin-top: 18px;}
-
 #content[style*="max-width: 700px"] .uk-card a.uk-button-default {
     justify-content: center;
     min-height: 48px;
@@ -409,18 +447,23 @@ form button[type="submit"]:hover {
     background: #ffffff;
     border-color: #e5e7eb;
     color: #1f2937;}
-
 #content[style*="max-width: 700px"] .uk-card a.uk-button-default:hover {
     background: linear-gradient(135deg, #1e87f0, #0f6ecd);
     border-color: transparent;
     color: #ffffff;}
 
+
+
+/*Оператор*/
 p.operator {
     margin: 0;
     font-size: 11px;
     top: 10px;
     left: 10px;}
 
+
+
+/*Подвал*/
 body > .uk-padding-small.uk-container.uk-flex.uk-flex-column.uk-flex-middle {
     margin-top: 24px;
     margin-bottom: 12px;
@@ -428,122 +471,105 @@ body > .uk-padding-small.uk-container.uk-flex.uk-flex-column.uk-flex-middle {
     padding-bottom: 22px !important;
     border-top: 1px solid #e5e7eb;
     color: #6b7280;}
-
 body > .uk-padding-small.uk-container.uk-flex.uk-flex-column.uk-flex-middle h2 {
     color: #1f2937;
     font-weight: 800;}
-
 body > .uk-padding-small.uk-container.uk-flex.uk-flex-column.uk-flex-middle p {
     color: #6b7280;}
 
+
+
+/*Адаптив 700*/
 @media (max-width: 700px) {
     .uk-container {
         padding-left: 10px;
         padding-right: 10px;}
-
     .uk-navbar-container {
         margin-top: 8px;
         margin-bottom: 12px;
         border-radius: 14px;}
-
     .uk-navbar-left {
         gap: 6px !important;
         flex-wrap: wrap;}
-
     .uk-navbar-left p {
         max-width: 100%;
         font-size: 11px !important;
         padding: 7px 10px;}
-
     #content {
         padding: 4px 6px 24px;}
-
     #content h1 {
         font-size: 38px;
         line-height: 1.05;
         margin-bottom: 18px !important;}
-
     .uk-card-body {
         padding: 20px;}
-
     .uk-card.uk-card-default {
         border-radius: 16px;}
-
     .pagemenu {
         margin: 12px auto 14px auto;}
 }
 
+
+
+/*Адаптив 550*/
 @media (max-width: 550px) {
     #content h1 {
         font-size: 34px;}
-
     h3.uk-card-title {
         font-size: 20px;}
-
     .uk-input,
     .uk-select {
         height: 44px;}
-
     #work_select,
     #part_select {
         width: 100%;
         margin-bottom: 8px;
         display: block;}
-
     #add_work,
     #add_part {
         width: 100%;}
-
     #work_select + #add_work,
     #part_select + #add_part {
         margin-left: 0;}
-
     #work_select,
     #part_select,
     #add_work,
     #add_part {
         flex: 1 1 100%;}
-
     #select_seat .uk-flex.uk-flex-middle {
         flex-wrap: wrap;
         align-items: stretch;
         gap: 8px !important;}
-
     .order-cart-header {
         align-items: flex-start;
         gap: 8px;}
-
     .order-cart-item {
         align-items: flex-start;
         gap: 10px;}
-
     .remove-work,
     .remove-part {
         min-width: 36px;}
-
     form button[type="submit"] {
         min-height: 50px;}
-
     .order-add-row {
         flex-direction: column;
         align-items: stretch;
         gap: 8px !important;}
 }
 
+
+
+/*Адаптив 380*/
 @media (max-width: 380px) {
     #content h1 {
         font-size: 30px;}
-
     .uk-card-body {
         padding: 16px;}
-
     .uk-navbar-left a {
         width: 34px;
         height: 34px;}
-
     .order-cart-header {
         padding: 12px;}
-
     .order-cart-body {
         padding: 12px;}
 }

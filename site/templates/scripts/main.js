@@ -3,12 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const workSelect = document.getElementById('work_select');
     const addWorkBtn = document.getElementById('add_work');
     const worksCart = document.getElementById('works_cart');
-    const worksEmpty = document.getElementById('works_empty');
+    let worksEmpty = document.getElementById('works_empty');
 
     const partSelect = document.getElementById('part_select');
     const addPartBtn = document.getElementById('add_part');
     const partsCart = document.getElementById('parts_cart');
-    const partsEmpty = document.getElementById('parts_empty');
+    let partsEmpty = document.getElementById('parts_empty');
 
     const worksPriceInput = document.getElementById('selected_price');
     const partsPriceInput = document.getElementById('parts_price');
@@ -16,6 +16,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let selectedWorks = [];
     let selectedParts = [];
+
+    if (!worksEmpty && worksCart) {
+        worksEmpty = document.createElement('div');
+        worksEmpty.id = 'works_empty';
+        worksEmpty.className = 'order-cart-empty';
+        worksEmpty.textContent = 'Работы пока не выбраны';
+        worksEmpty.style.display = 'none';
+    }
+
+    if (!partsEmpty && partsCart) {
+        partsEmpty = document.createElement('div');
+        partsEmpty.id = 'parts_empty';
+        partsEmpty.className = 'order-cart-empty';
+        partsEmpty.textContent = 'Запчасти пока не выбраны';
+        partsEmpty.style.display = 'none';
+    }
+
+    function loadExistingPartsFromCart() {
+        if (!partsCart) {
+            return;
+        }
+
+        const existingItems = partsCart.querySelectorAll('.order-cart-item');
+
+        existingItems.forEach(function (cartItem) {
+            const nameBlock = cartItem.querySelector('strong');
+            const priceInput = cartItem.querySelector('input[name="parts_prices[]"]');
+
+            if (!nameBlock || !priceInput) {
+                return;
+            }
+
+            const itemName = nameBlock.textContent.trim();
+            const itemPrice = Number(priceInput.value) || 0;
+
+            if (!itemName) {
+                return;
+            }
+
+            selectedParts.push({
+                id: Date.now() + Math.floor(Math.random() * 1000000),
+                name: itemName,
+                price: itemPrice
+            });
+        });
+    }
+
+    loadExistingWorksFromCart();
+    loadExistingPartsFromCart();
+    renderCarts();
+    updatePrices();
 
     addWorkBtn.addEventListener('click', function () {
         addItem({
@@ -32,6 +83,36 @@ document.addEventListener('DOMContentLoaded', function () {
             type: 'part'
         });
     });
+
+    function loadExistingWorksFromCart() {
+        if (!worksCart) {
+            return;
+        }
+
+        const existingItems = worksCart.querySelectorAll('.order-cart-item');
+
+        existingItems.forEach(function (cartItem) {
+            const nameBlock = cartItem.querySelector('strong');
+            const priceInput = cartItem.querySelector('input[name="works_prices[]"]');
+
+            if (!nameBlock || !priceInput) {
+                return;
+            }
+
+            const itemName = nameBlock.textContent.trim();
+            const itemPrice = Number(priceInput.value) || 0;
+
+            if (!itemName) {
+                return;
+            }
+
+            selectedWorks.push({
+                id: Date.now() + Math.floor(Math.random() * 1000000),
+                name: itemName,
+                price: itemPrice
+            });
+        });
+    }
 
     function addItem(options) {
         const select = options.select;
@@ -115,12 +196,17 @@ document.addEventListener('DOMContentLoaded', function () {
         cart.innerHTML = '';
 
         if (list.length === 0) {
-            emptyBlock.style.display = 'block';
-            cart.appendChild(emptyBlock);
+            if (emptyBlock) {
+                emptyBlock.style.display = 'block';
+                cart.appendChild(emptyBlock);
+            }
+
             return;
         }
 
-        emptyBlock.style.display = 'none';
+        if (emptyBlock) {
+            emptyBlock.style.display = 'none';
+        }
 
         list.forEach(function (item) {
             const cartItem = document.createElement('div');
