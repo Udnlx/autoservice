@@ -20,9 +20,30 @@ if ($operator == 'no_operator') {
 <?php    
 } else {
 
-    $order_id = $input->get->int('id');
+    $order_id = $input->get->int('idorder');
+
     if (!$order_id) {
-        $order_id = 1;
+        echo '<div id="content" style="max-width: 700px;">
+            <h1 class="uk-heading-hero uk-text-center">Заказ</h1>
+            <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
+                <h3 class="uk-card-title uk-text-center">Не передан ID заказа</h3>
+                <a class="uk-margin-small uk-button uk-button-default" href="/">На главную</a>
+            </div>
+        </div>';
+        return;
+    }
+
+    $orderPage = $pages->get("id=$order_id, template=order_item");
+
+    if (!$orderPage->id) {
+        echo '<div id="content" style="max-width: 700px;">
+            <h1 class="uk-heading-hero uk-text-center">Заказ</h1>
+            <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
+                <h3 class="uk-card-title uk-text-center">Заказ не найден</h3>
+                <a class="uk-margin-small uk-button uk-button-default" href="/">На главную</a>
+            </div>
+        </div>';
+        return;
     }
 
     if (!function_exists('orderClean')) {
@@ -31,43 +52,78 @@ if ($operator == 'no_operator') {
         }
     }
 
+    $works = [];
+    if (count($orderPage->works)) {
+        foreach ($orderPage->works as $item) {
+            $works[] = [
+                'name' => $item->work,
+                'price' => $item->price
+            ];
+        }
+    }
+
+    $parts = [];
+    if (count($orderPage->autoparts)) {
+        foreach ($orderPage->autoparts as $item) {
+            $parts[] = [
+                'name' => $item->autopart,
+                'price' => $item->price
+            ];
+        }
+    }
+
     $order = [
-        'id' => $order_id,
-        'date' => $today,
-        'worker' => $operator,
-        'client' => 'Клиент 1',
-        'car' => 'Авто 1',
-        'status' => 'Новая',
-        'payment_type' => 'Наличный расчет',
-        'works_price' => 2500,
-        'parts_price' => 4400,
-        'total_price' => 6900,
-        'works' => [
-            [
-                'name' => 'Замена масла',
-                'price' => 1500
-            ],
-            [
-                'name' => 'Диагностика',
-                'price' => 1000
-            ]
-        ],
-        'parts' => [
-            [
-                'name' => 'Масляный фильтр',
-                'price' => 900
-            ],
-            [
-                'name' => 'Масло 5W-40',
-                'price' => 3500
-            ]
-        ]
+        'id' => $orderPage->id,
+        'date' => $orderPage->date_order,
+        'worker' => $orderPage->operator,
+        'client' => $orderPage->client,
+        'car' => $orderPage->auto,
+        'status' => $orderPage->status_order,
+        'payment_type' => $orderPage->payment_type,
+        'works_price' => $orderPage->cost_works,
+        'parts_price' => $orderPage->cost_autoparts,
+        'total_price' => $orderPage->cost_total,
+        'works' => $works,
+        'parts' => $parts
     ];
+
+    // $order = [
+    //     'id' => $order_id,
+    //     'date' => $today,
+    //     'worker' => $operator,
+    //     'client' => 'Клиент 1',
+    //     'car' => 'Авто 1',
+    //     'status' => 'Новая',
+    //     'payment_type' => 'Наличный расчет',
+    //     'works_price' => 2500,
+    //     'parts_price' => 4400,
+    //     'total_price' => 6900,
+    //     'works' => [
+    //         [
+    //             'name' => 'Замена масла',
+    //             'price' => 1500
+    //         ],
+    //         [
+    //             'name' => 'Диагностика',
+    //             'price' => 1000
+    //         ]
+    //     ],
+    //     'parts' => [
+    //         [
+    //             'name' => 'Масляный фильтр',
+    //             'price' => 900
+    //         ],
+    //         [
+    //             'name' => 'Масло 5W-40',
+    //             'price' => 3500
+    //         ]
+    //     ]
+    // ];
 
 ?>
 
 <div id="content">
-    <h1 class="uk-margin-remove uk-heading-hero uk-text-center">Заказ №<?php echo orderClean($order['id']); ?></h1>
+    <h1 class="uk-margin-remove uk-heading-hero uk-text-center"><?php echo $orderPage->title ?></h1>
     <div>
 
         <div>
@@ -81,8 +137,8 @@ if ($operator == 'no_operator') {
 
                 <div class="order-view-top">
                     <div>
-                        <div class="order-view-number">Заказ №<?php echo orderClean($order['id']); ?></div>
-                        <div class="order-view-subtitle">Карточка зарегистрированной заявки</div>
+                        <div class="order-view-number"><?php echo $orderPage->title ?></div>
+                        <div class="order-view-subtitle">Карточка зарегистрированной заявки ID <?php echo orderClean($order['id']); ?></div>
                     </div>
 
                     <div class="order-status-badge" id="order_status_badge">
@@ -169,6 +225,7 @@ if ($operator == 'no_operator') {
                                             </div>
 
                                             <button type="button" class="uk-button uk-button-danger uk-button-small remove-work" data-id="<?php echo $work_item_id; ?>" data-type="work">
+                                            </button>
 
                                             <input type="hidden" name="works[]" value="<?php echo orderClean($work['name']); ?> - <?php echo orderClean($work['price']); ?>">
                                             <input type="hidden" name="works_prices[]" value="<?php echo orderClean($work['price']); ?>">
@@ -247,8 +304,8 @@ if ($operator == 'no_operator') {
                     <!--КОРЗИНА ЗАПЧАСТЕЙ-->
 
                     <div class="uk-margin-small-top">
-                        <label for="selected_price">Стоимость работ</label>
-                        <input class="uk-input" id="selected_price" type="text" name="selected_price" value="<?php echo orderClean($order['works_price']); ?>" autocomplete="off" required readonly>
+                        <label for="works_price">Стоимость работ</label>
+                        <input class="uk-input" id="works_price" type="text" name="works_price" value="<?php echo orderClean($order['works_price']); ?>" autocomplete="off" required readonly>
                     </div>
 
                     <div class="uk-margin-small-top">
@@ -284,9 +341,10 @@ if ($operator == 'no_operator') {
                             Изменить
                         </button>
                         <br>
-                        <button type="button" class="uk-button uk-button-default order-print-btn" name="print_order">
+                        <button type="button" class="uk-margin-small-top uk-button uk-button-default" name="print_order">
                             Распечатать
                         </button>
+                        <a class="uk-margin-small-top uk-button uk-button-default" href="/">Перейти на главную</a>
                     </div>
                 </form>
 

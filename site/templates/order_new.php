@@ -33,7 +33,7 @@ if ($operator == 'no_operator') {
 
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
-                <form class="uk-flex uk-flex-column" id="select_seat" action="" method="post">
+                <form class="uk-flex uk-flex-column" id="select_seat" action="/zakaz-registratciia/" method="post">
                     <label>Дата и оператор заказа</label>
                     <div class="uk-margin-small-top">
                         <input class="uk-input" id="selected_date" type="text" name="selected_date" value="<?php echo $today; ?>" readonly>
@@ -142,8 +142,8 @@ if ($operator == 'no_operator') {
                     <!--КОРЗИНА ЗАПЧАСТЕЙ-->
 
                     <div class="uk-margin-small-top">
-                        <label for="selected_price">Стоимость работ</label>
-                        <input class="uk-input" id="selected_price" type="text" name="selected_price" value="0" autocomplete="off" required readonly>
+                        <label for="works_price">Стоимость работ</label>
+                        <input class="uk-input" id="works_price" type="text" name="works_price" value="0" autocomplete="off" required readonly>
                     </div>
 
                     <div class="uk-margin-small-top">

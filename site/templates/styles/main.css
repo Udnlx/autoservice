@@ -403,14 +403,14 @@ form button[type="submit"]:hover {
 
 
 /*Стоимость заказа*/
-#selected_price,
+#works_price,
 #parts_price,
 #total_price {
     height: 44px;
     font-weight: 800;
     font-size: 17px;
     background: #f9fafb !important;}
-#selected_price {
+#works_price {
     border-left: 5px solid #1e87f0 !important;}
 #parts_price {
     border-left: 5px solid #32d296 !important;}

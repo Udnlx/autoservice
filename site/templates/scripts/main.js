@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const partsCart = document.getElementById('parts_cart');
     let partsEmpty = document.getElementById('parts_empty');
 
-    const worksPriceInput = document.getElementById('selected_price');
+    const worksPriceInput = document.getElementById('works_price');
     const partsPriceInput = document.getElementById('parts_price');
     const totalPriceInput = document.getElementById('total_price');
 
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ✕
                 </button>
 
-                <input type="hidden" name="${hiddenName}" value="${escapeHtml(item.name + ' - ' + item.price)}">
+                <input type="hidden" name="${hiddenName}" value="${escapeHtml(item.name)}">
                 <input type="hidden" name="${hiddenPriceName}" value="${item.price}">
             `;
 
