@@ -52,6 +52,19 @@ if ($operator == 'no_operator') {
         }
     }
 
+    if (!function_exists('orderStatusClass')) {
+        function orderStatusClass($status) {
+            switch ($status) {
+                case 'Новая':             return 'status-new';
+                case 'В работе':          return 'status-progress';
+                case 'Ожидает запчасти':  return 'status-waiting';
+                case 'Завершена':         return 'status-done';
+                case 'Отменена':          return 'status-canceled';
+                default:                  return 'status-new';
+            }
+        }
+    }
+
     $works = [];
     if (count($orderPage->works)) {
         foreach ($orderPage->works as $item) {
@@ -142,7 +155,7 @@ if ($operator == 'no_operator') {
                         <div class="order-view-subtitle">Карточка зарегистрированной заявки ID <?php echo orderClean($order['id']); ?></div>
                     </div>
 
-                    <div class="order-status-badge" id="order_status_badge">
+                    <div class="order-status-badge <?php echo orderStatusClass($order['status']); ?>">
                         <?php echo orderClean($order['status']); ?>
                     </div>
                 </div>

@@ -24,6 +24,19 @@ if ($operator == 'no_operator') {
         }
     }
 
+    if (!function_exists('orderStatusClass')) {
+        function orderStatusClass($status) {
+            switch ($status) {
+                case 'Новая':             return 'status-new';
+                case 'В работе':          return 'status-progress';
+                case 'Ожидает запчасти':  return 'status-waiting';
+                case 'Завершена':         return 'status-done';
+                case 'Отменена':          return 'status-canceled';
+                default:                  return 'status-new';
+            }
+        }
+    }
+
     $search_client = trim($input->get->text('search_client'));
     $search_auto = trim($input->get->text('search_auto'));
 
@@ -58,7 +71,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/zakaz-novyj/">Новая заявка</a>
+                <a class="menu-link" href="/zakaz-novyi/">Новая заявка</a>
             </div>
         </div>
 
@@ -111,10 +124,12 @@ if ($operator == 'no_operator') {
                     <?php if (count($orders_list)) { ?>
                         <div class="orders-list uk-flex uk-flex-column">
                             <?php foreach ($orders_list as $orderItem) { ?>
-                                <a class="order-list-item" href="/zakaz-prosmotr/?idorder=<?php echo $orderItem->id; ?>">
+                                <a class="order-list-item <?php echo orderStatusClass($orderItem->status_order); ?>" href="/zakaz-prosmotr/?idorder=<?php echo $orderItem->id; ?>">
                                     <div class="order-list-item-top">
                                         <div class="order-list-item-title"><?php echo orderClean($orderItem->title); ?></div>
-                                        <div class="order-status-badge"><?php echo orderClean($orderItem->status_order); ?></div>
+                                        <div class="order-status-badge <?php echo orderStatusClass($orderItem->status_order); ?>">
+                                            <?php echo orderClean($orderItem->status_order); ?>
+                                        </div>
                                     </div>
 
                                     <div class="order-list-item-grid">

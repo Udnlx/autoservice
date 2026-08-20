@@ -368,6 +368,26 @@ form button[type="submit"]:hover {
     font-size: 13px;
     font-weight: 800;
     white-space: nowrap;}
+.order-status-badge.status-new {
+    background: #eef6ff;
+    color: #1e87f0;
+    border-color: #bfdbfe;}
+.order-status-badge.status-progress {
+    background: #fff4e6;
+    color: #f2751a;
+    border-color: #fed7aa;}
+.order-status-badge.status-waiting {
+    background: #fef9c3;
+    color: #a16207;
+    border-color: #fde68a;}
+.order-status-badge.status-done {
+    background: #e8faf1;
+    color: #1fa971;
+    border-color: #a7f3d0;}
+.order-status-badge.status-canceled {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fecaca;}
 .order-view-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -443,6 +463,26 @@ form button[type="submit"]:hover {
     border-left-color: #0f6ecd;
     color: #111827;
     text-decoration: none;}
+.order-list-item.status-new {
+    border-left-color: #1e87f0;}
+.order-list-item.status-new:hover {
+    border-left-color: #0f6ecd;}
+.order-list-item.status-progress {
+    border-left-color: #f2751a;}
+.order-list-item.status-progress:hover {
+    border-left-color: #c85a10;}
+.order-list-item.status-waiting {
+    border-left-color: #a16207;}
+.order-list-item.status-waiting:hover {
+    border-left-color: #78430a;}
+.order-list-item.status-done {
+    border-left-color: #1fa971;}
+.order-list-item.status-done:hover {
+    border-left-color: #14895a;}
+.order-list-item.status-canceled {
+    border-left-color: #dc2626;}
+.order-list-item.status-canceled:hover {
+    border-left-color: #a91a1a;}
 .order-list-item-top {
     display: flex;
     justify-content: space-between;
