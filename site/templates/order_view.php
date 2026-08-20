@@ -129,6 +129,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
+                <a class="menu-link" href="/zakaz-dvizhenie/">Движение</a>
             </div>
         </div>
 
@@ -146,7 +147,19 @@ if ($operator == 'no_operator') {
                     </div>
                 </div>
 
-                <form class="uk-flex uk-flex-column" id="order_view_form" action="" method="post">
+                <?php if ($input->get->int('saved') === 1) { ?>
+                    <div class="uk-alert-success uk-margin-small-top" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">Изменения сохранены</p>
+                    </div>
+                <?php } elseif ($input->get('saved') !== null && $input->get->int('saved') === 0) { ?>
+                    <div class="uk-alert-danger uk-margin-small-top" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">Не удалось сохранить изменения</p>
+                    </div>
+                <?php } ?>
+
+                <form class="uk-flex uk-flex-column" id="order_view_form" action="/zakaz-redaktirovanie/" method="post">
                     <input type="hidden" name="order_id" value="<?php echo orderClean($order['id']); ?>">
 
                     <div class="order-view-grid uk-margin-small-top">

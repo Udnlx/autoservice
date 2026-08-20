@@ -422,6 +422,62 @@ form button[type="submit"]:hover {
 
 
 
+/*Список заявок*/
+.orders-list {
+    gap: 10px;}
+.order-list-item {
+    display: block;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    color: #111827;
+    text-decoration: none;
+    transition: 0.2s ease;
+    border-left: 5px solid #1e87f0;}
+.order-list-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.09);
+    border-color: #bfdbfe;
+    border-left-color: #0f6ecd;
+    color: #111827;
+    text-decoration: none;}
+.order-list-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;}
+.order-list-item-title {
+    color: #111827;
+    font-size: 16px;
+    font-weight: 800;}
+.order-list-item-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;}
+.order-list-item-cell {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: #f9fafb;
+    border: 1px solid #edf0f5;}
+.order-list-item-label {
+    margin-bottom: 3px;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;}
+.order-list-item-value {
+    color: #111827;
+    font-size: 14px;
+    font-weight: 700;}
+.order-list-item-total {
+    color: #faa05a;}
+
+
+
 /*Вход в систему*/
 #login_system {
     gap: 5px;}
@@ -555,6 +611,12 @@ body > .uk-padding-small.uk-container.uk-flex.uk-flex-column.uk-flex-middle p {
         flex-direction: column;
         align-items: stretch;
         gap: 8px !important;}
+    .order-list-item-grid {
+        grid-template-columns: 1fr;}
+    .order-list-item-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;}
 }
 
 
