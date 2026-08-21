@@ -11,7 +11,7 @@ if(isset($_SESSION['operator'])){
 if ($operator == 'no_operator') {
 ?>
     <div id="content" style="max-width: 700px;">
-        <h1 class="uk-heading-hero uk-text-center">Заказ</h1>
+        <h1 class="uk-heading-hero uk-text-center">Заказ-наряд</h1>
         <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
             <h3 class="uk-card-title uk-text-center">Нет прав на эту страницу, потеряна сессия или точка, перезайти</h3>
             <a class="uk-margin-small uk-button uk-button-default" href="/login/">Перезайти</a>
@@ -24,7 +24,7 @@ if ($operator == 'no_operator') {
 
     if (!$order_id) {
         echo '<div id="content" style="max-width: 700px;">
-            <h1 class="uk-heading-hero uk-text-center">Заказ</h1>
+            <h1 class="uk-heading-hero uk-text-center">Заказ-наряд</h1>
             <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
                 <h3 class="uk-card-title uk-text-center">Не передан ID заказа</h3>
                 <a class="uk-margin-small uk-button uk-button-default" href="/">На главную</a>
@@ -37,7 +37,7 @@ if ($operator == 'no_operator') {
 
     if (!$orderPage->id) {
         echo '<div id="content" style="max-width: 700px;">
-            <h1 class="uk-heading-hero uk-text-center">Заказ</h1>
+            <h1 class="uk-heading-hero uk-text-center">Заказ-наряд</h1>
             <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
                 <h3 class="uk-card-title uk-text-center">Заказ не найден</h3>
                 <a class="uk-margin-small uk-button uk-button-default" href="/">На главную</a>

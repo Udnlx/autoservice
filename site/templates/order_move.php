@@ -9,7 +9,7 @@ if (isset($_SESSION['operator'])) {
 if ($operator == 'no_operator') {
 ?>
     <div id="content" style="max-width: 700px;">
-        <h1 class="uk-heading-hero uk-text-center">Движение заказов</h1>
+        <h1 class="uk-heading-hero uk-text-center">Движение</h1>
         <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
             <h3 class="uk-card-title uk-text-center">Нет прав на эту страницу, потеряна сессия или точка, перезайти</h3>
             <a class="uk-margin-small uk-button uk-button-default" href="/login/">Перезайти</a>
@@ -65,13 +65,13 @@ if ($operator == 'no_operator') {
 ?>
 
 <div id="content">
-    <h1 class="uk-margin-remove uk-heading-hero uk-text-center">Движение заказов</h1>
+    <h1 class="uk-margin-remove uk-heading-hero uk-text-center">Движение</h1>
     <div>
 
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/zakaz-novyi/">Новая заявка</a>
+                <a class="menu-link" href="/zakaz-novyi/">Новый заказ-наряд</a>
             </div>
         </div>
 
@@ -80,12 +80,12 @@ if ($operator == 'no_operator') {
 
                 <div class="order-view-top">
                     <div>
-                        <div class="order-view-number">Список заказов</div>
+                        <div class="order-view-number">Список заказ-нарядов</div>
                         <div class="order-view-subtitle">
                             <?php if ($is_search) { ?>
                                 Результаты поиска: найдено <?php echo count($orders_list); ?>
                             <?php } else { ?>
-                                Последние 30 заявок
+                                Последние 30 записей
                             <?php } ?>
                         </div>
                     </div>
