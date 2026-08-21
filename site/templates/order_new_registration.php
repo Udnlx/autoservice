@@ -70,13 +70,13 @@ if ($operator == 'no_operator') {
     // print_r($order);
     // echo '</pre>';
 
-	if ($selected_worker && $client && $car && $works_price && $parts_price && $total_price && $payment_type && $operator != 'no_operator') {
+	if ($selected_worker && $client && $car && $total_price && $payment_type && $operator != 'no_operator') {
         $orders_page = $pages->get('template=orders');
         // $orderPage = $pages->get('id=1106');
         $orderPage = $pages->add('order_item', $orders_page);
 
         $orderPage->of(false);
-        $orderPage->title = 'Заказ ' . date('Ymd-Hi');
+        $orderPage->title = 'Заказ ' . date('ymd-His');
         $orderPage->date_order = $order['date'];
         $orderPage->status_order = $order['status'];
         $orderPage->operator = $order['worker'];

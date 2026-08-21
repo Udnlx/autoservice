@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let selectedWorks = [];
     let selectedParts = [];
+    let itemIdCounter = 1;
 
     if (!worksEmpty && worksCart) {
         worksEmpty = document.createElement('div');
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             selectedParts.push({
-                id: Date.now() + Math.floor(Math.random() * 1000000),
+                id: itemIdCounter++,
                 name: itemName,
                 price: itemPrice
             });
@@ -107,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             selectedWorks.push({
-                id: Date.now() + Math.floor(Math.random() * 1000000),
+                id: itemIdCounter++,
                 name: itemName,
                 price: itemPrice
             });
@@ -138,18 +139,18 @@ document.addEventListener('DOMContentLoaded', function () {
             return item.name === itemName;
         });
 
-        if (alreadyExists) {
-            if (type === 'work') {
-                alert('Эта работа уже добавлена');
-            } else {
-                alert('Эта запчасть уже добавлена');
-            }
+        // if (alreadyExists) {
+        //     if (type === 'work') {
+        //         alert('Эта работа уже добавлена');
+        //     } else {
+        //         alert('Эта запчасть уже добавлена');
+        //     }
 
-            return;
-        }
+        //     return;
+        // }
 
         const item = {
-            id: Date.now() + Math.floor(Math.random() * 1000),
+            id: itemIdCounter++,
             name: itemName,
             price: itemPrice
         };
