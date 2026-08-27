@@ -61,7 +61,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
 
-                <form class="uk-flex uk-flex-column" action="/vladel-tcy-spravochnik/" method="get">
+                <form class="uk-flex uk-flex-column" action="/vladeltcy-spravochnik/" method="get">
                     <label for="q">Поиск владельца</label>
 
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">

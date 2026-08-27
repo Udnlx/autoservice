@@ -54,7 +54,7 @@ if ($operator == 'no_operator') {
     } else {
         $info .= '
             <p class="uk-margin-remove">Владелец не зарегистрирован!<br>Произошла ошибка, возможно некорректные данные или не заполнены обязательные поля.<br>Попробуйте позже или обратитесь в техподдержку</p>
-            <a class="uk-margin-small-top uk-button uk-button-default" href="/vladel-tcy-spravochnik/">Вернуться в справочник</a>
+            <a class="uk-margin-small-top uk-button uk-button-default" href="/vladeltcy-spravochnik/">Вернуться в справочник</a>
         ';
     }
 
@@ -69,7 +69,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/vladel-tcy-spravochnik/">Справочник владельцев</a>
+                <a class="menu-link" href="/vladeltcy-spravochnik/">Справочник владельцев</a>
             </div>
         </div>
 
