@@ -165,7 +165,7 @@ if ($operator == 'no_operator') {
 
             <div class="uk-margin-small-top">
                 <label for="car_year">Год выпуска</label>
-                <input class="uk-input" id="car_year" type="text" name="car_year" placeholder="Например: 2022" autocomplete="off">
+                <input class="uk-input" id="car_year" type="text" name="car_year" placeholder="Например: 2022" autocomplete="off" required>
             </div>
 
             <div class="uk-margin-small-top">
