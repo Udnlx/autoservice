@@ -72,7 +72,7 @@ if ($operator == 'no_operator') {
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
                         <input class="uk-input" id="q" type="text" name="q" value="<?php echo carClean($search_query); ?>" placeholder="Введите название автомобиля" autocomplete="off">
 
-                        <button type="submit" class="uk-button uk-button-default">
+                        <button type="submit" class="uk-button uk-button-default" style="margin: 0 !important;">
                             Найти
                         </button>
                     </div>
