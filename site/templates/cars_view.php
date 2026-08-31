@@ -52,8 +52,15 @@ if ($operator == 'no_operator') {
         }
     }
 
-    // Загружаем всех клиентов для select в модальном окне
-    $all_owners = $pages->find("template=owner, sort=title, limit=500");
+    // Загружаем всех клиентов для поиска в модальном окне
+    $all_owners = $pages->find("template=owner, sort=title, limit=1000");
+
+    // Готовим массив для JS-поиска
+    $owners_json = [];
+    foreach ($all_owners as $o) {
+        $owners_json[] = ['id' => (int)$o->id, 'title' => $o->title];
+    }
+    $owners_json_encoded = json_encode($owners_json, JSON_UNESCAPED_UNICODE);
 
 ?>
 
@@ -173,15 +180,45 @@ if ($operator == 'no_operator') {
                 <input class="uk-input" id="car_year" type="text" name="car_year" placeholder="Например: 2022" autocomplete="off" required>
             </div>
 
+            <!-- ПОИСК КЛИЕНТА -->
             <div class="uk-margin-small-top">
-                <label for="car_owner">Клиент</label>
-                <select class="uk-select" id="car_owner" name="car_owner">
-                    <option value="0">— Не выбран —</option>
-                    <?php foreach ($all_owners as $ownerOption) { ?>
-                        <option value="<?php echo (int)$ownerOption->id; ?>"><?php echo carClean($ownerOption->title); ?></option>
-                    <?php } ?>
-                </select>
+                <label for="car_owner_search">Клиент</label>
+
+                <input type="hidden" id="car_owner" name="car_owner" value="0">
+
+                <div style="position: relative;">
+                    <div class="uk-flex" style="gap: 8px;">
+                        <input
+                            class="uk-input"
+                            id="car_owner_search"
+                            type="text"
+                            placeholder="Введите имя клиента..."
+                            autocomplete="off"
+                        >
+                        <button
+                            type="button"
+                            class="uk-button uk-button-default"
+                            id="car_owner_search_btn"
+                            style="white-space: nowrap;"
+                        >Найти</button>
+                    </div>
+
+                    <!-- Выбранный клиент -->
+                    <div id="car_owner_selected" style="display:none; margin-top: 6px; padding: 6px 10px; background: #f8f8f8; border-radius: 4px; font-size: 0.9em;">
+                        <span id="car_owner_selected_name"></span>
+                        <a href="#" id="car_owner_clear" style="margin-left: 10px; font-size: 0.85em; color: #999;">✕ сбросить</a>
+                    </div>
+
+                    <!-- Список результатов -->
+                    <ul
+                        id="car_owner_results"
+                        style="display:none; position:absolute; z-index:1100; left:0; right:0; margin:0; padding:0;
+                               list-style:none; background:#fff; border:1px solid #e0e0e0; border-radius:4px;
+                               max-height:220px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,.1);"
+                    ></ul>
+                </div>
             </div>
+            <!-- /ПОИСК КЛИЕНТА -->
 
             <div class="uk-margin-small-top">
                 <label for="car_notes">Примечания</label>
@@ -200,6 +237,95 @@ if ($operator == 'no_operator') {
 <!--МОДАЛЬНОЕ ОКНО НОВЫЙ АВТОМОБИЛЬ-->
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var owners = <?php echo $owners_json_encoded; ?>;
+
+    var searchInput  = document.getElementById('car_owner_search');
+    var searchBtn    = document.getElementById('car_owner_search_btn');
+    var resultsList  = document.getElementById('car_owner_results');
+    var hiddenInput  = document.getElementById('car_owner');
+    var selectedBox  = document.getElementById('car_owner_selected');
+    var selectedName = document.getElementById('car_owner_selected_name');
+    var clearBtn     = document.getElementById('car_owner_clear');
+
+    // Если элементы не найдены — тихо выходим, не ломаем страницу
+    if (!searchInput || !searchBtn || !resultsList || !hiddenInput || !selectedBox || !selectedName || !clearBtn) return;
+
+    function showResults(items) {
+        resultsList.innerHTML = '';
+        if (items.length === 0) {
+            var li = document.createElement('li');
+            li.textContent = 'Ничего не найдено';
+            li.style.cssText = 'padding:8px 12px; color:#999; font-size:.9em;';
+            resultsList.appendChild(li);
+        } else {
+            items.forEach(function (owner) {
+                var li = document.createElement('li');
+                li.textContent = owner.title;
+                li.dataset.id = owner.id;
+                li.style.cssText = 'padding:8px 12px; cursor:pointer; border-bottom:1px solid #f0f0f0; font-size:.9em;';
+                li.addEventListener('mouseenter', function () { this.style.background = '#f5f5f5'; });
+                li.addEventListener('mouseleave', function () { this.style.background = ''; });
+                li.addEventListener('click', function () {
+                    selectOwner(owner.id, owner.title);
+                });
+                resultsList.appendChild(li);
+            });
+        }
+        resultsList.style.display = 'block';
+    }
+
+    function selectOwner(id, title) {
+        hiddenInput.value = id;
+        selectedName.textContent = title;
+        selectedBox.style.display = 'block';
+        resultsList.style.display = 'none';
+        searchInput.value = '';
+    }
+
+    function doSearch() {
+        var q = searchInput.value.trim().toLowerCase();
+        if (q.length < 2) {
+            resultsList.style.display = 'none';
+            return;
+        }
+        var filtered = owners.filter(function (o) {
+            return o.title.toLowerCase().indexOf(q) !== -1;
+        });
+        showResults(filtered.slice(0, 50));
+    }
+
+    searchBtn.addEventListener('click', doSearch);
+    searchInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+    });
+
+    clearBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        hiddenInput.value = 0;
+        selectedBox.style.display = 'none';
+        searchInput.value = '';
+        resultsList.style.display = 'none';
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('#car_owner_search') &&
+            !e.target.closest('#car_owner_search_btn') &&
+            !e.target.closest('#car_owner_results')) {
+            resultsList.style.display = 'none';
+        }
+    });
+
+    UIkit.util.on('#new_car_modal', 'hidden', function () {
+        hiddenInput.value = 0;
+        selectedBox.style.display = 'none';
+        searchInput.value = '';
+        resultsList.style.display = 'none';
+    });
+});
+</script>
 
 <?php   
 }
