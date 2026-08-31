@@ -51,10 +51,15 @@ if ($operator == 'no_operator') {
     }
 
     $owner = [
-        'id'    => $ownerPage->id,
-        'title' => $ownerPage->title,
-        'phone' => $ownerPage->phone,
-        'email' => $ownerPage->email
+        'id'      => $ownerPage->id,
+        'title'   => $ownerPage->title,
+        'phone'   => $ownerPage->phone,
+        'email'   => $ownerPage->email,
+        'type'    => $ownerPage->owner_type,
+        'address' => $ownerPage->owner_address,
+        'company' => $ownerPage->owner_company,
+        'inn'     => $ownerPage->owner_inn,
+        'notes'   => $ownerPage->owner_notes
     ];
 
     // Автомобили этого клиента
@@ -82,9 +87,9 @@ if ($operator == 'no_operator') {
                         <div class="order-view-subtitle">Карточка клиента ID <?php echo ownerClean($owner['id']); ?></div>
                     </div>
 
-                    <?php if (!empty($owner['phone'])) { ?>
+                    <?php if (!empty($owner['type'])) { ?>
                         <div class="order-status-badge">
-                            <?php echo ownerClean($owner['phone']); ?>
+                            <?php echo ownerClean($owner['type']); ?>
                         </div>
                     <?php } ?>
                 </div>
@@ -110,6 +115,11 @@ if ($operator == 'no_operator') {
                         </div>
 
                         <div class="order-info-box">
+                            <div class="order-info-label">Тип</div>
+                            <div class="order-info-value"><?php echo !empty($owner['type']) ? ownerClean($owner['type']) : '—'; ?></div>
+                        </div>
+
+                        <div class="order-info-box">
                             <div class="order-info-label">Телефон</div>
                             <div class="order-info-value"><?php echo !empty($owner['phone']) ? ownerClean($owner['phone']) : '—'; ?></div>
                         </div>
@@ -117,6 +127,26 @@ if ($operator == 'no_operator') {
                         <div class="order-info-box">
                             <div class="order-info-label">Email</div>
                             <div class="order-info-value"><?php echo !empty($owner['email']) ? ownerClean($owner['email']) : '—'; ?></div>
+                        </div>
+
+                        <div class="order-info-box">
+                            <div class="order-info-label">Адрес</div>
+                            <div class="order-info-value"><?php echo !empty($owner['address']) ? ownerClean($owner['address']) : '—'; ?></div>
+                        </div>
+
+                        <div class="order-info-box">
+                            <div class="order-info-label">Организация</div>
+                            <div class="order-info-value"><?php echo !empty($owner['company']) ? ownerClean($owner['company']) : '—'; ?></div>
+                        </div>
+
+                        <div class="order-info-box">
+                            <div class="order-info-label">ИНН</div>
+                            <div class="order-info-value"><?php echo !empty($owner['inn']) ? ownerClean($owner['inn']) : '—'; ?></div>
+                        </div>
+
+                        <div class="order-info-box">
+                            <div class="order-info-label">Примечания</div>
+                            <div class="order-info-value"><?php echo !empty($owner['notes']) ? ownerClean($owner['notes']) : '—'; ?></div>
                         </div>
                     </div>
 
@@ -170,6 +200,14 @@ if ($operator == 'no_operator') {
                     <input type="hidden" name="owner_id" value="<?php echo ownerClean($owner['id']); ?>">
 
                     <div class="uk-margin-small-top">
+                        <label for="owner_type">Тип клиента</label>
+                        <select class="uk-select" id="owner_type" name="owner_type">
+                            <option value="Физлицо" <?php echo ($owner['type'] === 'Физлицо') ? 'selected' : ''; ?>>Физлицо</option>
+                            <option value="Юрлицо" <?php echo ($owner['type'] === 'Юрлицо') ? 'selected' : ''; ?>>Юрлицо</option>
+                        </select>
+                    </div>
+
+                    <div class="uk-margin-small-top">
                         <label for="owner_title">ФИО</label>
                         <input class="uk-input" id="owner_title" type="text" name="owner_title" value="<?php echo ownerClean($owner['title']); ?>" placeholder="Иванов Иван Иванович" autocomplete="off" required>
                     </div>
@@ -182,6 +220,26 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="owner_email">Email</label>
                         <input class="uk-input" id="owner_email" type="email" name="owner_email" value="<?php echo ownerClean($owner['email']); ?>" placeholder="example@mail.ru" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="owner_address">Адрес</label>
+                        <input class="uk-input" id="owner_address" type="text" name="owner_address" value="<?php echo ownerClean($owner['address']); ?>" placeholder="г. Москва, ул. Ленина, д. 1" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="owner_company">Организация</label>
+                        <input class="uk-input" id="owner_company" type="text" name="owner_company" value="<?php echo ownerClean($owner['company']); ?>" placeholder="Название компании" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="owner_inn">ИНН</label>
+                        <input class="uk-input" id="owner_inn" type="text" name="owner_inn" value="<?php echo ownerClean($owner['inn']); ?>" placeholder="10 или 12 цифр" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="owner_notes">Примечания</label>
+                        <textarea class="uk-textarea" id="owner_notes" name="owner_notes" rows="3" placeholder="Особенности, замечания..."><?php echo ownerClean($owner['notes']); ?></textarea>
                     </div>
 
                     <div class="uk-margin-small-top uk-flex uk-flex-column">

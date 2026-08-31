@@ -33,14 +33,19 @@ if ($operator == 'no_operator') {
 
     if ($search_active) {
         $safe_query = $sanitizer->selectorValue($search_query);
-        $owners_result = $pages->find("template=owner, title|phone|email%=$safe_query, limit=100");
+        $owners_result = $pages->find("template=owner, title|phone|email|owner_company|owner_inn%=$safe_query, limit=100");
 
         foreach ($owners_result as $ownerPage) {
             $found_owners[] = [
-                'id' => $ownerPage->id,
-                'title' => $ownerPage->title,
-                'phone' => $ownerPage->phone,
-                'email' => $ownerPage->email
+                'id'      => $ownerPage->id,
+                'title'   => $ownerPage->title,
+                'phone'   => $ownerPage->phone,
+                'email'   => $ownerPage->email,
+                'type'    => $ownerPage->owner_type,
+                'address' => $ownerPage->owner_address,
+                'company' => $ownerPage->owner_company,
+                'inn'     => $ownerPage->owner_inn,
+                'notes'   => $ownerPage->owner_notes
             ];
         }
     }
@@ -52,10 +57,10 @@ if ($operator == 'no_operator') {
     <div>
 
         <div>
-			<div class="pagemenu uk-width-1-1 uk-flex">
-			    <a class="menu-link" href="/">На главную</a>
-			    <a class="menu-link" href="#new_owner_modal" uk-toggle>Новый клиент</a>
-			</div>
+            <div class="pagemenu uk-width-1-1 uk-flex">
+                <a class="menu-link" href="/">На главную</a>
+                <a class="menu-link" href="#new_owner_modal" uk-toggle>Новый клиент</a>
+            </div>
         </div>
 
         <div>
@@ -65,7 +70,7 @@ if ($operator == 'no_operator') {
                     <label for="q">Поиск клиента</label>
 
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
-                        <input class="uk-input" id="q" type="text" name="q" value="<?php echo ownerClean($search_query); ?>" placeholder="Введите ФИО, телефон или почту" autocomplete="off">
+                        <input class="uk-input" id="q" type="text" name="q" value="<?php echo ownerClean($search_query); ?>" placeholder="Введите ФИО, телефон, почту или организацию" autocomplete="off">
 
                         <button type="submit" class="uk-button uk-button-default" style="margin: 0 !important;">
                             Найти
@@ -87,6 +92,9 @@ if ($operator == 'no_operator') {
                             <a class="order-list-item" href="/klient-prosmotr/?idowner=<?php echo (int)$owner['id']; ?>">
                                 <div class="order-list-item-top">
                                     <div class="order-list-item-title"><?php echo ownerClean($owner['title']); ?></div>
+                                    <?php if (!empty($owner['type'])) { ?>
+                                        <div class="order-status-badge status-new"><?php echo ownerClean($owner['type']); ?></div>
+                                    <?php } ?>
                                 </div>
 
                                 <div class="order-list-item-grid">
@@ -99,6 +107,20 @@ if ($operator == 'no_operator') {
                                         <div class="order-list-item-label">Почта</div>
                                         <div class="order-list-item-value"><?php echo !empty($owner['email']) ? ownerClean($owner['email']) : '—'; ?></div>
                                     </div>
+
+                                    <?php if (!empty($owner['company'])) { ?>
+                                    <div class="order-list-item-cell">
+                                        <div class="order-list-item-label">Организация</div>
+                                        <div class="order-list-item-value"><?php echo ownerClean($owner['company']); ?></div>
+                                    </div>
+                                    <?php } ?>
+
+                                    <?php if (!empty($owner['inn'])) { ?>
+                                    <div class="order-list-item-cell">
+                                        <div class="order-list-item-label">ИНН</div>
+                                        <div class="order-list-item-value"><?php echo ownerClean($owner['inn']); ?></div>
+                                    </div>
+                                    <?php } ?>
                                 </div>
                             </a>
                         <?php } ?>
@@ -120,6 +142,14 @@ if ($operator == 'no_operator') {
         <form class="uk-flex uk-flex-column" action="/klient-registratciia/" method="post">
 
             <div class="uk-margin-small-top">
+                <label for="owner_type">Тип клиента</label>
+                <select class="uk-select" id="owner_type" name="owner_type">
+                    <option value="Физлицо">Физлицо</option>
+                    <option value="Юрлицо">Юрлицо</option>
+                </select>
+            </div>
+
+            <div class="uk-margin-small-top">
                 <label for="owner_name">ФИО (Фамилия Имя Отчество)</label>
                 <input class="uk-input" id="owner_name" type="text" name="owner_name" placeholder="Например: Иванов Иван Иванович" autocomplete="off" required>
             </div>
@@ -132,6 +162,26 @@ if ($operator == 'no_operator') {
             <div class="uk-margin-small-top">
                 <label for="owner_email">Почта</label>
                 <input class="uk-input" id="owner_email" type="email" name="owner_email" placeholder="Например: ivanov@mail.ru" autocomplete="off">
+            </div>
+
+            <div class="uk-margin-small-top">
+                <label for="owner_address">Адрес</label>
+                <input class="uk-input" id="owner_address" type="text" name="owner_address" placeholder="Например: г. Москва, ул. Ленина, д. 1" autocomplete="off">
+            </div>
+
+            <div class="uk-margin-small-top">
+                <label for="owner_company">Организация</label>
+                <input class="uk-input" id="owner_company" type="text" name="owner_company" placeholder="Название компании" autocomplete="off">
+            </div>
+
+            <div class="uk-margin-small-top">
+                <label for="owner_inn">ИНН</label>
+                <input class="uk-input" id="owner_inn" type="text" name="owner_inn" placeholder="10 или 12 цифр" autocomplete="off">
+            </div>
+
+            <div class="uk-margin-small-top">
+                <label for="owner_notes">Примечания</label>
+                <textarea class="uk-textarea" id="owner_notes" name="owner_notes" rows="3" placeholder="Особенности, замечания..."></textarea>
             </div>
 
             <div class="uk-margin-small-top uk-flex uk-flex-column">

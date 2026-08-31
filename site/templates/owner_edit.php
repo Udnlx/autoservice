@@ -20,9 +20,14 @@ if ($operator == 'no_operator') {
 
     $owner_id = !empty($_POST['owner_id']) ? (int)$_POST['owner_id'] : 0;
 
-    $owner_title = !empty($_POST['owner_title']) ? trim($_POST['owner_title']) : '';
-    $owner_phone = !empty($_POST['owner_phone']) ? trim($_POST['owner_phone']) : '';
-    $owner_email = !empty($_POST['owner_email']) ? trim($_POST['owner_email']) : '';
+    $owner_title   = !empty($_POST['owner_title'])   ? trim($_POST['owner_title'])   : '';
+    $owner_phone   = !empty($_POST['owner_phone'])   ? trim($_POST['owner_phone'])   : '';
+    $owner_email   = !empty($_POST['owner_email'])   ? trim($_POST['owner_email'])   : '';
+    $owner_type    = !empty($_POST['owner_type'])    ? trim($_POST['owner_type'])    : 'Физлицо';
+    $owner_address = !empty($_POST['owner_address']) ? trim($_POST['owner_address']) : '';
+    $owner_company = !empty($_POST['owner_company']) ? trim($_POST['owner_company']) : '';
+    $owner_inn     = !empty($_POST['owner_inn'])     ? trim($_POST['owner_inn'])     : '';
+    $owner_notes   = !empty($_POST['owner_notes'])   ? trim($_POST['owner_notes'])   : '';
 
     $success = false;
 
@@ -33,9 +38,14 @@ if ($operator == 'no_operator') {
         if ($ownerPage->id) {
 
             $ownerPage->of(false);
-            $ownerPage->title = $owner_title;
-            $ownerPage->phone = $owner_phone;
-            $ownerPage->email = $owner_email;
+            $ownerPage->title         = $owner_title;
+            $ownerPage->phone         = $owner_phone;
+            $ownerPage->email         = $owner_email;
+            $ownerPage->owner_type    = $owner_type;
+            $ownerPage->owner_address = $owner_address;
+            $ownerPage->owner_company = $owner_company;
+            $ownerPage->owner_inn     = $owner_inn;
+            $ownerPage->owner_notes   = $owner_notes;
             $ownerPage->save();
 
             $success = true;

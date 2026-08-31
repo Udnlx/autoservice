@@ -20,9 +20,14 @@ if ($operator == 'no_operator') {
 <?php    
 } else {
 
-    $owner_name  = !empty($_POST['owner_name'])  ? trim($_POST['owner_name'])  : NULL;
-    $owner_phone = !empty($_POST['owner_phone']) ? trim($_POST['owner_phone']) : NULL;
-    $owner_email = !empty($_POST['owner_email']) ? trim($_POST['owner_email']) : NULL;
+    $owner_name    = !empty($_POST['owner_name'])    ? trim($_POST['owner_name'])    : NULL;
+    $owner_phone   = !empty($_POST['owner_phone'])   ? trim($_POST['owner_phone'])   : NULL;
+    $owner_email   = !empty($_POST['owner_email'])   ? trim($_POST['owner_email'])   : NULL;
+    $owner_type    = !empty($_POST['owner_type'])    ? trim($_POST['owner_type'])    : 'Физлицо';
+    $owner_address = !empty($_POST['owner_address']) ? trim($_POST['owner_address']) : NULL;
+    $owner_company = !empty($_POST['owner_company']) ? trim($_POST['owner_company']) : NULL;
+    $owner_inn     = !empty($_POST['owner_inn'])     ? trim($_POST['owner_inn'])     : NULL;
+    $owner_notes   = !empty($_POST['owner_notes'])   ? trim($_POST['owner_notes'])   : NULL;
 
     $success = '';
 
@@ -33,9 +38,14 @@ if ($operator == 'no_operator') {
 
         $ownerPage->of(false);
 
-        $ownerPage->title = $owner_name;
-        $ownerPage->phone = $owner_phone;
-        $ownerPage->email = $owner_email;
+        $ownerPage->title         = $owner_name;
+        $ownerPage->phone         = $owner_phone;
+        $ownerPage->email         = $owner_email;
+        $ownerPage->owner_type    = $owner_type;
+        $ownerPage->owner_address = $owner_address;
+        $ownerPage->owner_company = $owner_company;
+        $ownerPage->owner_inn     = $owner_inn;
+        $ownerPage->owner_notes   = $owner_notes;
 
         $ownerPage->save();
 
