@@ -234,7 +234,7 @@ if ($operator == 'no_operator') {
                             <!-- Выбранный клиент -->
                             <div id="car_owner_selected"
                                 style="<?php echo $car['owner_id'] ? '' : 'display:none;'; ?> margin-top: 6px; padding: 6px 10px; background: #f8f8f8; border-radius: 4px; font-size: 0.9em;">
-                                <span id="car_owner_selected_name"><?php echo carClean($car['owner_title']); ?></span>
+                                <span id="car_owner_selected_name" style="font-weight: 700;"><?php echo carClean($car['owner_title']); ?></span>
                                 <a href="#" id="car_owner_clear" style="margin-left: 10px; font-size: 0.85em; color: #999;">✕ сбросить</a>
                             </div>
 
