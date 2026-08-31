@@ -72,7 +72,7 @@ if ($operator == 'no_operator') {
         $car_title_display = carClean($car['title']);
     }
 
-    // Все владельцы для select в форме редактирования
+    // Все клиенты для select в форме редактирования
     $all_owners = $pages->find("template=owner, sort=title, limit=500");
 
 ?>
@@ -145,10 +145,10 @@ if ($operator == 'no_operator') {
                         </div>
 
                         <div class="order-info-box">
-                            <div class="order-info-label">Владелец</div>
+                            <div class="order-info-label">Клиент</div>
                             <div class="order-info-value">
                                 <?php if ($car['owner_id']) { ?>
-                                    <a href="/spravochnik-vladelec-prosmotr/?idowner=<?php echo (int)$car['owner_id']; ?>">
+                                    <a href="/klient-prosmotr/?idowner=<?php echo (int)$car['owner_id']; ?>">
                                         <?php echo carClean($car['owner_title']); ?>
                                     </a>
                                 <?php } else { ?>
@@ -202,7 +202,7 @@ if ($operator == 'no_operator') {
                     </div>
 
                     <div class="uk-margin-small-top">
-                        <label for="car_owner">Владелец</label>
+                        <label for="car_owner">Клиент</label>
                         <select class="uk-select" id="car_owner" name="car_owner">
                             <option value="0">— Не выбран —</option>
                             <?php foreach ($all_owners as $ownerOption) { ?>

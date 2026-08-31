@@ -11,7 +11,7 @@ if(isset($_SESSION['operator'])){
 if ($operator == 'no_operator') {
 ?>
     <div id="content" style="max-width: 700px;">
-        <h1 class="uk-heading-hero uk-text-center">Владельцы Справочник</h1>
+        <h1 class="uk-heading-hero uk-text-center">Клиенты Справочник</h1>
         <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
             <h3 class="uk-card-title uk-text-center">Нет прав на эту страницу, потеряна сессия или точка, перезайти</h3>
             <a class="uk-margin-small uk-button uk-button-default" href="/login/">Перезайти</a>
@@ -48,21 +48,21 @@ if ($operator == 'no_operator') {
 ?>
 
 <div id="content">
-    <h1 class="uk-margin-remove uk-heading-hero uk-text-center">Владельцы Справочник</h1>
+    <h1 class="uk-margin-remove uk-heading-hero uk-text-center">Клиенты Справочник</h1>
     <div>
 
         <div>
 			<div class="pagemenu uk-width-1-1 uk-flex">
 			    <a class="menu-link" href="/">На главную</a>
-			    <a class="menu-link" href="#new_owner_modal" uk-toggle>Новый владелец</a>
+			    <a class="menu-link" href="#new_owner_modal" uk-toggle>Новый клиент</a>
 			</div>
         </div>
 
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
 
-                <form class="uk-flex uk-flex-column" action="/vladeltcy-spravochnik/" method="get">
-                    <label for="q">Поиск владельца</label>
+                <form class="uk-flex uk-flex-column" action="/klienty-spravochnik/" method="get">
+                    <label for="q">Поиск клиента</label>
 
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
                         <input class="uk-input" id="q" type="text" name="q" value="<?php echo ownerClean($search_query); ?>" placeholder="Введите ФИО, телефон или почту" autocomplete="off">
@@ -75,7 +75,7 @@ if ($operator == 'no_operator') {
 
                 <?php if (!$search_active) { ?>
                     <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Начните поиск, чтобы увидеть владельцев
+                        Начните поиск, чтобы увидеть клиентов
                     </div>
                 <?php } elseif (empty($found_owners)) { ?>
                     <div class="order-cart-empty uk-margin-small-top uk-text-center">
@@ -84,7 +84,7 @@ if ($operator == 'no_operator') {
                 <?php } else { ?>
                     <div class="orders-list uk-flex uk-flex-column uk-margin-small-top">
                         <?php foreach ($found_owners as $owner) { ?>
-                            <a class="order-list-item" href="/spravochnik-vladelec-prosmotr/?idowner=<?php echo (int)$owner['id']; ?>">
+                            <a class="order-list-item" href="/klient-prosmotr/?idowner=<?php echo (int)$owner['id']; ?>">
                                 <div class="order-list-item-top">
                                     <div class="order-list-item-title"><?php echo ownerClean($owner['title']); ?></div>
                                 </div>
@@ -110,14 +110,14 @@ if ($operator == 'no_operator') {
 
     </div>
 
-<!--МОДАЛЬНОЕ ОКНО НОВЫЙ ВЛАДЕЛЕЦ-->
+<!--МОДАЛЬНОЕ ОКНО НОВЫЙ КЛИЕНТ-->
 <div id="new_owner_modal" uk-modal>
     <div class="uk-modal-dialog uk-modal-body">
         <button class="uk-modal-close-default" type="button" uk-close></button>
 
-        <h3 class="uk-card-title uk-text-center">Новый владелец</h3>
+        <h3 class="uk-card-title uk-text-center">Новый клиент</h3>
 
-        <form class="uk-flex uk-flex-column" action="/vladeletc-registratciia/" method="post">
+        <form class="uk-flex uk-flex-column" action="/klient-registratciia/" method="post">
 
             <div class="uk-margin-small-top">
                 <label for="owner_name">ФИО (Фамилия Имя Отчество)</label>
@@ -143,7 +143,7 @@ if ($operator == 'no_operator') {
         </form>
     </div>
 </div>
-<!--МОДАЛЬНОЕ ОКНО НОВЫЙ ВЛАДЕЛЕЦ-->
+<!--МОДАЛЬНОЕ ОКНО НОВЫЙ КЛИЕНТ-->
 
 </div>
 

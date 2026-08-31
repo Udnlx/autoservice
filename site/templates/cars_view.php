@@ -52,7 +52,7 @@ if ($operator == 'no_operator') {
         }
     }
 
-    // Загружаем всех владельцев для select в модальном окне
+    // Загружаем всех клиентов для select в модальном окне
     $all_owners = $pages->find("template=owner, sort=title, limit=500");
 
 ?>
@@ -120,7 +120,7 @@ if ($operator == 'no_operator') {
                                     </div>
 
                                     <div class="order-list-item-cell">
-                                        <div class="order-list-item-label">Владелец</div>
+                                        <div class="order-list-item-label">Клиент</div>
                                         <div class="order-list-item-value"><?php echo !empty($car['owner_title']) ? carClean($car['owner_title']) : '—'; ?></div>
                                     </div>
 
@@ -174,7 +174,7 @@ if ($operator == 'no_operator') {
             </div>
 
             <div class="uk-margin-small-top">
-                <label for="car_owner">Владелец</label>
+                <label for="car_owner">Клиент</label>
                 <select class="uk-select" id="car_owner" name="car_owner">
                     <option value="0">— Не выбран —</option>
                     <?php foreach ($all_owners as $ownerOption) { ?>

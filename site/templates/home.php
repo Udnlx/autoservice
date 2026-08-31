@@ -25,7 +25,7 @@ if ($operator == 'admin') {
         <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-novyi/">Новый заказ-наряд</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-dvizhenie/">Движение</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/avtomobili-spravochnik/">Автомобили</a>
-        <a class="uk-margin-small uk-button uk-button-default" href="/vladeltcy-spravochnik/">Клиенты</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/klienty-spravochnik/">Клиенты</a>
         <a class="uk-margin-small uk-button uk-button-default" href="">Склад</a>
         <a class="uk-margin-small uk-button uk-button-default" href="">Справочники</a>
     ';

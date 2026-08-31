@@ -9,7 +9,7 @@ if(isset($_SESSION['operator'])){
 if ($operator == 'no_operator') {
 ?>
     <div id="content" style="max-width: 700px;">
-        <h1 class="uk-heading-hero uk-text-center">Владелец Просмотр</h1>
+        <h1 class="uk-heading-hero uk-text-center">Клиент Просмотр</h1>
         <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
             <h3 class="uk-card-title uk-text-center">Нет прав на эту страницу, потеряна сессия или точка, перезайти</h3>
             <a class="uk-margin-small uk-button uk-button-default" href="/login/">Перезайти</a>
@@ -22,9 +22,9 @@ if ($operator == 'no_operator') {
 
     if (!$owner_id) {
         echo '<div id="content" style="max-width: 700px;">
-            <h1 class="uk-heading-hero uk-text-center">Владелец Просмотр</h1>
+            <h1 class="uk-heading-hero uk-text-center">Клиент Просмотр</h1>
             <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
-                <h3 class="uk-card-title uk-text-center">Не передан ID владельца</h3>
+                <h3 class="uk-card-title uk-text-center">Не передан ID клиента</h3>
                 <a class="uk-margin-small uk-button uk-button-default" href="/">На главную</a>
             </div>
         </div>';
@@ -35,9 +35,9 @@ if ($operator == 'no_operator') {
 
     if (!$ownerPage->id) {
         echo '<div id="content" style="max-width: 700px;">
-            <h1 class="uk-heading-hero uk-text-center">Владелец Просмотр</h1>
+            <h1 class="uk-heading-hero uk-text-center">Клиент Просмотр</h1>
             <div class="uk-card uk-card-default uk-card-body uk-width-1-1 uk-flex uk-flex-column">
-                <h3 class="uk-card-title uk-text-center">Владелец не найден</h3>
+                <h3 class="uk-card-title uk-text-center">Клиент не найден</h3>
                 <a class="uk-margin-small uk-button uk-button-default" href="/">На главную</a>
             </div>
         </div>';
@@ -57,7 +57,7 @@ if ($operator == 'no_operator') {
         'email' => $ownerPage->email
     ];
 
-    // Автомобили этого владельца
+    // Автомобили этого клиента
     $owner_cars = $pages->find("template=car, car_owner=$owner_id, sort=title");
 
 ?>
@@ -69,7 +69,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/vladeltcy-spravochnik/">Справочник владельцев</a>
+                <a class="menu-link" href="/klienty-spravochnik/">Справочник клиентов</a>
             </div>
         </div>
 
@@ -79,7 +79,7 @@ if ($operator == 'no_operator') {
                 <div class="order-view-top">
                     <div>
                         <div class="order-view-number"><?php echo ownerClean($owner['title']); ?></div>
-                        <div class="order-view-subtitle">Карточка владельца ID <?php echo ownerClean($owner['id']); ?></div>
+                        <div class="order-view-subtitle">Карточка клиента ID <?php echo ownerClean($owner['id']); ?></div>
                     </div>
 
                     <?php if (!empty($owner['phone'])) { ?>
@@ -120,7 +120,7 @@ if ($operator == 'no_operator') {
                         </div>
                     </div>
 
-                    <!--АВТОМОБИЛИ ВЛАДЕЛЬЦА-->
+                    <!--АВТОМОБИЛИ КЛИЕНТА-->
                     <div class="uk-margin-small-top">
                         <div class="order-info-label">Автомобили</div>
                         <?php if ($owner_cars->count()) { ?>
@@ -154,7 +154,7 @@ if ($operator == 'no_operator') {
                             <div class="order-cart-empty uk-margin-small-top">Автомобили не привязаны</div>
                         <?php } ?>
                     </div>
-                    <!--АВТОМОБИЛИ ВЛАДЕЛЬЦА-->
+                    <!--АВТОМОБИЛИ КЛИЕНТА-->
 
                     <div class="uk-margin-small-top uk-flex uk-flex-column">
                         <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="toggle_edit_btn">
@@ -166,7 +166,7 @@ if ($operator == 'no_operator') {
                 <!--БЛОК ПРОСМОТРА-->
 
                 <!--БЛОК РЕДАКТИРОВАНИЯ (скрыт по умолчанию)-->
-                <form id="owner_edit_form" class="uk-flex uk-flex-column" action="/vladelec-redaktirovanie/" method="post" hidden>
+                <form id="owner_edit_form" class="uk-flex uk-flex-column" action="/klient-redaktirovanie/" method="post" hidden>
                     <input type="hidden" name="owner_id" value="<?php echo ownerClean($owner['id']); ?>">
 
                     <div class="uk-margin-small-top">
