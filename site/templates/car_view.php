@@ -52,22 +52,28 @@ if ($operator == 'no_operator') {
         }
     }
 
+    $ownerPage = $carPage->car_owner;
+
     $car = [
-        'id'     => $carPage->id,
-        'title'  => $carPage->title,
-        'brand'  => $carPage->car_brand,
-        'model'  => $carPage->car_model,
-        'number' => $carPage->car_number,
-        'vin'    => $carPage->car_vin,
-        'year'   => $carPage->car_year,
-        'owner'  => $carPage->car_owner,
-        'notes'  => $carPage->car_notes
+        'id'           => $carPage->id,
+        'title'        => $carPage->title,
+        'brand'        => $carPage->car_brand,
+        'model'        => $carPage->car_model,
+        'number'       => $carPage->car_number,
+        'vin'          => $carPage->car_vin,
+        'year'         => $carPage->car_year,
+        'owner_id'     => ($ownerPage && $ownerPage->id) ? $ownerPage->id    : 0,
+        'owner_title'  => ($ownerPage && $ownerPage->id) ? $ownerPage->title : '',
+        'notes'        => $carPage->car_notes
     ];
 
     $car_title_display = trim(carClean($car['brand']) . ' ' . carClean($car['model']));
     if ($car_title_display === '') {
         $car_title_display = carClean($car['title']);
     }
+
+    // Все владельцы для select в форме редактирования
+    $all_owners = $pages->find("template=owner, sort=title, limit=500");
 
 ?>
 
@@ -140,7 +146,15 @@ if ($operator == 'no_operator') {
 
                         <div class="order-info-box">
                             <div class="order-info-label">Владелец</div>
-                            <div class="order-info-value"><?php echo !empty($car['owner']) ? carClean($car['owner']) : '—'; ?></div>
+                            <div class="order-info-value">
+                                <?php if ($car['owner_id']) { ?>
+                                    <a href="/spravochnik-vladelec-prosmotr/?idowner=<?php echo (int)$car['owner_id']; ?>">
+                                        <?php echo carClean($car['owner_title']); ?>
+                                    </a>
+                                <?php } else { ?>
+                                    —
+                                <?php } ?>
+                            </div>
                         </div>
 
                         <div class="order-info-box">
@@ -189,7 +203,15 @@ if ($operator == 'no_operator') {
 
                     <div class="uk-margin-small-top">
                         <label for="car_owner">Владелец</label>
-                        <input class="uk-input" id="car_owner" type="text" name="car_owner" value="<?php echo carClean($car['owner']); ?>" placeholder="ФИО владельца" autocomplete="off">
+                        <select class="uk-select" id="car_owner" name="car_owner">
+                            <option value="0">— Не выбран —</option>
+                            <?php foreach ($all_owners as $ownerOption) { ?>
+                                <option value="<?php echo (int)$ownerOption->id; ?>"
+                                    <?php echo ($ownerOption->id === $car['owner_id']) ? 'selected' : ''; ?>>
+                                    <?php echo carClean($ownerOption->title); ?>
+                                </option>
+                            <?php } ?>
+                        </select>
                     </div>
 
                     <div class="uk-margin-small-top">

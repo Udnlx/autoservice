@@ -57,6 +57,9 @@ if ($operator == 'no_operator') {
         'email' => $ownerPage->email
     ];
 
+    // Автомобили этого владельца
+    $owner_cars = $pages->find("template=car, car_owner=$owner_id, sort=title");
+
 ?>
 
 <div id="content">
@@ -116,6 +119,42 @@ if ($operator == 'no_operator') {
                             <div class="order-info-value"><?php echo !empty($owner['email']) ? ownerClean($owner['email']) : '—'; ?></div>
                         </div>
                     </div>
+
+                    <!--АВТОМОБИЛИ ВЛАДЕЛЬЦА-->
+                    <div class="uk-margin-small-top">
+                        <div class="order-info-label">Автомобили</div>
+                        <?php if ($owner_cars->count()) { ?>
+                            <div class="orders-list uk-flex uk-flex-column uk-margin-small-top">
+                                <?php foreach ($owner_cars as $carPage) { ?>
+                                    <?php
+                                        $car_display = trim(ownerClean($carPage->car_brand) . ' ' . ownerClean($carPage->car_model));
+                                        if ($car_display === '') $car_display = ownerClean($carPage->title);
+                                    ?>
+                                    <a class="order-list-item" href="/spravochnik-avto-prosmotr/?idcar=<?php echo (int)$carPage->id; ?>">
+                                        <div class="order-list-item-top">
+                                            <div class="order-list-item-title"><?php echo $car_display; ?></div>
+                                            <?php if ($carPage->car_number) { ?>
+                                                <div class="order-status-badge status-new"><?php echo ownerClean($carPage->car_number); ?></div>
+                                            <?php } ?>
+                                        </div>
+                                        <div class="order-list-item-grid">
+                                            <div class="order-list-item-cell">
+                                                <div class="order-list-item-label">Год</div>
+                                                <div class="order-list-item-value"><?php echo $carPage->car_year ? ownerClean($carPage->car_year) : '—'; ?></div>
+                                            </div>
+                                            <div class="order-list-item-cell">
+                                                <div class="order-list-item-label">VIN</div>
+                                                <div class="order-list-item-value"><?php echo $carPage->car_vin ? ownerClean($carPage->car_vin) : '—'; ?></div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                <?php } ?>
+                            </div>
+                        <?php } else { ?>
+                            <div class="order-cart-empty uk-margin-small-top">Автомобили не привязаны</div>
+                        <?php } ?>
+                    </div>
+                    <!--АВТОМОБИЛИ ВЛАДЕЛЬЦА-->
 
                     <div class="uk-margin-small-top uk-flex uk-flex-column">
                         <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="toggle_edit_btn">

@@ -25,7 +25,7 @@ if ($operator == 'no_operator') {
     $car_number = !empty($_POST['car_number']) ? trim($_POST['car_number']) : '';
     $car_vin    = !empty($_POST['car_vin'])    ? trim($_POST['car_vin'])    : '';
     $car_year   = !empty($_POST['car_year'])   ? trim($_POST['car_year'])   : '';
-    $car_owner  = !empty($_POST['car_owner'])  ? trim($_POST['car_owner'])  : '';
+    $car_owner  = !empty($_POST['car_owner'])  ? (int)$_POST['car_owner']  : 0;
     $car_notes  = !empty($_POST['car_notes'])  ? trim($_POST['car_notes'])  : '';
 
     $success = false;
@@ -49,7 +49,7 @@ if ($operator == 'no_operator') {
             $carPage->car_number = $car_number;
             $carPage->car_vin    = $car_vin;
             $carPage->car_year   = $car_year;
-            $carPage->car_owner  = $car_owner;
+            $carPage->car_owner  = $car_owner > 0 ? $pages->get($car_owner) : null;
             $carPage->car_notes  = $car_notes;
             $carPage->save();
 

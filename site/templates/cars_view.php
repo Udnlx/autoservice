@@ -36,19 +36,24 @@ if ($operator == 'no_operator') {
         $cars_result = $pages->find("template=car, title%=$safe_query, limit=100");
 
         foreach ($cars_result as $carPage) {
+            $ownerPage = $carPage->car_owner;
             $found_cars[] = [
-                'id' => $carPage->id,
-                'title' => $carPage->title,
-                'brand' => $carPage->car_brand,
-                'model' => $carPage->car_model,
-                'number' => $carPage->car_number,
-                'vin' => $carPage->car_vin,
-                'year' => $carPage->car_year,
-                'owner' => $carPage->car_owner,
-                'notes' => $carPage->car_notes
+                'id'           => $carPage->id,
+                'title'        => $carPage->title,
+                'brand'        => $carPage->car_brand,
+                'model'        => $carPage->car_model,
+                'number'       => $carPage->car_number,
+                'vin'          => $carPage->car_vin,
+                'year'         => $carPage->car_year,
+                'owner_id'     => ($ownerPage && $ownerPage->id) ? $ownerPage->id : 0,
+                'owner_title'  => ($ownerPage && $ownerPage->id) ? $ownerPage->title : '',
+                'notes'        => $carPage->car_notes
             ];
         }
     }
+
+    // Загружаем всех владельцев для select в модальном окне
+    $all_owners = $pages->find("template=owner, sort=title, limit=500");
 
 ?>
 
@@ -57,10 +62,10 @@ if ($operator == 'no_operator') {
     <div>
 
         <div>
-			<div class="pagemenu uk-width-1-1 uk-flex">
-			    <a class="menu-link" href="/">На главную</a>
-			    <a class="menu-link" href="#new_car_modal" uk-toggle>Новый автомобиль</a>
-			</div>
+            <div class="pagemenu uk-width-1-1 uk-flex">
+                <a class="menu-link" href="/">На главную</a>
+                <a class="menu-link" href="#new_car_modal" uk-toggle>Новый автомобиль</a>
+            </div>
         </div>
 
         <div>
@@ -116,7 +121,7 @@ if ($operator == 'no_operator') {
 
                                     <div class="order-list-item-cell">
                                         <div class="order-list-item-label">Владелец</div>
-                                        <div class="order-list-item-value"><?php echo !empty($car['owner']) ? carClean($car['owner']) : '—'; ?></div>
+                                        <div class="order-list-item-value"><?php echo !empty($car['owner_title']) ? carClean($car['owner_title']) : '—'; ?></div>
                                     </div>
 
                                     <div class="order-list-item-cell">
@@ -170,7 +175,12 @@ if ($operator == 'no_operator') {
 
             <div class="uk-margin-small-top">
                 <label for="car_owner">Владелец</label>
-                <input class="uk-input" id="car_owner" type="text" name="car_owner" placeholder="ФИО владельца" autocomplete="off">
+                <select class="uk-select" id="car_owner" name="car_owner">
+                    <option value="0">— Не выбран —</option>
+                    <?php foreach ($all_owners as $ownerOption) { ?>
+                        <option value="<?php echo (int)$ownerOption->id; ?>"><?php echo carClean($ownerOption->title); ?></option>
+                    <?php } ?>
+                </select>
             </div>
 
             <div class="uk-margin-small-top">
