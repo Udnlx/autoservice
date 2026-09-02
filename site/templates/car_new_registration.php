@@ -28,6 +28,9 @@ if ($operator == 'no_operator') {
     $car_owner  = !empty($_POST['car_owner'])  ? (int)$_POST['car_owner']  : 0;
     $car_notes  = !empty($_POST['car_notes'])  ? trim($_POST['car_notes'])  : NULL;
 
+    // Куда возвращаться после регистрации
+    $return_to = !empty($_POST['return_to']) ? trim($_POST['return_to']) : '';
+
     $success = '';
 
     if ($car_brand && $car_model && $car_number && $car_vin && $car_year && $operator != 'no_operator') {
@@ -54,7 +57,17 @@ if ($operator == 'no_operator') {
         $carPage->save();
 
         $success = 'Автомобиль успешно зарегистрирован';
-        $session->redirect('/spravochnik-avto-prosmotr/?idcar=' . $carPage->id);
+
+        // Разные редиректы в зависимости от контекста
+        if ($return_to === 'new_order') {
+            $redirect_url = '/zakaz-novyi/?car_id=' . $carPage->id . '&car_created=1';
+            if ($car_owner > 0) {
+                $redirect_url .= '&client_id=' . $car_owner;
+            }
+            $session->redirect($redirect_url);
+        } else {
+            $session->redirect('/spravochnik-avto-prosmotr/?idcar=' . $carPage->id);
+        }
 
     } else {
         $success = 'Автомобиль не зарегистрирован!<br>Ошибка в данных';

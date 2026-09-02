@@ -60,6 +60,9 @@ if ($operator == 'no_operator') {
         }
     }
 
+    // Предвыбранный автомобиль из GET (после регистрации из модалки авто)
+    $preselect_car_id = (int)$input->get('car_id');
+
 ?>
 
 <div id="content">
@@ -79,6 +82,13 @@ if ($operator == 'no_operator') {
                     <div class="uk-alert-success" uk-alert>
                         <a class="uk-alert-close" uk-close></a>
                         <p class="uk-margin-remove">Новый клиент зарегистрирован и выбран</p>
+                    </div>
+                <?php } ?>
+
+                <?php if ($input->get->int('car_created') === 1) { ?>
+                    <div class="uk-alert-success" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">Новый автомобиль зарегистрирован и выбран</p>
                     </div>
                 <?php } ?>
 
@@ -137,13 +147,19 @@ if ($operator == 'no_operator') {
 
                     <!-- АВТОМОБИЛЬ — появляется после выбора клиента -->
                     <div class="uk-margin-small-top" id="car_section" style="display:none;">
-                        <label for="car_select">Автомобиль</label>
+
+                        <div class="uk-flex uk-flex-between uk-flex-middle" style="gap: 10px;">
+                            <label for="car_select" style="margin: 0;">Автомобиль</label>
+                            <a href="#new_car_modal" uk-toggle style="font-size: 0.85em;" id="new_car_link">+ Новый автомобиль</a>
+                        </div>
 
                         <input type="hidden" id="car" name="car" value="0">
 
-                        <select class="uk-select" id="car_select">
-                            <option value="0">— Выберите автомобиль —</option>
-                        </select>
+                        <div class="uk-margin-small-top">
+                            <select class="uk-select" id="car_select">
+                                <option value="0">— Выберите автомобиль —</option>
+                            </select>
+                        </div>
 
                         <div id="car_no_cars" style="display:none; margin-top: 6px; font-size: 0.9em; color: #999;">
                             У этого клиента нет автомобилей в базе
@@ -274,7 +290,6 @@ if ($operator == 'no_operator') {
 
             <form class="uk-flex uk-flex-column" action="/klient-registratciia/" method="post">
 
-                <!-- Возврат обратно на страницу нового заказа -->
                 <input type="hidden" name="return_to" value="new_order">
 
                 <div class="uk-margin-small-top">
@@ -330,6 +345,100 @@ if ($operator == 'no_operator') {
         </div>
     </div>
     <!--МОДАЛЬНОЕ ОКНО НОВЫЙ КЛИЕНТ-->
+
+    <!--МОДАЛЬНОЕ ОКНО НОВЫЙ АВТОМОБИЛЬ-->
+    <div id="new_car_modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+
+            <h3 class="uk-card-title uk-text-center">Новый автомобиль</h3>
+
+            <form class="uk-flex uk-flex-column" action="/avtomobil-registratciia/" method="post">
+
+                <!-- Возврат обратно на страницу нового заказа -->
+                <input type="hidden" name="return_to" value="new_order">
+
+                <div class="uk-margin-small-top">
+                    <label for="modal_car_brand">Марка</label>
+                    <input class="uk-input" id="modal_car_brand" type="text" name="car_brand" placeholder="Например: Renault" autocomplete="off" required>
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="modal_car_model">Модель</label>
+                    <input class="uk-input" id="modal_car_model" type="text" name="car_model" placeholder="Например: Sandero" autocomplete="off" required>
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="modal_car_number">Гос. номер</label>
+                    <input class="uk-input" id="modal_car_number" type="text" name="car_number" placeholder="Например: О123ХХ58" autocomplete="off" required>
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="modal_car_vin">VIN</label>
+                    <input class="uk-input" id="modal_car_vin" type="text" name="car_vin" placeholder="17 символов" autocomplete="off" required>
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="modal_car_year">Год выпуска</label>
+                    <input class="uk-input" id="modal_car_year" type="text" name="car_year" placeholder="Например: 2022" autocomplete="off" required>
+                </div>
+
+                <!-- ПОИСК КЛИЕНТА В МОДАЛКЕ АВТО -->
+                <div class="uk-margin-small-top">
+                    <label for="modal_car_owner_search">Клиент</label>
+
+                    <input type="hidden" id="modal_car_owner" name="car_owner" value="0">
+
+                    <div style="position: relative;">
+                        <div class="uk-flex" style="gap: 8px;">
+                            <input
+                                class="uk-input"
+                                id="modal_car_owner_search"
+                                type="text"
+                                placeholder="Введите имя клиента..."
+                                autocomplete="off"
+                            >
+                            <button
+                                type="button"
+                                class="uk-button uk-button-default"
+                                id="modal_car_owner_search_btn"
+                                style="white-space: nowrap;"
+                            >Найти</button>
+                        </div>
+
+                        <!-- Выбранный клиент -->
+                        <div id="modal_car_owner_selected" style="display:none; margin-top: 6px; padding: 6px 10px; background: #f8f8f8; border-radius: 4px; font-size: 0.9em;">
+                            <span id="modal_car_owner_selected_name" style="font-weight: 700;"></span>
+                            <a href="#" id="modal_car_owner_clear" style="margin-left: 10px; font-size: 0.85em; color: #999;">✕ сбросить</a>
+                        </div>
+
+                        <!-- Список результатов -->
+                        <ul
+                            id="modal_car_owner_results"
+                            style="display:none; position:absolute; z-index:1200; left:0; right:0; margin:0; padding:0;
+                                   list-style:none; background:#fff; border:1px solid #e0e0e0; border-radius:4px;
+                                   max-height:220px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,.1);"
+                        ></ul>
+                    </div>
+                </div>
+                <!-- /ПОИСК КЛИЕНТА В МОДАЛКЕ АВТО -->
+
+                <div class="uk-margin-small-top">
+                    <label for="modal_car_notes">Примечания</label>
+                    <textarea class="uk-textarea" id="modal_car_notes" name="car_notes" rows="3" placeholder="Особенности, замечания..."></textarea>
+                </div>
+
+                <div class="uk-margin-small-top uk-flex uk-flex-column">
+                    <button type="submit" class="uk-margin-small-top uk-button uk-button-default" name="save_new_car" value="1">
+                        Зарегистрировать
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <!--МОДАЛЬНОЕ ОКНО НОВЫЙ АВТОМОБИЛЬ-->
+
 </div>
 
 <script>
@@ -337,6 +446,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var owners  = <?php echo $owners_json_encoded; ?>;
     var allCars = <?php echo $cars_json_encoded; ?>;
+
+    // Предвыбранный автомобиль из GET (после регистрации)
+    var preselectCarId = <?php echo (int)$preselect_car_id; ?>;
 
     // --- Элементы клиента ---
     var clientSearchInput  = document.getElementById('client_search');
@@ -348,14 +460,23 @@ document.addEventListener('DOMContentLoaded', function () {
     var clientClearBtn     = document.getElementById('client_clear');
 
     // --- Элементы автомобиля ---
-    var carSection    = document.getElementById('car_section');
-    var carSelect     = document.getElementById('car_select');
+    var carSection     = document.getElementById('car_section');
+    var carSelect      = document.getElementById('car_select');
     var carHiddenInput = document.getElementById('car');
-    var carNoCars     = document.getElementById('car_no_cars');
+    var carNoCars      = document.getElementById('car_no_cars');
 
     // --- Кнопка отправки ---
     var submitBtn  = document.getElementById('submit_btn');
     var submitHint = document.getElementById('submit_hint');
+
+    // --- Элементы модалки авто (поиск владельца) ---
+    var modalCarOwnerSearch      = document.getElementById('modal_car_owner_search');
+    var modalCarOwnerSearchBtn   = document.getElementById('modal_car_owner_search_btn');
+    var modalCarOwnerResults     = document.getElementById('modal_car_owner_results');
+    var modalCarOwnerHidden      = document.getElementById('modal_car_owner');
+    var modalCarOwnerSelectedBox = document.getElementById('modal_car_owner_selected');
+    var modalCarOwnerSelectedName= document.getElementById('modal_car_owner_selected_name');
+    var modalCarOwnerClear       = document.getElementById('modal_car_owner_clear');
 
     // Обновляем состояние кнопки
     function updateSubmitState() {
@@ -395,6 +516,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 opt.textContent = car.title;
                 carSelect.appendChild(opt);
             });
+
+            // Предвыбор автомобиля после возврата из модалки регистрации
+            if (preselectCarId > 0) {
+                carSelect.value = preselectCarId;
+                if (carSelect.value == preselectCarId) {
+                    carHiddenInput.value = preselectCarId;
+                }
+                preselectCarId = 0; // сбрасываем, чтобы не повторялось
+            }
         }
 
         carSection.style.display = 'block';
@@ -489,11 +619,108 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Инициализация с предвыбранным клиентом ---
     var preselectedId = parseInt(clientHiddenInput.value, 10);
     if (preselectedId > 0) {
-        // Клиент уже отрисован сервером — просто загружаем его машины
         loadCarsForClient(preselectedId);
     }
 
     updateSubmitState();
+
+    // =============================================
+    // МОДАЛКА НОВОГО АВТОМОБИЛЯ — поиск владельца
+    // =============================================
+
+    if (modalCarOwnerSearch && modalCarOwnerSearchBtn) {
+
+        function modalShowOwnerResults(items) {
+            modalCarOwnerResults.innerHTML = '';
+            if (items.length === 0) {
+                var li = document.createElement('li');
+                li.textContent = 'Ничего не найдено';
+                li.style.cssText = 'padding:8px 12px; color:#999; font-size:.9em;';
+                modalCarOwnerResults.appendChild(li);
+            } else {
+                items.forEach(function (owner) {
+                    var li = document.createElement('li');
+                    li.textContent = owner.title;
+                    li.style.cssText = 'padding:8px 12px; cursor:pointer; border-bottom:1px solid #f0f0f0; font-size:.9em;';
+                    li.addEventListener('mouseenter', function () { this.style.background = '#f5f5f5'; });
+                    li.addEventListener('mouseleave', function () { this.style.background = ''; });
+                    li.addEventListener('click', function () {
+                        modalSelectOwner(owner.id, owner.title);
+                    });
+                    modalCarOwnerResults.appendChild(li);
+                });
+            }
+            modalCarOwnerResults.style.display = 'block';
+        }
+
+        function modalSelectOwner(id, title) {
+            modalCarOwnerHidden.value = id;
+            modalCarOwnerSelectedName.textContent = title;
+            modalCarOwnerSelectedBox.style.display = 'block';
+            modalCarOwnerResults.style.display = 'none';
+            modalCarOwnerSearch.value = '';
+        }
+
+        function modalResetOwner() {
+            modalCarOwnerHidden.value = 0;
+            modalCarOwnerSelectedBox.style.display = 'none';
+            modalCarOwnerSearch.value = '';
+            modalCarOwnerResults.style.display = 'none';
+        }
+
+        function modalDoOwnerSearch() {
+            var q = modalCarOwnerSearch.value.trim().toLowerCase();
+            if (q.length < 2) {
+                modalCarOwnerResults.style.display = 'none';
+                return;
+            }
+            var filtered = owners.filter(function (o) {
+                return o.title.toLowerCase().indexOf(q) !== -1;
+            });
+            modalShowOwnerResults(filtered.slice(0, 50));
+        }
+
+        modalCarOwnerSearchBtn.addEventListener('click', modalDoOwnerSearch);
+        modalCarOwnerSearch.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); modalDoOwnerSearch(); }
+        });
+
+        modalCarOwnerClear.addEventListener('click', function (e) {
+            e.preventDefault();
+            modalResetOwner();
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#modal_car_owner_search') &&
+                !e.target.closest('#modal_car_owner_search_btn') &&
+                !e.target.closest('#modal_car_owner_results')) {
+                modalCarOwnerResults.style.display = 'none';
+            }
+        });
+
+        // При открытии модалки — автоматически подставляем текущего выбранного клиента
+        UIkit.util.on('#new_car_modal', 'show', function () {
+            var currentClientId    = parseInt(clientHiddenInput.value, 10);
+            var currentClientTitle = clientSelectedName.textContent.trim();
+
+            if (currentClientId > 0 && currentClientTitle !== '') {
+                modalSelectOwner(currentClientId, currentClientTitle);
+            }
+        });
+
+        // При закрытии модалки — сбрасываем форму авто
+        UIkit.util.on('#new_car_modal', 'hidden', function () {
+            modalResetOwner();
+            // Сбрасываем поля формы
+            var form = document.querySelector('#new_car_modal form');
+            if (form) {
+                form.querySelectorAll('input[type=text], input[type=email], textarea').forEach(function(el) {
+                    el.value = '';
+                });
+            }
+        });
+    }
+
 });
 </script>
 
