@@ -48,6 +48,18 @@ if ($operator == 'no_operator') {
     }
     $cars_json_encoded = json_encode($cars_json, JSON_UNESCAPED_UNICODE);
 
+    // Предвыбранный клиент из GET (после регистрации из модалки)
+    $preselect_client_id = (int)$input->get('client_id');
+    $preselect_client_title = '';
+    if ($preselect_client_id) {
+        $preClientPage = $pages->get("id=$preselect_client_id, template=owner");
+        if ($preClientPage->id) {
+            $preselect_client_title = $preClientPage->title;
+        } else {
+            $preselect_client_id = 0;
+        }
+    }
+
 ?>
 
 <div id="content">
@@ -62,6 +74,14 @@ if ($operator == 'no_operator') {
 
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
+
+                <?php if ($input->get->int('client_created') === 1) { ?>
+                    <div class="uk-alert-success" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">Новый клиент зарегистрирован и выбран</p>
+                    </div>
+                <?php } ?>
+
                 <form class="uk-flex uk-flex-column" id="select_seat" action="/zakaz-registratciia/" method="post">
 
                     <label>Дата и оператор заказа</label>
@@ -74,11 +94,14 @@ if ($operator == 'no_operator') {
 
                     <!-- ПОИСК КЛИЕНТА -->
                     <div class="uk-margin-small-top">
-                        <label for="client_search">Клиент</label>
+                        <div class="uk-flex uk-flex-between uk-flex-middle" style="gap: 10px;">
+                            <label for="client_search" style="margin: 0;">Клиент</label>
+                            <a href="#new_owner_modal" uk-toggle style="font-size: 0.85em;">+ Новый клиент</a>
+                        </div>
 
-                        <input type="hidden" id="client" name="client" value="0">
+                        <input type="hidden" id="client" name="client" value="<?php echo (int)$preselect_client_id; ?>">
 
-                        <div style="position: relative;">
+                        <div class="uk-margin-small-top" style="position: relative;">
                             <div class="uk-flex" style="gap: 8px;">
                                 <input
                                     class="uk-input"
@@ -96,8 +119,8 @@ if ($operator == 'no_operator') {
                             </div>
 
                             <!-- Выбранный клиент -->
-                            <div id="client_selected" style="display:none; margin-top: 6px; padding: 6px 10px; background: #f8f8f8; border-radius: 4px; font-size: 0.9em;">
-                                <span id="client_selected_name" style="font-weight: 700;"></span>
+                            <div id="client_selected" style="<?php echo $preselect_client_id ? '' : 'display:none;'; ?> margin-top: 6px; padding: 6px 10px; background: #f8f8f8; border-radius: 4px; font-size: 0.9em;">
+                                <span id="client_selected_name" style="font-weight: 700;"><?php echo htmlspecialchars($preselect_client_title, ENT_QUOTES, 'UTF-8'); ?></span>
                                 <a href="#" id="client_clear" style="margin-left: 10px; font-size: 0.85em; color: #999;">✕ сбросить</a>
                             </div>
 
@@ -241,6 +264,72 @@ if ($operator == 'no_operator') {
         </div>
 
     </div>
+
+    <!--МОДАЛЬНОЕ ОКНО НОВЫЙ КЛИЕНТ-->
+    <div id="new_owner_modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+
+            <h3 class="uk-card-title uk-text-center">Новый клиент</h3>
+
+            <form class="uk-flex uk-flex-column" action="/klient-registratciia/" method="post">
+
+                <!-- Возврат обратно на страницу нового заказа -->
+                <input type="hidden" name="return_to" value="new_order">
+
+                <div class="uk-margin-small-top">
+                    <label for="owner_type">Тип клиента</label>
+                    <select class="uk-select" id="owner_type" name="owner_type">
+                        <option value="Физлицо">Физлицо</option>
+                        <option value="Юрлицо">Юрлицо</option>
+                    </select>
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="owner_name">ФИО (Фамилия Имя Отчество)</label>
+                    <input class="uk-input" id="owner_name" type="text" name="owner_name" placeholder="Например: Иванов Иван Иванович" autocomplete="off" required>
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="owner_phone">Телефон</label>
+                    <input class="uk-input" id="owner_phone" type="text" name="owner_phone" placeholder="Например: +7 900 123-45-67" autocomplete="off" required>
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="owner_email">Почта</label>
+                    <input class="uk-input" id="owner_email" type="email" name="owner_email" placeholder="Например: ivanov@mail.ru" autocomplete="off">
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="owner_address">Адрес</label>
+                    <input class="uk-input" id="owner_address" type="text" name="owner_address" placeholder="Например: г. Москва, ул. Ленина, д. 1" autocomplete="off">
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="owner_company">Организация</label>
+                    <input class="uk-input" id="owner_company" type="text" name="owner_company" placeholder="Название компании" autocomplete="off">
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="owner_inn">ИНН</label>
+                    <input class="uk-input" id="owner_inn" type="text" name="owner_inn" placeholder="10 или 12 цифр" autocomplete="off">
+                </div>
+
+                <div class="uk-margin-small-top">
+                    <label for="owner_notes">Примечания</label>
+                    <textarea class="uk-textarea" id="owner_notes" name="owner_notes" rows="3" placeholder="Особенности, замечания..."></textarea>
+                </div>
+
+                <div class="uk-margin-small-top uk-flex uk-flex-column">
+                    <button type="submit" class="uk-margin-small-top uk-button uk-button-default" name="save_new_owner" value="1">
+                        Зарегистрировать
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <!--МОДАЛЬНОЕ ОКНО НОВЫЙ КЛИЕНТ-->
 </div>
 
 <script>
@@ -291,7 +380,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadCarsForClient(clientId) {
         var filtered = allCars.filter(function (c) { return c.owner_id === clientId; });
 
-        // Сбрасываем select и скрытый инпут
         carHiddenInput.value = '0';
         carSelect.innerHTML = '<option value="0">— Выберите автомобиль —</option>';
         carSelect.style.display = 'block';
@@ -313,7 +401,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateSubmitState();
     }
 
-    // Выбор клиента
     function selectClient(id, title) {
         clientHiddenInput.value = id;
         clientSelectedName.textContent = title;
@@ -323,7 +410,6 @@ document.addEventListener('DOMContentLoaded', function () {
         loadCarsForClient(id);
     }
 
-    // Сброс клиента — скрываем и сбрасываем автомобиль
     function resetClient() {
         clientHiddenInput.value = '0';
         clientSelectedBox.style.display = 'none';
@@ -335,7 +421,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateSubmitState();
     }
 
-    // Поиск клиентов
     function showClientResults(items) {
         clientResultsList.innerHTML = '';
         if (items.length === 0) {
@@ -379,13 +464,11 @@ document.addEventListener('DOMContentLoaded', function () {
         resetClient();
     });
 
-    // Выбор автомобиля из select
     carSelect.addEventListener('change', function () {
         carHiddenInput.value = this.value;
         updateSubmitState();
     });
 
-    // Закрываем список клиентов при клике вне
     document.addEventListener('click', function (e) {
         if (!e.target.closest('#client_search') &&
             !e.target.closest('#client_search_btn') &&
@@ -394,7 +477,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Страховая проверка при отправке формы
     document.getElementById('select_seat').addEventListener('submit', function (e) {
         var clientOk = clientHiddenInput.value !== '0' && clientHiddenInput.value !== '';
         var carOk    = carHiddenInput.value !== '0' && carHiddenInput.value !== '';
@@ -404,7 +486,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Инициализация
+    // --- Инициализация с предвыбранным клиентом ---
+    var preselectedId = parseInt(clientHiddenInput.value, 10);
+    if (preselectedId > 0) {
+        // Клиент уже отрисован сервером — просто загружаем его машины
+        loadCarsForClient(preselectedId);
+    }
+
     updateSubmitState();
 });
 </script>

@@ -29,6 +29,9 @@ if ($operator == 'no_operator') {
     $owner_inn     = !empty($_POST['owner_inn'])     ? trim($_POST['owner_inn'])     : NULL;
     $owner_notes   = !empty($_POST['owner_notes'])   ? trim($_POST['owner_notes'])   : NULL;
 
+    // Куда возвращаться после регистрации
+    $return_to = !empty($_POST['return_to']) ? trim($_POST['return_to']) : '';
+
     $success = '';
 
     if ($owner_name && $owner_phone && $operator != 'no_operator') {
@@ -50,7 +53,13 @@ if ($operator == 'no_operator') {
         $ownerPage->save();
 
         $success = 'Клиент успешно зарегистрирован';
-        $session->redirect('/klient-prosmotr/?idowner=' . $ownerPage->id);
+
+        // Разные редиректы в зависимости от контекста
+        if ($return_to === 'new_order') {
+            $session->redirect('/zakaz-novyi/?client_id=' . $ownerPage->id);
+        } else {
+            $session->redirect('/klient-prosmotr/?idowner=' . $ownerPage->id);
+        }
 
     } else {
         $success = 'Клиент не зарегистрирован!<br>Ошибка в данных';
