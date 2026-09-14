@@ -23,8 +23,8 @@ $menu = '
                 <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-dvizhenie/">Движение</a>
                 <a class="uk-margin-small uk-button uk-button-default" href="/avtomobili-spravochnik/">Автомобили</a>
                 <a class="uk-margin-small uk-button uk-button-default" href="/klienty-spravochnik/">Клиенты</a>
-                <a class="uk-margin-small uk-button uk-button-default" href="">Склад</a>
-                <a class="uk-margin-small uk-button uk-button-default" href="">Справочники</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/zapchasti-spravochnik/">Склад</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/spravochniki-meniu/">Справочники</a>
             </div>
         </div>
 
