@@ -133,6 +133,9 @@ if ($operator == 'no_operator') {
     //     ]
     // ];
 
+    // Все работы для списка
+    $all_works = $pages->find("parent.name=raboty, template=work_item, sort=title");
+
 ?>
 
 <div id="content">
@@ -214,11 +217,11 @@ if ($operator == 'no_operator') {
                         <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
                             <select class="uk-select" id="work_select">
                                 <option value="" disabled selected>Выберите работу</option>
-                                <option value="Замена масла" data-price="1500">Замена масла — 1500 ₽</option>
-                                <option value="Замена фильтра" data-price="700">Замена фильтра — 700 ₽</option>
-                                <option value="Диагностика" data-price="1000">Диагностика — 1000 ₽</option>
-                                <option value="Шиномонтаж" data-price="2500">Шиномонтаж — 2500 ₽</option>
-                                <option value="Развал-схождение" data-price="3000">Развал-схождение — 3000 ₽</option>
+                                <?php foreach ($all_works as $workPage) { ?>
+                                    <option value="<?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?>" data-price="<?php echo (int)$workPage->work_price; ?>">
+                                        <?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$workPage->work_price; ?> ₽
+                                    </option>
+                                <?php } ?>
                             </select>
 
                             <button type="button" class="uk-button uk-button-default" id="add_work">

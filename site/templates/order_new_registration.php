@@ -35,6 +35,12 @@ if ($operator == 'no_operator') {
     $total_price = !empty($_POST['total_price'])?$_POST['total_price']:NULL;
     $payment_type = !empty($_POST['payment_type'])?$_POST['payment_type']:NULL;
 
+    $client_page = $pages->get("template=owner, id=" . $client);
+    $client_name = $client_page->title;
+
+    $car_page = $pages->get("template=car, id=" . $car);
+    $car_name = $car_page->title;
+
     $order_works = [];
     foreach ($works as $index => $work_name) {
         $order_works[] = [
@@ -53,8 +59,8 @@ if ($operator == 'no_operator') {
     $order = [
         'date' => $selected_date,
         'worker' => $selected_worker,
-        'client' => $client,
-        'car' => $car,
+        'client' => $client_name,
+        'car' => $car_name,
         'status' => 'Новая',
         'payment_type' => $payment_type,
 
