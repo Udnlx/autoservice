@@ -66,6 +66,9 @@ if ($operator == 'no_operator') {
     // Все работы для списка
     $all_works = $pages->find("parent.name=raboty, template=work_item, sort=title");
 
+    // Все запчасти для списка
+    $all_parts = $pages->find("parent.name=zapchasti, template=part, sort=title");
+
 ?>
 
 <div id="content">
@@ -215,11 +218,15 @@ if ($operator == 'no_operator') {
                         <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
                             <select class="uk-select" id="part_select">
                                 <option value="" disabled selected>Выберите запчасть</option>
-                                <option value="Масляный фильтр" data-price="900">Масляный фильтр — 900 ₽</option>
-                                <option value="Воздушный фильтр" data-price="1200">Воздушный фильтр — 1200 ₽</option>
-                                <option value="Салонный фильтр" data-price="1100">Салонный фильтр — 1100 ₽</option>
-                                <option value="Масло 5W-40" data-price="3500">Масло 5W-40 — 3500 ₽</option>
-                                <option value="Свечи зажигания" data-price="2400">Свечи зажигания — 2400 ₽</option>
+                                <?php foreach ($all_parts as $partPage) { ?>
+                                    <option
+                                        value="<?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?>"
+                                        data-price="<?php echo (int)$partPage->part_price; ?>"
+                                        data-id="<?php echo (int)$partPage->id; ?>"
+                                        data-qty="<?php echo (int)$partPage->part_qty; ?>">
+                                        <?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$partPage->part_price; ?> ₽
+                                    </option>
+                                <?php } ?>
                             </select>
 
                             <button type="button" class="uk-button uk-button-default" id="add_part">
