@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
         existingItems.forEach(function (cartItem) {
             const nameBlock = cartItem.querySelector('strong');
             const priceInput = cartItem.querySelector('input[name="parts_prices[]"]');
+            const idInput = cartItem.querySelector('input[name="parts_ids[]"]');
 
             if (!nameBlock || !priceInput) {
                 return;
@@ -51,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const itemName = nameBlock.textContent.trim();
             const itemPrice = Number(priceInput.value) || 0;
+            const itemPartId = idInput ? (Number(idInput.value) || 0) : 0;
 
             if (!itemName) {
                 return;
@@ -59,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedParts.push({
                 id: itemIdCounter++,
                 name: itemName,
-                price: itemPrice
+                price: itemPrice,
+                partId: itemPartId
             });
         });
     }
@@ -128,62 +131,53 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 alert('Выберите запчасть');
             }
-
             return;
         }
 
-        const itemName = selectedOption.value;
+        const itemName  = selectedOption.value;
         const itemPrice = Number(selectedOption.dataset.price) || 0;
+        const itemPartId = Number(selectedOption.dataset.id) || 0; // ID страницы PW
 
         const alreadyExists = list.some(function (item) {
             return item.name === itemName;
         });
 
-        // if (alreadyExists) {
-        //     if (type === 'work') {
-        //         alert('Эта работа уже добавлена');
-        //     } else {
-        //         alert('Эта запчасть уже добавлена');
-        //     }
-
-        //     return;
-        // }
-
         const item = {
-            id: itemIdCounter++,
-            name: itemName,
-            price: itemPrice
+            id:     itemIdCounter++,
+            name:   itemName,
+            price:  itemPrice,
+            partId: itemPartId  // 0 для работ, ID страницы для запчастей
         };
 
         list.push(item);
-
         renderCarts();
         updatePrices();
-
         select.selectedIndex = 0;
     }
 
-    function renderCarts() {
-        renderCart({
-            list: selectedWorks,
-            cart: worksCart,
-            emptyBlock: worksEmpty,
-            type: 'work',
-            hiddenName: 'works[]',
-            hiddenPriceName: 'works_prices[]',
-            removeClass: 'remove-work'
-        });
+function renderCarts() {
+    renderCart({
+        list: selectedWorks,
+        cart: worksCart,
+        emptyBlock: worksEmpty,
+        type: 'work',
+        hiddenName: 'works[]',
+        hiddenPriceName: 'works_prices[]',
+        hiddenIdName: '',          // у работ ID не нужен
+        removeClass: 'remove-work'
+    });
 
-        renderCart({
-            list: selectedParts,
-            cart: partsCart,
-            emptyBlock: partsEmpty,
-            type: 'part',
-            hiddenName: 'parts[]',
-            hiddenPriceName: 'parts_prices[]',
-            removeClass: 'remove-part'
-        });
-    }
+    renderCart({
+        list: selectedParts,
+        cart: partsCart,
+        emptyBlock: partsEmpty,
+        type: 'part',
+        hiddenName: 'parts[]',
+        hiddenPriceName: 'parts_prices[]',
+        hiddenIdName: 'parts_ids[]',   // ID страницы запчасти
+        removeClass: 'remove-part'
+    });
+}
 
     function renderCart(options) {
         const list = options.list;
@@ -229,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 <input type="hidden" name="${hiddenName}" value="${escapeHtml(item.name)}">
                 <input type="hidden" name="${hiddenPriceName}" value="${item.price}">
+                ${options.hiddenIdName ? `<input type="hidden" name="${options.hiddenIdName}" value="${item.partId || 0}">` : ''}
             `;
 
             cart.appendChild(cartItem);

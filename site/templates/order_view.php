@@ -80,7 +80,8 @@ if ($operator == 'no_operator') {
         foreach ($orderPage->autoparts as $item) {
             $parts[] = [
                 'name' => $item->autopart,
-                'price' => $item->price
+                'price' => $item->price,
+                'part_id' => (int)$item->part_id
             ];
         }
     }
@@ -327,6 +328,7 @@ if ($operator == 'no_operator') {
 
                                             <input type="hidden" name="parts[]" value="<?php echo orderClean($part['name']); ?> - <?php echo orderClean($part['price']); ?>">
                                             <input type="hidden" name="parts_prices[]" value="<?php echo orderClean($part['price']); ?>">
+                                            <input type="hidden" name="parts_ids[]" value="<?php echo (int)$part['part_id']; ?>">
                                         </div>
                                     <?php } ?>
                                 <?php } else { ?>

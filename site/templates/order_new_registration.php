@@ -29,6 +29,7 @@ if ($operator == 'no_operator') {
     $works_prices = $_POST['works_prices'] ?? [];
     $parts = $_POST['parts'] ?? [];
     $parts_prices = $_POST['parts_prices'] ?? [];
+    $parts_ids = $_POST['parts_ids'] ?? [];
 
     $works_price = !empty($_POST['works_price'])?$_POST['works_price']:NULL;
     $parts_price = !empty($_POST['parts_price'])?$_POST['parts_price']:NULL;
@@ -52,7 +53,8 @@ if ($operator == 'no_operator') {
     foreach ($parts as $index => $part_name) {
         $order_parts[] = [
             'name' => $part_name,
-            'price' => $parts_prices[$index] ?? 0
+            'price' => $parts_prices[$index] ?? 0,
+            'part_id' => (int)($parts_ids[$index] ?? 0)
         ];
     }
 
@@ -128,6 +130,7 @@ if ($operator == 'no_operator') {
             $item->of(false);
             $item->autopart = $row['name'];
             $item->price = $row['price'];
+            $item->part_id = (int)$row['part_id'];
             $item->save();
             $orderPage->autoparts->add($item);
         }
@@ -135,6 +138,23 @@ if ($operator == 'no_operator') {
         $orderPage->of(false);
         $orderPage->save('autoparts');
         //ДОБАВЛЯЕМ ЗАПЧАСТИ
+
+        //СПИСАНИЕ ЗАПЧАСТЕЙ СО СКЛАДА
+        $parts_ids = $_POST['parts_ids'] ?? [];
+
+        foreach ($parts_ids as $pid) {
+            $pid = (int)$pid;
+            if ($pid <= 0) continue;
+
+            $partPage = $pages->get("id=$pid, template=part");
+            if (!$partPage->id) continue;
+
+            $partPage->of(false);
+            $current_qty = (int)$partPage->part_qty;
+            $partPage->part_qty = max(0, $current_qty - 1); // не уходим в минус
+            $partPage->save('part_qty');
+        }
+        //СПИСАНИЕ ЗАПЧАСТЕЙ СО СКЛАДА
 
         $orderPage->save();
         $success = 'Заказ успешно зарегистрирован';
