@@ -152,6 +152,10 @@ if ($operator == 'no_operator') {
         $stock_error_items = $stock_notice['items'] ?? [];
     }
 
+    // Флаги из адресной строки
+    $was_cancelled = ($input->get->int('cancelled') === 1);
+    $was_blocked   = ($input->get->int('blocked') === 1);
+
 ?>
 
 <div id="content">
@@ -192,6 +196,16 @@ if ($operator == 'no_operator') {
                                 </li>
                             <?php } ?>
                         </ul>
+                    </div>
+                <?php } elseif ($was_blocked) { ?>
+                    <div class="uk-alert-danger uk-margin-small-top" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">Заявка «<?php echo orderClean($order['status']); ?>» — изменение невозможно</p>
+                    </div>
+                <?php } elseif ($was_cancelled) { ?>
+                    <div class="uk-alert-success uk-margin-small-top" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">Заявка отменена. Запчасти возвращены на склад</p>
                     </div>
                 <?php } elseif ($input->get->int('saved') === 1) { ?>
                     <div class="uk-alert-success uk-margin-small-top" uk-alert>
@@ -401,9 +415,15 @@ if ($operator == 'no_operator') {
                     </div>
 
                     <div class="uk-margin-small-top uk-flex uk-flex-column">
-                        <button type="submit" class="uk-margin-small-top uk-button uk-button-default" name="save_order_changes" value="1">
-                            Изменить
-                        </button>
+                        <?php if (!in_array($order['status'], ['Отменена', 'Завершена'], true)) { ?>
+                            <button type="submit" class="uk-margin-small-top uk-button uk-button-default" name="save_order_changes" value="1">
+                                Изменить
+                            </button>
+                        <?php } else { ?>
+                            <div class="uk-alert-warning uk-margin-small-top" uk-alert>
+                                <p class="uk-margin-remove" style="font-weight: 700;">Заявка «<?php echo orderClean($order['status']); ?>» — изменение недоступно</p>
+                            </div>
+                        <?php } ?>
                         <br>
                         <button type="button" class="uk-margin-small-top uk-button uk-button-default" name="print_order">
                             Распечатать

@@ -18,8 +18,14 @@ if ($operator == 'no_operator') {
 <?php
 } else {
 
-    // Чистим прошлое сообщение, чтобы оно не всплыло повторно
+    // Чистим прошлое сообщение, чтобы не всплыло повторно
     $session->remove('order_stock_errors');
+
+    // Название статуса отмены — в одном месте
+    $cancel_status = 'Отменена';
+
+    // Закрытые заявки: их нельзя редактировать
+    $locked_statuses = ['Отменена', 'Завершена'];
 
     $order_id = !empty($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
 
@@ -69,6 +75,48 @@ if ($operator == 'no_operator') {
         $orderPage = $pages->get("id=$order_id, template=order_item");
 
         if ($orderPage->id) {
+
+            $old_status = (string)$orderPage->status_order;
+
+            // =========================================================
+            // ЗАЩИТА: закрытые заявки (Отменена, Завершена) не редактируются.
+            // Ловит повторный POST, F5 и старую вкладку с открытой формой.
+            // =========================================================
+            if (in_array($old_status, $locked_statuses, true)) {
+                $session->redirect('/zakaz-prosmotr/?idorder=' . $order_id . '&saved=0&blocked=1');
+            }
+
+            // =========================================================
+            // ВЕТКА ОТМЕНЫ: всё из СТАРОЙ корзины возвращаем на склад.
+            // Проверку наличия пропускаем, репитеры не перезаписываем.
+            // =========================================================
+            if ($order_status === $cancel_status) {
+
+                foreach ($orderPage->autoparts as $oldItem) {
+                    $pid = (int)$oldItem->part_id;
+                    if ($pid <= 0) {
+                        continue;   // запчасть без привязки к справочнику — возвращать некуда
+                    }
+
+                    $partPage = $pages->get("id=$pid, template=part");
+                    if (!$partPage->id) {
+                        continue;   // запчасть удалена из справочника
+                    }
+
+                    $partPage->of(false);
+                    $partPage->part_qty = (int)$partPage->part_qty + 1;
+                    $partPage->save('part_qty');
+                }
+
+                $orderPage->of(false);
+                $orderPage->status_order = $cancel_status;
+                $orderPage->save();
+
+                $session->redirect('/zakaz-prosmotr/?idorder=' . $order_id . '&saved=1&cancelled=1');
+            }
+            // =========================================================
+            // /ВЕТКА ОТМЕНЫ
+            // =========================================================
 
             // --- СЛЕПОК ЗАКАЗА ДО ПРАВКИ ---
             // Читаем ДО того, как повторитель будет перезаписан
