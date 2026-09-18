@@ -58,6 +58,15 @@ if ($operator == 'no_operator') {
         ];
     }
 
+    // Сколько раз каждая запчасть встречается в корзине (по part_id)
+    $new_part_counts = [];
+    foreach ($order_parts as $row) {
+        $pid = (int)$row['part_id'];
+        if ($pid > 0) {
+            $new_part_counts[$pid] = ($new_part_counts[$pid] ?? 0) + 1;
+        }
+    }
+
     $order = [
         'date' => $selected_date,
         'worker' => $selected_worker,
@@ -79,6 +88,39 @@ if ($operator == 'no_operator') {
     // echo '</pre>';
 
 	if ($selected_worker && $client && $car && $total_price && $payment_type && $operator != 'no_operator') {
+
+        // --- ПРОВЕРКА НАЛИЧИЯ НА СКЛАДЕ (до создания заказа) ---
+        $stock_errors = [];
+
+        foreach ($new_part_counts as $pid => $need) {
+            $partPage = $pages->get("id=$pid, template=part");
+            if (!$partPage->id) {
+                continue;   // запчасть удалена из справочника — остаток неизвестен
+            }
+
+            $qty_now = (int)$partPage->part_qty;
+
+            if ($qty_now < $need) {
+                $stock_errors[] = [
+                    'name' => (string)$partPage->title,
+                    'need' => $need,
+                    'have' => $qty_now
+                ];
+            }
+        }
+
+        // Не хватило — ничего не создаём и не списываем, назад на форму
+        if (!empty($stock_errors)) {
+            $session->set('new_order_stock_errors', $stock_errors);
+
+            $back = '/zakaz-novyi/?stock_error=1';
+            if ($client > 0) { $back .= '&client_id=' . (int)$client; }
+            if ($car > 0)    { $back .= '&car_id=' . (int)$car; }
+
+            $session->redirect($back);
+        }
+        // --- /ПРОВЕРКА НАЛИЧИЯ НА СКЛАДЕ ---
+
         $orders_page = $pages->get('template=orders');
         // $orderPage = $pages->get('id=1106');
         $orderPage = $pages->add('order_item', $orders_page);
@@ -140,18 +182,13 @@ if ($operator == 'no_operator') {
         //ДОБАВЛЯЕМ ЗАПЧАСТИ
 
         //СПИСАНИЕ ЗАПЧАСТЕЙ СО СКЛАДА
-        $parts_ids = $_POST['parts_ids'] ?? [];
-
-        foreach ($parts_ids as $pid) {
-            $pid = (int)$pid;
-            if ($pid <= 0) continue;
-
+        foreach ($new_part_counts as $pid => $count) {
             $partPage = $pages->get("id=$pid, template=part");
             if (!$partPage->id) continue;
 
             $partPage->of(false);
             $current_qty = (int)$partPage->part_qty;
-            $partPage->part_qty = max(0, $current_qty - 1); // не уходим в минус
+            $partPage->part_qty = max(0, $current_qty - $count); // не уходим в минус
             $partPage->save('part_qty');
         }
         //СПИСАНИЕ ЗАПЧАСТЕЙ СО СКЛАДА

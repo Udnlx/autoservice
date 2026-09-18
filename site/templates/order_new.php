@@ -69,6 +69,18 @@ if ($operator == 'no_operator') {
     // Все запчасти для списка
     $all_parts = $pages->find("parent.name=zapchasti, template=part, sort=title");
 
+    // Сообщение о нехватке запчастей (приходит из order_new_registration.php через сессию)
+    $new_stock_notice = $session->get('new_order_stock_errors');
+    $session->remove('new_order_stock_errors');
+
+    $has_new_stock_errors = false;
+    $new_stock_error_items = [];
+
+    if (!empty($new_stock_notice) && is_array($new_stock_notice)) {
+        $has_new_stock_errors = true;
+        $new_stock_error_items = $new_stock_notice;
+    }
+
 ?>
 
 <div id="content">
@@ -83,6 +95,22 @@ if ($operator == 'no_operator') {
 
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
+
+                <?php if ($has_new_stock_errors) { ?>
+                    <div class="uk-alert-danger" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove"><strong>Заказ не зарегистрирован — на складе не хватает запчастей</strong></p>
+                        <ul class="uk-list uk-list-divider uk-margin-small-top uk-margin-remove-bottom">
+                            <?php foreach ($new_stock_error_items as $err) { ?>
+                                <li>
+                                    <strong><?php echo htmlspecialchars($err['name'], ENT_QUOTES, 'UTF-8'); ?></strong> —
+                                    нужно <?php echo (int)$err['need']; ?> шт,
+                                    на складе <?php echo (int)$err['have']; ?> шт
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+                <?php } ?>
 
                 <?php if ($input->get->int('client_created') === 1) { ?>
                     <div class="uk-alert-success" uk-alert>
@@ -224,7 +252,7 @@ if ($operator == 'no_operator') {
                                         data-price="<?php echo (int)$partPage->part_price; ?>"
                                         data-id="<?php echo (int)$partPage->id; ?>"
                                         data-qty="<?php echo (int)$partPage->part_qty; ?>">
-                                        <?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$partPage->part_price; ?> ₽
+                                        <?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$partPage->part_price; ?> ₽ · остаток <?php echo (int)$partPage->part_qty; ?> шт
                                     </option>
                                 <?php } ?>
                             </select>
