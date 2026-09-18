@@ -140,6 +140,18 @@ if ($operator == 'no_operator') {
     // Все запчасти для списка
     $all_parts = $pages->find("parent.name=zapchasti, template=part, sort=title");
 
+    // Сообщение о нехватке запчастей (приходит из order_edit.php через сессию)
+    $stock_notice = $session->get('order_stock_errors');
+    $session->remove('order_stock_errors');
+
+    $has_stock_errors = false;
+    $stock_error_items = [];
+
+    if ($stock_notice && (int)($stock_notice['order_id'] ?? 0) === (int)$order['id']) {
+        $has_stock_errors = true;
+        $stock_error_items = $stock_notice['items'] ?? [];
+    }
+
 ?>
 
 <div id="content">
@@ -167,7 +179,21 @@ if ($operator == 'no_operator') {
                     </div>
                 </div>
 
-                <?php if ($input->get->int('saved') === 1) { ?>
+                <?php if ($has_stock_errors) { ?>
+                    <div class="uk-alert-danger uk-margin-small-top" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove"><strong>Изменения не сохранены — на складе не хватает запчастей</strong></p>
+                        <ul class="uk-list uk-list-divider uk-margin-small-top uk-margin-remove-bottom">
+                            <?php foreach ($stock_error_items as $err) { ?>
+                                <li>
+                                    <strong><?php echo orderClean($err['name']); ?></strong> —
+                                    нужно добавить <?php echo (int)$err['need']; ?> шт,
+                                    на складе <?php echo (int)$err['have']; ?> шт
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+                <?php } elseif ($input->get->int('saved') === 1) { ?>
                     <div class="uk-alert-success uk-margin-small-top" uk-alert>
                         <a class="uk-alert-close" uk-close></a>
                         <p class="uk-margin-remove">Изменения сохранены</p>
@@ -287,7 +313,7 @@ if ($operator == 'no_operator') {
                                         data-price="<?php echo (int)$partPage->part_price; ?>"
                                         data-id="<?php echo (int)$partPage->id; ?>"
                                         data-qty="<?php echo (int)$partPage->part_qty; ?>">
-                                        <?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$partPage->part_price; ?> ₽
+                                        <?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$partPage->part_price; ?> ₽ · остаток <?php echo (int)$partPage->part_qty; ?> шт
                                     </option>
                                 <?php } ?>
                             </select>

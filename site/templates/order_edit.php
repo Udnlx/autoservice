@@ -18,6 +18,9 @@ if ($operator == 'no_operator') {
 <?php
 } else {
 
+    // Чистим прошлое сообщение, чтобы оно не всплыло повторно
+    $session->remove('order_stock_errors');
+
     $order_id = !empty($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
 
     $works = $_POST['works'] ?? [];
@@ -59,6 +62,7 @@ if ($operator == 'no_operator') {
     }
 
     $success = false;
+    $stock_errors = [];
 
     if ($order_id && $payment_type && $order_status) {
 
@@ -77,82 +81,121 @@ if ($operator == 'no_operator') {
             }
             // --- /СЛЕПОК ЗАКАЗА ДО ПРАВКИ ---
 
-            $orderPage->of(false);
-            $orderPage->status_order = $order_status;
-            $orderPage->payment_type = $payment_type;
-            $orderPage->cost_works = $works_price;
-            $orderPage->cost_autoparts = $parts_price;
-            $orderPage->cost_total = $total_price;
-            $orderPage->save();
-
-            //ОБНОВЛЯЕМ РАБОТЫ
-            foreach ($orderPage->works as $oldItem) {
-                $orderPage->works->remove($oldItem);
-                $oldItem->delete();
-            }
-            $orderPage->of(false);
-            foreach ($order_works as $row) {
-                $item = $orderPage->works->getNew();
-                $item->of(false);
-                $item->work = $row['name'];
-                $item->price = $row['price'];
-                $item->save();
-                $orderPage->works->add($item);
-            }
-            $orderPage->of(false);
-            $orderPage->save('works');
-            //ОБНОВЛЯЕМ РАБОТЫ
-
-            //ОБНОВЛЯЕМ ЗАПЧАСТИ
-            foreach ($orderPage->autoparts as $oldItem) {
-                $orderPage->autoparts->remove($oldItem);
-                $oldItem->delete();
-            }
-            $orderPage->of(false);
-            foreach ($order_parts as $row) {
-                $item = $orderPage->autoparts->getNew();
-                $item->of(false);
-                $item->autopart = $row['name'];
-                $item->price    = $row['price'];
-                $item->part_id  = (int)$row['part_id'];
-                $item->save();
-                $orderPage->autoparts->add($item);
-            }
-            $orderPage->of(false);
-            $orderPage->save('autoparts');
-            //ОБНОВЛЯЕМ ЗАПЧАСТИ
-
-            $orderPage->save();
-
-            // --- ДВИЖЕНИЕ ПО СКЛАДУ ---
+            // Список всех запчастей, которых коснулась правка
             $touched_ids = array_unique(array_merge(
                 array_keys($old_part_counts),
                 array_keys($new_part_counts)
             ));
 
+            // --- ПРОВЕРКА НАЛИЧИЯ НА СКЛАДЕ (до любых сохранений) ---
             foreach ($touched_ids as $pid) {
                 $before = $old_part_counts[$pid] ?? 0;
                 $after  = $new_part_counts[$pid] ?? 0;
-                $delta  = $after - $before;   // >0 добавили в заказ, <0 убрали
+                $delta  = $after - $before;   // >0 добавляем, <0 убираем
 
-                if ($delta === 0) {
-                    continue;
+                if ($delta <= 0) {
+                    continue;   // убираем или ничего не меняем — склад не нужен
                 }
 
                 $partPage = $pages->get("id=$pid, template=part");
                 if (!$partPage->id) {
-                    continue;   // запчасть удалена из справочника — прибавлять некуда
+                    continue;   // запчасть удалена из справочника — остаток неизвестен
                 }
 
-                $partPage->of(false);
                 $qty_now = (int)$partPage->part_qty;
-                $partPage->part_qty = max(0, $qty_now - $delta);
-                $partPage->save('part_qty');
-            }
-            // --- /ДВИЖЕНИЕ ПО СКЛАДУ ---
 
-            $success = true;
+                if ($qty_now < $delta) {
+                    $stock_errors[] = [
+                        'name' => (string)$partPage->title,
+                        'need' => $delta,
+                        'have' => $qty_now
+                    ];
+                }
+            }
+            // --- /ПРОВЕРКА НАЛИЧИЯ НА СКЛАДЕ ---
+
+            if (empty($stock_errors)) {
+
+                $orderPage->of(false);
+                $orderPage->status_order = $order_status;
+                $orderPage->payment_type = $payment_type;
+                $orderPage->cost_works = $works_price;
+                $orderPage->cost_autoparts = $parts_price;
+                $orderPage->cost_total = $total_price;
+                $orderPage->save();
+
+                //ОБНОВЛЯЕМ РАБОТЫ
+                foreach ($orderPage->works as $oldItem) {
+                    $orderPage->works->remove($oldItem);
+                    $oldItem->delete();
+                }
+                $orderPage->of(false);
+                foreach ($order_works as $row) {
+                    $item = $orderPage->works->getNew();
+                    $item->of(false);
+                    $item->work = $row['name'];
+                    $item->price = $row['price'];
+                    $item->save();
+                    $orderPage->works->add($item);
+                }
+                $orderPage->of(false);
+                $orderPage->save('works');
+                //ОБНОВЛЯЕМ РАБОТЫ
+
+                //ОБНОВЛЯЕМ ЗАПЧАСТИ
+                foreach ($orderPage->autoparts as $oldItem) {
+                    $orderPage->autoparts->remove($oldItem);
+                    $oldItem->delete();
+                }
+                $orderPage->of(false);
+                foreach ($order_parts as $row) {
+                    $item = $orderPage->autoparts->getNew();
+                    $item->of(false);
+                    $item->autopart = $row['name'];
+                    $item->price    = $row['price'];
+                    $item->part_id  = (int)$row['part_id'];
+                    $item->save();
+                    $orderPage->autoparts->add($item);
+                }
+                $orderPage->of(false);
+                $orderPage->save('autoparts');
+                //ОБНОВЛЯЕМ ЗАПЧАСТИ
+
+                $orderPage->save();
+
+                // --- ДВИЖЕНИЕ ПО СКЛАДУ ---
+                foreach ($touched_ids as $pid) {
+                    $before = $old_part_counts[$pid] ?? 0;
+                    $after  = $new_part_counts[$pid] ?? 0;
+                    $delta  = $after - $before;   // >0 добавили в заказ, <0 убрали
+
+                    if ($delta === 0) {
+                        continue;
+                    }
+
+                    $partPage = $pages->get("id=$pid, template=part");
+                    if (!$partPage->id) {
+                        continue;   // запчасть удалена из справочника — прибавлять некуда
+                    }
+
+                    $partPage->of(false);
+                    $qty_now = (int)$partPage->part_qty;
+                    $partPage->part_qty = max(0, $qty_now - $delta);
+                    $partPage->save('part_qty');
+                }
+                // --- /ДВИЖЕНИЕ ПО СКЛАДУ ---
+
+                $success = true;
+            }
         }
+    }
+
+    // Не хватило запчастей — кладём сообщение в сессию, его покажет карточка заказа
+    if (!empty($stock_errors)) {
+        $session->set('order_stock_errors', [
+            'order_id' => $order_id,
+            'items'    => $stock_errors
+        ]);
     }
 
     if ($success) {
