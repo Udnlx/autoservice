@@ -127,7 +127,37 @@ if ($operator == 'no_operator') {
                     </div>
                 </div>
 
-                <?php if ($input->get->int('saved') === 1) { ?>
+                <?php if ($input->get->int('expend') > 0) { ?>
+                    <div class="uk-alert-success uk-margin-small-top" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">
+                            Расход со склада: <strong><?php echo (int)$input->get->int('expend'); ?> <?php echo partClean($part_unit_label); ?></strong>
+                            <?php if ($input->get('expend_note')): ?>
+                                — <?php echo partClean($input->get('expend_note')); ?>
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                <?php } elseif ($input->get->int('expend_error') === 1) { ?>
+                    <div class="uk-alert-danger uk-margin-small-top" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">
+                            Недостаточно на складе — нужно <strong><?php echo (int)$input->get->int('expend_need'); ?> <?php echo partClean($part_unit_label); ?></strong>,
+                            на складе <strong><?php echo (int)$input->get->int('expend_have'); ?> <?php echo partClean($part_unit_label); ?></strong>
+                        </p>
+                    </div>
+                <?php } ?>
+
+                <?php if ($input->get->int('coming') > 0) { ?>
+                    <div class="uk-alert-success uk-margin-small-top" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p class="uk-margin-remove">
+                            Приход на склад: <strong><?php echo (int)$input->get->int('coming'); ?> <?php echo partClean($part_unit_label); ?></strong>
+                            <?php if ($input->get('coming_note')): ?>
+                                — <?php echo partClean($input->get('coming_note')); ?>
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                <?php } elseif ($input->get->int('saved') === 1) { ?>
                     <div class="uk-alert-success uk-margin-small-top" uk-alert>
                         <a class="uk-alert-close" uk-close></a>
                         <p class="uk-margin-remove">Изменения сохранены</p>
@@ -189,6 +219,12 @@ if ($operator == 'no_operator') {
                     </div>
 
                     <div class="uk-margin-small-top uk-flex uk-flex-column">
+                        <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="coming_edit_btn">
+                            Приход
+                        </button>
+                        <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="expend_edit_btn">
+                            Расход
+                        </button>
                         <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="toggle_edit_btn">
                             Изменить
                         </button>
@@ -196,6 +232,59 @@ if ($operator == 'no_operator') {
                     </div>
                 </div>
                 <!--БЛОК ПРОСМОТРА-->
+
+                <!--БЛОК РАСХОДА (скрыт по умолчанию)-->
+                <form id="part_expend_form" class="uk-flex uk-flex-column" action="/zapchast-raskhod/" method="post" hidden>
+                    <input type="hidden" name="part_id" value="<?php echo partClean($part['id']); ?>">
+
+                    <div class="uk-margin-small-top">
+                        <label for="expend_qty">Количество (<?php echo partClean($part_unit_label); ?>)</label>
+                        <input class="uk-input" id="expend_qty" type="number" name="expend_qty" min="1" step="1" placeholder="Например: 3" autocomplete="off" required>
+                        <div style="margin-top: 4px; font-size: 0.85em; color: #999;">
+                            На складе сейчас: <?php echo (int)$part['qty']; ?> <?php echo partClean($part_unit_label); ?>
+                        </div>
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="expend_note">Примечание</label>
+                        <input class="uk-input" id="expend_note" type="text" name="expend_note" placeholder="Например: Выдано на ремонт" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top uk-flex uk-flex-column">
+                        <button type="submit" class="uk-margin-small-top uk-button uk-button-default" name="save_expend" value="1">
+                            Списать со склада
+                        </button>
+                        <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="cancel_expend_btn">
+                            Отмена
+                        </button>
+                    </div>
+                </form>
+                <!--БЛОК РАСХОДА-->
+
+                <!--БЛОК ПРИХОДА (скрыт по умолчанию)-->
+                <form id="part_coming_form" class="uk-flex uk-flex-column" action="/zapchast-prikhod/" method="post" hidden>
+                    <input type="hidden" name="part_id" value="<?php echo partClean($part['id']); ?>">
+
+                    <div class="uk-margin-small-top">
+                        <label for="coming_qty">Количество (<?php echo partClean($part_unit_label); ?>)</label>
+                        <input class="uk-input" id="coming_qty" type="number" name="coming_qty" min="1" step="1" placeholder="Например: 5" autocomplete="off" required>
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="coming_note">Примечание</label>
+                        <input class="uk-input" id="coming_note" type="text" name="coming_note" placeholder="Например: Закупка у поставщика" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top uk-flex uk-flex-column">
+                        <button type="submit" class="uk-margin-small-top uk-button uk-button-default" name="save_coming" value="1">
+                            Добавить на склад
+                        </button>
+                        <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="cancel_coming_btn">
+                            Отмена
+                        </button>
+                    </div>
+                </form>
+                <!--БЛОК ПРИХОДА-->
 
                 <!--БЛОК РЕДАКТИРОВАНИЯ (скрыт по умолчанию)-->
                 <form id="part_edit_form" class="uk-flex uk-flex-column" action="/zapchast-redaktirovanie/" method="post" hidden>
@@ -214,11 +303,6 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="part_price">Цена (₽)</label>
                         <input class="uk-input" id="part_price" type="number" name="part_price" min="0" step="1" value="<?php echo ($part['price'] === null || $part['price'] === '') ? '' : (int)$part['price']; ?>" placeholder="Например: 450" autocomplete="off" required>
-                    </div>
-
-                    <div class="uk-margin-small-top">
-                        <label for="part_qty">Количество на складе</label>
-                        <input class="uk-input" id="part_qty" type="number" name="part_qty" min="0" step="1" value="<?php echo ($part['qty'] === null || $part['qty'] === '') ? '' : (int)$part['qty']; ?>" placeholder="Например: 10" autocomplete="off" required>
                     </div>
 
                     <div class="uk-margin-small-top">
@@ -279,18 +363,66 @@ document.addEventListener('DOMContentLoaded', function () {
     var toggleBtn = document.getElementById('toggle_edit_btn');
     var cancelBtn = document.getElementById('cancel_edit_btn');
 
+    var comingForm   = document.getElementById('part_coming_form');
+    var comingBtn    = document.getElementById('coming_edit_btn');
+    var cancelComing = document.getElementById('cancel_coming_btn');
+
+    var expendForm   = document.getElementById('part_expend_form');
+    var expendBtn    = document.getElementById('expend_edit_btn');
+    var cancelExpend = document.getElementById('cancel_expend_btn');
+
+    if (expendBtn) {
+        expendBtn.addEventListener('click', function () {
+            viewBlock.hidden  = true;
+            editForm.hidden   = true;
+            comingForm.hidden = true;
+            expendForm.hidden = false;
+            expendForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    if (cancelExpend) {
+        cancelExpend.addEventListener('click', function () {
+            expendForm.hidden = true;
+            viewBlock.hidden  = false;
+            viewBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    if (comingBtn) {
+        comingBtn.addEventListener('click', function () {
+            viewBlock.hidden  = true;
+            editForm.hidden   = true;
+            expendForm.hidden = true;
+            comingForm.hidden = false;
+            comingForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    if (cancelComing) {
+        cancelComing.addEventListener('click', function () {
+            comingForm.hidden = true;
+            viewBlock.hidden  = false;
+            viewBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
     if (toggleBtn) {
         toggleBtn.addEventListener('click', function () {
-            viewBlock.hidden = true;
-            editForm.hidden  = false;
+            viewBlock.hidden  = true;
+            comingForm.hidden = true;
+            expendForm.hidden = true;
+            editForm.hidden   = false;
             editForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
 
     if (cancelBtn) {
         cancelBtn.addEventListener('click', function () {
-            editForm.hidden  = true;
-            viewBlock.hidden = false;
+            editForm.hidden   = true;
+            comingForm.hidden = true;
+            expendForm.hidden = true;
+            viewBlock.hidden  = false;
             viewBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
