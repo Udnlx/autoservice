@@ -32,22 +32,26 @@ if ($operator == 'no_operator') {
     $found_owners = [];
 
     if ($search_active) {
+        // Поиск по запросу
         $safe_query = $sanitizer->selectorValue($search_query);
         $owners_result = $pages->find("template=owner, title|phone|email|owner_company|owner_inn%=$safe_query, limit=100");
+    } else {
+        // Последние 30 клиентов, новые вверху
+        $owners_result = $pages->find("template=owner, sort=-created, limit=30");
+    }
 
-        foreach ($owners_result as $ownerPage) {
-            $found_owners[] = [
-                'id'      => $ownerPage->id,
-                'title'   => $ownerPage->title,
-                'phone'   => $ownerPage->phone,
-                'email'   => $ownerPage->email,
-                'type'    => $ownerPage->owner_type,
-                'address' => $ownerPage->owner_address,
-                'company' => $ownerPage->owner_company,
-                'inn'     => $ownerPage->owner_inn,
-                'notes'   => $ownerPage->owner_notes
-            ];
-        }
+    foreach ($owners_result as $ownerPage) {
+        $found_owners[] = [
+            'id'      => $ownerPage->id,
+            'title'   => $ownerPage->title,
+            'phone'   => $ownerPage->phone,
+            'email'   => $ownerPage->email,
+            'type'    => $ownerPage->owner_type,
+            'address' => $ownerPage->owner_address,
+            'company' => $ownerPage->owner_company,
+            'inn'     => $ownerPage->owner_inn,
+            'notes'   => $ownerPage->owner_notes
+        ];
     }
 
 ?>
@@ -66,7 +70,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
 
-                <form class="uk-flex uk-flex-column" action="/klienty-spravochnik/" method="get">
+                <form class="uk-flex uk-flex-column" action="/klienty-spravochnik/" method="get" style="margin:0;">
                     <label for="q">Поиск клиента</label>
 
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
@@ -78,13 +82,13 @@ if ($operator == 'no_operator') {
                     </div>
                 </form>
 
-                <?php if (!$search_active) { ?>
+                <?php if (empty($found_owners)) { ?>
                     <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Начните поиск, чтобы увидеть клиентов
-                    </div>
-                <?php } elseif (empty($found_owners)) { ?>
-                    <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Ничего не найдено по запросу «<?php echo ownerClean($search_query); ?>»
+                        <?php if ($search_active) { ?>
+                            Ничего не найдено по запросу «<?php echo ownerClean($search_query); ?>»
+                        <?php } else { ?>
+                            Пока нет клиентов в справочнике
+                        <?php } ?>
                     </div>
                 <?php } else { ?>
                     <div class="orders-list uk-flex uk-flex-column uk-margin-small-top">

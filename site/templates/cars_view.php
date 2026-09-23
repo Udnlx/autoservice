@@ -32,24 +32,28 @@ if ($operator == 'no_operator') {
     $found_cars = [];
 
     if ($search_active) {
+        // Поиск по запросу
         $safe_query = $sanitizer->selectorValue($search_query);
         $cars_result = $pages->find("template=car, title%=$safe_query, limit=100");
+    } else {
+        // Последние 30 автомобилей, новые вверху
+        $cars_result = $pages->find("template=car, sort=-created, limit=30");
+    }
 
-        foreach ($cars_result as $carPage) {
-            $ownerPage = $carPage->car_owner;
-            $found_cars[] = [
-                'id'           => $carPage->id,
-                'title'        => $carPage->title,
-                'brand'        => $carPage->car_brand,
-                'model'        => $carPage->car_model,
-                'number'       => $carPage->car_number,
-                'vin'          => $carPage->car_vin,
-                'year'         => $carPage->car_year,
-                'owner_id'     => ($ownerPage && $ownerPage->id) ? $ownerPage->id : 0,
-                'owner_title'  => ($ownerPage && $ownerPage->id) ? $ownerPage->title : '',
-                'notes'        => $carPage->car_notes
-            ];
-        }
+    foreach ($cars_result as $carPage) {
+        $ownerPage = $carPage->car_owner;
+        $found_cars[] = [
+            'id'           => $carPage->id,
+            'title'        => $carPage->title,
+            'brand'        => $carPage->car_brand,
+            'model'        => $carPage->car_model,
+            'number'       => $carPage->car_number,
+            'vin'          => $carPage->car_vin,
+            'year'         => $carPage->car_year,
+            'owner_id'     => ($ownerPage && $ownerPage->id) ? $ownerPage->id : 0,
+            'owner_title'  => ($ownerPage && $ownerPage->id) ? $ownerPage->title : '',
+            'notes'        => $carPage->car_notes
+        ];
     }
 
     // Загружаем всех клиентов для поиска в модальном окне
@@ -78,7 +82,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
 
-                <form class="uk-flex uk-flex-column" action="/avtomobili-spravochnik/" method="get">
+                <form class="uk-flex uk-flex-column" action="/avtomobili-spravochnik/" method="get" style="margin:0;">
                     <label for="q">Поиск автомобиля</label>
 
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
@@ -90,13 +94,13 @@ if ($operator == 'no_operator') {
                     </div>
                 </form>
 
-                <?php if (!$search_active) { ?>
+                <?php if (empty($found_cars)) { ?>
                     <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Начните поиск, чтобы увидеть автомобили
-                    </div>
-                <?php } elseif (empty($found_cars)) { ?>
-                    <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Ничего не найдено по запросу «<?php echo carClean($search_query); ?>»
+                        <?php if ($search_active) { ?>
+                            Ничего не найдено по запросу «<?php echo carClean($search_query); ?>»
+                        <?php } else { ?>
+                            Пока нет автомобилей в справочнике
+                        <?php } ?>
                     </div>
                 <?php } else { ?>
                     <div class="orders-list uk-flex uk-flex-column uk-margin-small-top">

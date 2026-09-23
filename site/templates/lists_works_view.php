@@ -32,18 +32,22 @@ if ($operator == 'no_operator') {
     $found_works = [];
 
     if ($search_active) {
+        // Поиск по запросу
         $safe_query = $sanitizer->selectorValue($search_query);
         $works_result = $pages->find("template=work_item, title%=$safe_query, limit=100");
+    } else {
+        // Последние 30 работ, новые вверху
+        $works_result = $pages->find("template=work_item, sort=-created, limit=30");
+    }
 
-        foreach ($works_result as $workPage) {
-            $found_works[] = [
-                'id'         => $workPage->id,
-                'title'      => $workPage->title,
-                'price'      => $workPage->work_price,
-                'time'       => $workPage->work_time,
-                'notes'      => $workPage->work_notes
-            ];
-        }
+    foreach ($works_result as $workPage) {
+        $found_works[] = [
+            'id'         => $workPage->id,
+            'title'      => $workPage->title,
+            'price'      => $workPage->work_price,
+            'time'       => $workPage->work_time,
+            'notes'      => $workPage->work_notes
+        ];
     }
 
 ?>
@@ -62,7 +66,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
 
-                <form class="uk-flex uk-flex-column" action="/raboty-spravochnik/" method="get">
+                <form class="uk-flex uk-flex-column" action="/raboty-spravochnik/" method="get" style="margin:0;">
                     <label for="q">Поиск работы</label>
 
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
@@ -74,13 +78,13 @@ if ($operator == 'no_operator') {
                     </div>
                 </form>
 
-                <?php if (!$search_active) { ?>
+                <?php if (empty($found_works)) { ?>
                     <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Начните поиск, чтобы увидеть работы
-                    </div>
-                <?php } elseif (empty($found_works)) { ?>
-                    <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Ничего не найдено по запросу «<?php echo workClean($search_query); ?>»
+                        <?php if ($search_active) { ?>
+                            Ничего не найдено по запросу «<?php echo workClean($search_query); ?>»
+                        <?php } else { ?>
+                            Пока нет работ в справочнике
+                        <?php } ?>
                     </div>
                 <?php } else { ?>
                     <div class="orders-list uk-flex uk-flex-column uk-margin-small-top">

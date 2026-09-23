@@ -67,23 +67,27 @@ if ($operator == 'no_operator') {
     $found_parts = [];
 
     if ($search_active) {
+        // Поиск по запросу
         $safe_query = $sanitizer->selectorValue($search_query);
         $parts_result = $pages->find("template=part, title|part_sku|part_oem|part_brand%=$safe_query, sort=title, limit=100");
+    } else {
+        // Последние 30 запчастей, новые вверху
+        $parts_result = $pages->find("template=part, sort=-created, limit=30");
+    }
 
-        foreach ($parts_result as $partPage) {
-            $found_parts[] = [
-                'id'       => $partPage->id,
-                'title'    => $partPage->title,
-                'sku'      => $partPage->part_sku,
-                'price'    => $partPage->part_price,
-                'qty'      => $partPage->part_qty,
-                'unit'     => $partPage->part_unit,
-                'brand'    => $partPage->part_brand,
-                'oem'      => $partPage->part_oem,
-                'location' => $partPage->part_location,
-                'notes'    => $partPage->part_notes
-            ];
-        }
+    foreach ($parts_result as $partPage) {
+        $found_parts[] = [
+            'id'       => $partPage->id,
+            'title'    => $partPage->title,
+            'sku'      => $partPage->part_sku,
+            'price'    => $partPage->part_price,
+            'qty'      => $partPage->part_qty,
+            'unit'     => $partPage->part_unit,
+            'brand'    => $partPage->part_brand,
+            'oem'      => $partPage->part_oem,
+            'location' => $partPage->part_location,
+            'notes'    => $partPage->part_notes
+        ];
     }
 
 ?>
@@ -102,7 +106,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
 
-                <form class="uk-flex uk-flex-column" action="/zapchasti-spravochnik/" method="get">
+                <form class="uk-flex uk-flex-column" action="/zapchasti-spravochnik/" method="get" style="margin:0;">
                     <label for="q">Поиск запчасти</label>
 
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
@@ -114,13 +118,13 @@ if ($operator == 'no_operator') {
                     </div>
                 </form>
 
-                <?php if (!$search_active) { ?>
+                <?php if (empty($found_parts)) { ?>
                     <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Начните поиск, чтобы увидеть запчасти
-                    </div>
-                <?php } elseif (empty($found_parts)) { ?>
-                    <div class="order-cart-empty uk-margin-small-top uk-text-center">
-                        Ничего не найдено по запросу «<?php echo partClean($search_query); ?>»
+                        <?php if ($search_active) { ?>
+                            Ничего не найдено по запросу «<?php echo partClean($search_query); ?>»
+                        <?php } else { ?>
+                            Пока нет запчастей в справочнике
+                        <?php } ?>
                     </div>
                 <?php } else { ?>
                     <div class="orders-list uk-flex uk-flex-column uk-margin-small-top">
