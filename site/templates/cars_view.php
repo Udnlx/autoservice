@@ -337,9 +337,38 @@ document.addEventListener('DOMContentLoaded', function () {
         resultsList.style.display = 'none';
     });
 
-    // --- Кнопка заполнения по VIN ---
+        // --- Кнопка заполнения по VIN + автозапрос баланса ---
     var vinLookupBtn    = document.getElementById('vin_lookup_btn');
     var vinBalanceLabel = document.getElementById('vin_balance_label');
+
+    // Функция обновления баланса
+    function updateBalance() {
+        if (vinBalanceLabel) {
+            vinBalanceLabel.textContent = 'Загрузка баланса...';
+            vinBalanceLabel.style.display = 'inline';
+
+            fetch('/api-balance/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.error) {
+                    vinBalanceLabel.textContent = 'Баланс: ошибка';
+                } else {
+                    vinBalanceLabel.textContent = 'Баланс: ' + data.balance + ' ₽';
+                }
+            })
+            .catch(function () {
+                vinBalanceLabel.textContent = 'Баланс: недоступен';
+            });
+        }
+    }
+
+    // Запрашиваем баланс при открытии модального окна
+    UIkit.util.on('#new_car_modal', 'shown', function () {
+        updateBalance();
+    });
 
     if (vinLookupBtn) {
         vinLookupBtn.addEventListener('click', function (e) {
@@ -364,13 +393,12 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(function (data) {
                 if (data.error) {
                     alert('Ошибка запроса: ' + data.error);
-                    return;
+                } else {
+                    // Подставляем поля
+                    if (data.brand) { document.getElementById('car_brand').value = data.brand; }
+                    if (data.model) { document.getElementById('car_model').value = data.model; }
+                    if (data.year)  { document.getElementById('car_year').value  = data.year;  }
                 }
-
-                // Подставляем поля
-                if (data.brand) { document.getElementById('car_brand').value = data.brand; }
-                if (data.model) { document.getElementById('car_model').value = data.model; }
-                if (data.year)  { document.getElementById('car_year').value  = data.year;  }
             })
             .catch(function () {
                 alert('Не удалось получить ответ от сервера');
@@ -378,6 +406,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .finally(function () {
                 vinLookupBtn.disabled = false;
                 vinLookupBtn.textContent = 'Заполнить поля по VIN';
+                
+                // Обновляем баланс после запроса VIN (всегда)
+                updateBalance();
             });
         });
     }
