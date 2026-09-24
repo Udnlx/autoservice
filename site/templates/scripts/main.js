@@ -1,11 +1,75 @@
 //СКРИПТ ДОБАВЛЕНИЯ РАБОТ И ЗАПЧАСТЕЙ
 document.addEventListener('DOMContentLoaded', function () {
     const workSelect = document.getElementById('work_select');
+    const workFilter = document.getElementById('work_filter');
+
+    // Сохраняем все оригинальные опции один раз
+    const allWorkOptions = Array.from(workSelect.options);
+
+    workFilter.addEventListener('input', function () {
+        const q = this.value.trim().toLowerCase();
+        const currentVal = workSelect.value;
+
+        // Очищаем и перестраиваем список
+        workSelect.innerHTML = '';
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.disabled = true;
+        placeholder.textContent = 'Выберите работу';
+        workSelect.appendChild(placeholder);
+
+        const filtered = q.length === 0
+            ? allWorkOptions.filter(o => o.value !== '')
+            : allWorkOptions.filter(o => o.value !== '' && o.text.toLowerCase().includes(q));
+
+        filtered.forEach(function (opt) {
+            workSelect.appendChild(opt.cloneNode(true));
+        });
+
+        // Восстанавливаем выбор если он всё ещё в списке
+        if (currentVal && filtered.some(o => o.value === currentVal)) {
+            workSelect.value = currentVal;
+        } else {
+            workSelect.selectedIndex = 0;
+        }
+    });
+
     const addWorkBtn = document.getElementById('add_work');
     const worksCart = document.getElementById('works_cart');
     let worksEmpty = document.getElementById('works_empty');
 
     const partSelect = document.getElementById('part_select');
+    const partFilter = document.getElementById('part_filter');
+    const allPartOptions = Array.from(partSelect.options);
+
+    partFilter.addEventListener('input', function () {
+        const q = this.value.trim().toLowerCase();
+        const currentVal = partSelect.value;
+
+        partSelect.innerHTML = '';
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.disabled = true;
+        placeholder.textContent = 'Выберите запчасть';
+        partSelect.appendChild(placeholder);
+
+        const filtered = q.length === 0
+            ? allPartOptions.filter(o => o.value !== '')
+            : allPartOptions.filter(o => o.value !== '' && o.text.toLowerCase().includes(q));
+
+        filtered.forEach(function (opt) {
+            partSelect.appendChild(opt.cloneNode(true));
+        });
+
+        if (currentVal && filtered.some(o => o.value === currentVal)) {
+            partSelect.value = currentVal;
+        } else {
+            partSelect.selectedIndex = 0;
+        }
+    });
+    
     const addPartBtn = document.getElementById('add_part');
     const partsCart = document.getElementById('parts_cart');
     let partsEmpty = document.getElementById('parts_empty');

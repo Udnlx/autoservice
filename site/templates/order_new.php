@@ -205,16 +205,24 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="work_select">Работы</label>
 
-                        <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
-                            <select class="uk-select" id="work_select">
-                                <option value="" disabled selected>Выберите работу</option>
-                                <?php foreach ($all_works as $workPage) { ?>
-                                    <option value="<?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?>" data-price="<?php echo (int)$workPage->work_price; ?>">
-                                        <?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$workPage->work_price; ?> ₽
-                                    </option>
-                                <?php } ?>
-                            </select>
-
+                        <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px; flex-wrap: wrap;">
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                                <input
+                                    class="uk-input"
+                                    id="work_filter"
+                                    type="text"
+                                    placeholder="Фильтр по названию работы..."
+                                    autocomplete="off"
+                                >
+                                <select class="uk-select" id="work_select">
+                                    <option value="" disabled selected>Выберите работу</option>
+                                    <?php foreach ($all_works as $workPage) { ?>
+                                        <option value="<?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?>" data-price="<?php echo (int)$workPage->work_price; ?>">
+                                            <?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$workPage->work_price; ?> ₽
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                             <button type="button" class="uk-button uk-button-default" id="add_work">
                                 Добавить
                             </button>
@@ -243,20 +251,28 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="part_select">Запчасти</label>
 
-                        <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
-                            <select class="uk-select" id="part_select">
-                                <option value="" disabled selected>Выберите запчасть</option>
-                                <?php foreach ($all_parts as $partPage) { ?>
-                                    <option
-                                        value="<?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?>"
-                                        data-price="<?php echo (int)$partPage->part_price; ?>"
-                                        data-id="<?php echo (int)$partPage->id; ?>"
-                                        data-qty="<?php echo (int)$partPage->part_qty; ?>">
-                                        <?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$partPage->part_price; ?> ₽ · остаток <?php echo (int)$partPage->part_qty; ?> шт
-                                    </option>
-                                <?php } ?>
-                            </select>
-
+                        <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px; flex-wrap: wrap;">
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                                <input
+                                    class="uk-input"
+                                    id="part_filter"
+                                    type="text"
+                                    placeholder="Фильтр по названию запчасти..."
+                                    autocomplete="off"
+                                >
+                                <select class="uk-select" id="part_select">
+                                    <option value="" disabled selected>Выберите запчасть</option>
+                                    <?php foreach ($all_parts as $partPage) { ?>
+                                        <option
+                                            value="<?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-price="<?php echo (int)$partPage->part_price; ?>"
+                                            data-id="<?php echo (int)$partPage->id; ?>"
+                                            data-qty="<?php echo (int)$partPage->part_qty; ?>">
+                                            <?php echo htmlspecialchars($partPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$partPage->part_price; ?> ₽ · остаток <?php echo (int)$partPage->part_qty; ?> шт
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                             <button type="button" class="uk-button uk-button-default" id="add_part">
                                 Добавить
                             </button>
