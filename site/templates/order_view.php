@@ -441,9 +441,7 @@ if ($operator == 'no_operator') {
                             </div>
                         <?php } ?>
                         <br>
-                        <button type="button" class="uk-margin-small-top uk-button uk-button-default" name="print_order">
-                            Распечатать
-                        </button>
+                        <a class="uk-margin-small-top uk-button uk-button-default" href="/zakaz-pechat/?idorder=<?php echo $order_id ?>">Распечатать</a>
                         <a class="uk-margin-small-top uk-button uk-button-default" href="/">Перейти на главную</a>
                     </div>
                 </form>
