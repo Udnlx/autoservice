@@ -196,7 +196,12 @@ if ($operator == 'no_operator') {
             </div>
 
             <div class="uk-margin-small-top">
-                <label for="part_price">Цена (₽)</label>
+                <label for="part_price_purchase">Цена закупки (₽)</label>
+                <input class="uk-input" id="part_price_purchase" type="number" name="part_price_purchase" min="0" step="1" placeholder="Например: 350" autocomplete="off" required>
+            </div>
+
+            <div class="uk-margin-small-top">
+                <label for="part_price">Цена для клиента (₽)</label>
                 <input class="uk-input" id="part_price" type="number" name="part_price" min="0" step="1" placeholder="Например: 450" autocomplete="off" required>
             </div>
 
