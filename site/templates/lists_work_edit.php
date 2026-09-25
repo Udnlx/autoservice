@@ -21,6 +21,7 @@ if ($operator == 'no_operator') {
     $work_id = !empty($_POST['work_id']) ? (int)$_POST['work_id'] : 0;
 
     $work_title = !empty($_POST['work_title']) ? trim($_POST['work_title']) : '';
+    $work_type  = !empty($_POST['work_type'])  ? trim($_POST['work_type']) : '';
     $work_price = !empty($_POST['work_price']) ? (int)$_POST['work_price']  : 0;
     $work_time  = !empty($_POST['work_time'])  ? trim($_POST['work_time'])  : '';
     $work_notes = !empty($_POST['work_notes']) ? trim($_POST['work_notes']) : '';
@@ -35,6 +36,7 @@ if ($operator == 'no_operator') {
 
             $workPage->of(false);
             $workPage->title      = $work_title;
+            $workPage->work_type  = $work_type;
             $workPage->work_price = $work_price;
             $workPage->work_time  = $work_time;
             $workPage->work_notes = $work_notes;

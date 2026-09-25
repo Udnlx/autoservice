@@ -55,6 +55,7 @@ if ($operator == 'no_operator') {
     $work = [
         'id'    => $workPage->id,
         'title' => $workPage->title,
+        'type'  => $workPage->work_type->title,
         'price' => $workPage->work_price,
         'time'  => $workPage->work_time,
         'notes' => $workPage->work_notes
@@ -121,6 +122,11 @@ if ($operator == 'no_operator') {
                             <div class="order-info-label">Описание</div>
                             <div class="order-info-value"><?php echo !empty($work['notes']) ? workClean($work['notes']) : '—'; ?></div>
                         </div>
+
+                        <div class="order-info-box">
+                            <div class="order-info-label">Тип работы</div>
+                            <div class="order-info-value"><?php echo !empty($work['type']) ? workClean($work['type']) : '—'; ?></div>
+                        </div>
                     </div>
 
                     <div class="uk-margin-small-top uk-flex uk-flex-column">
@@ -139,6 +145,27 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="work_title">Наименование работы</label>
                         <input class="uk-input" id="work_title" type="text" name="work_title" value="<?php echo workClean($work['title']); ?>" placeholder="Например: Замена масла" autocomplete="off" required>
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="work_type">Тип работы</label>
+                        <select class="uk-select" id="work_type" name="work_type" required>
+                            <option value="" disabled <?php echo empty($work['type']) ? 'selected' : ''; ?>>
+                                Выберите тип работы
+                            </option>
+
+                            <option value="1" <?php echo $work['type'] === 'Антикор' ? 'selected' : ''; ?>>
+                                Антикор
+                            </option>
+
+                            <option value="2" <?php echo $work['type'] === 'Фильтры' ? 'selected' : ''; ?>>
+                                Фильтры
+                            </option>
+
+                            <option value="3" <?php echo $work['type'] === 'Турбины' ? 'selected' : ''; ?>>
+                                Турбины
+                            </option>
+                        </select>
                     </div>
 
                     <div class="uk-margin-small-top">

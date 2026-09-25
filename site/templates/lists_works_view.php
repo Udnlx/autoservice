@@ -44,6 +44,7 @@ if ($operator == 'no_operator') {
         $found_works[] = [
             'id'         => $workPage->id,
             'title'      => $workPage->title,
+            'type'      => $workPage->work_type->title,
             'price'      => $workPage->work_price,
             'time'       => $workPage->work_time,
             'notes'      => $workPage->work_notes
@@ -110,6 +111,11 @@ if ($operator == 'no_operator') {
                                         <div class="order-list-item-label">Описание</div>
                                         <div class="order-list-item-value"><?php echo !empty($work['notes']) ? workClean($work['notes']) : '—'; ?></div>
                                     </div>
+
+                                    <div class="order-list-item-cell">
+                                        <div class="order-list-item-label">Тип работы</div>
+                                        <div class="order-list-item-value"><?php echo !empty($work['type']) ? workClean($work['type']) : '—'; ?></div>
+                                    </div>
                                 </div>
                             </a>
                         <?php } ?>
@@ -133,6 +139,16 @@ if ($operator == 'no_operator') {
             <div class="uk-margin-small-top">
                 <label for="work_title">Наименование работы</label>
                 <input class="uk-input" id="work_title" type="text" name="work_title" placeholder="Например: Замена масла" autocomplete="off" required>
+            </div>
+
+            <div class="uk-margin-small-top">
+                <label for="work_type">Тип работы</label>
+                <select class="uk-select" id="work_type" name="work_type" required>
+                    <option value="" disabled selected>Выберите тип работы</option>
+                    <option value="1">Антикор</option>
+                    <option value="2">Фильтры</option>
+                    <option value="3">Турбины</option>
+                </select>
             </div>
 
             <div class="uk-margin-small-top">
