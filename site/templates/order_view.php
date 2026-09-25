@@ -260,6 +260,13 @@ if ($operator == 'no_operator') {
 
                         <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px; flex-wrap: wrap;">
                             <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                                <select class="uk-select" id="work_type">
+                                    <option value="" selected>— Все типы работ —</option>
+                                    <option value="1">Антикор</option>
+                                    <option value="2">Фильтры</option>
+                                    <option value="3">Турбины</option>
+                                </select>
+                                
                                 <input
                                     class="uk-input"
                                     id="work_filter"
@@ -267,15 +274,25 @@ if ($operator == 'no_operator') {
                                     placeholder="Фильтр по названию работы..."
                                     autocomplete="off"
                                 >
+
                                 <select class="uk-select" id="work_select">
                                     <option value="" disabled selected>Выберите работу</option>
+
                                     <?php foreach ($all_works as $workPage) { ?>
-                                        <option value="<?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?>" data-price="<?php echo (int)$workPage->work_price; ?>">
-                                            <?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?> — <?php echo (int)$workPage->work_price; ?> ₽
+                                        <?php $workTypeValue = $workPage->getUnformatted('work_type'); ?>
+
+                                        <option
+                                            value="<?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-price="<?php echo (int)$workPage->work_price; ?>"
+                                            data-work-type="<?php echo htmlspecialchars((string)$workTypeValue, ENT_QUOTES, 'UTF-8'); ?>"
+                                        >
+                                            <?php echo htmlspecialchars($workPage->title, ENT_QUOTES, 'UTF-8'); ?>
+                                            — <?php echo (int)$workPage->work_price; ?> ₽
                                         </option>
                                     <?php } ?>
                                 </select>
                             </div>
+
                             <button type="button" class="uk-button uk-button-default" id="add_work">
                                 Добавить
                             </button>
