@@ -137,10 +137,24 @@ if ($operator == 'no_operator') {
     }
 
     // ---------- Реквизиты автосервиса (заглушки) ----------
-    $company_name    = 'Турбина Плюс';
-    $company_address = 'Люберцы, Октябрьский проспект 259 стр 1';
-    $company_inn     = '502770491281';
-    $company_phone   = '8 985 816-10-10';
+    $company_name    = '-';
+    $company_address = '-';
+    $company_inn     = '-';
+    $company_phone   = '-';
+
+    $company = $input->get->string('company');
+    if ($company == 'turbina_plus') {
+        $company_name    = 'Турбина Плюс';
+        $company_address = 'Люберцы, Октябрьский проспект 259 стр 1';
+        $company_inn     = '502770491281';
+        $company_phone   = '8 985 816-10-10';
+    }
+    if ($company == 'antikor_rf') {
+        $company_name    = 'Антикор РФ';
+        $company_address = 'Люберцы, Октябрьский проспект 259 стр 1';
+        $company_inn     = '502770491281';
+        $company_phone   = '8 985 816-10-10';
+    }
 
     // ---------- Клиент: ищем по title в шаблоне owner ----------
     $client_display = $client_name; // по умолчанию — исходная строка (если не найден)

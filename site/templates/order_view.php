@@ -457,17 +457,48 @@ if ($operator == 'no_operator') {
                                 <p class="uk-margin-remove" style="font-weight: 700;">Заявка «<?php echo orderClean($order['status']); ?>» — изменение недоступно</p>
                             </div>
                         <?php } ?>
-                        <br>
-                        <a class="uk-margin-small-top uk-button uk-button-default" href="/zakaz-pechat/?idorder=<?php echo $order_id ?>">Распечатать</a>
-                        <a class="uk-margin-small-top uk-button uk-button-default" href="/">Перейти на главную</a>
                     </div>
                 </form>
+
+                <div class="uk-margin-small-top uk-flex uk-flex-column">
+                    <select class="uk-select uk-margin-small-top" id="print_company">
+                        <option value="" disabled selected>— Выберите компанию для формирования документа —</option>
+                        <option value="turbina_plus">Турбина Плюс</option>
+                        <option value="antikor_rf">Антикор РФ</option>
+                    </select>
+
+                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_btn">
+                        Распечатать
+                    </button>
+
+                    <a class="uk-margin-small-top uk-button uk-button-default" href="/">Перейти на главную</a>
+                </div>
 
             </div>
         </div>
         
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var printBtn     = document.getElementById('print_btn');
+    var printCompany = document.getElementById('print_company');
+
+    printBtn.addEventListener('click', function () {
+        var company = printCompany.value;
+
+        if (!company) {
+            alert('Выберите компанию для формирования документа');
+            return;
+        }
+
+        window.location.href =
+            '/zakaz-pechat/?idorder=<?php echo (int)$order_id ?>&company=' +
+            encodeURIComponent(company);
+    });
+});
+</script>
 
 <?php   
 }
