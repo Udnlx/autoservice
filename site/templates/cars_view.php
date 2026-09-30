@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
         resultsList.style.display = 'none';
     });
 
-        // --- Кнопка заполнения по VIN + автозапрос баланса ---
+    // --- Кнопка заполнения по VIN + автозапрос баланса ---
     var vinLookupBtn    = document.getElementById('vin_lookup_btn');
     var vinBalanceLabel = document.getElementById('vin_balance_label');
 

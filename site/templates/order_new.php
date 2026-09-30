@@ -444,9 +444,17 @@ if ($operator == 'no_operator') {
                 </div>
 
                 <div class="uk-margin-small-top">
-                    <label for="modal_car_vin">VIN</label>
-                    <input class="uk-input" id="modal_car_vin" type="text" name="car_vin" placeholder="17 символов" autocomplete="off" required>
+                <div class="uk-flex uk-flex-between uk-flex-middle" style="gap: 10px;">
+                    <label for="car_vin" style="margin: 0;">VIN</label>
+                    <div class="uk-flex uk-flex-middle" style="gap: 8px;">
+                        <span id="vin_balance_label" style="display:none; font-size: 0.8em; color: #999;"></span>
+                        <button type="button" id="vin_lookup_btn" class="uk-button uk-button-primary uk-button-small" style="font-size: 0.78em; padding: 0 10px; line-height: 26px; height: 26px;">
+                            Заполнить поля по VIN
+                        </button>
+                    </div>
                 </div>
+                <input class="uk-input uk-margin-small-top" id="car_vin" type="text" name="car_vin" placeholder="17 символов" autocomplete="off" required>
+            </div>
 
                 <div class="uk-margin-small-top">
                     <label for="modal_car_year">Год выпуска</label>
@@ -788,6 +796,82 @@ document.addEventListener('DOMContentLoaded', function () {
                     el.value = '';
                 });
             }
+        });
+    }
+
+    // --- Кнопка заполнения по VIN + автозапрос баланса ---
+    var vinLookupBtn    = document.getElementById('vin_lookup_btn');
+    var vinBalanceLabel = document.getElementById('vin_balance_label');
+
+    // Функция обновления баланса
+    function updateBalance() {
+        if (vinBalanceLabel) {
+            vinBalanceLabel.textContent = 'Загрузка баланса...';
+            vinBalanceLabel.style.display = 'inline';
+
+            fetch('/api-balance/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.error) {
+                    vinBalanceLabel.textContent = 'Баланс: ошибка';
+                } else {
+                    vinBalanceLabel.textContent = 'Баланс: ' + data.balance + ' ₽';
+                }
+            })
+            .catch(function () {
+                vinBalanceLabel.textContent = 'Баланс: недоступен';
+            });
+        }
+    }
+
+    // Запрашиваем баланс при открытии модального окна
+    UIkit.util.on('#new_car_modal', 'shown', function () {
+        updateBalance();
+    });
+
+    if (vinLookupBtn) {
+        vinLookupBtn.addEventListener('click', function (e) {
+            e.stopImmediatePropagation();
+            var vin = document.getElementById('car_vin').value.trim().toUpperCase();
+
+            if (vin.length !== 17) {
+                alert('Введите VIN (ровно 17 символов) перед запросом');
+                return;
+            }
+
+            // Блокируем кнопку на время запроса
+            vinLookupBtn.disabled = true;
+            vinLookupBtn.textContent = 'Запрос...';
+
+            fetch('/api-vin-lookup/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vin: vin })
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.error) {
+                    alert('Ошибка запроса: ' + data.error);
+                } else {
+                    // Подставляем поля
+                    if (data.brand) { document.getElementById('modal_car_brand').value = data.brand; }
+                    if (data.model) { document.getElementById('modal_car_model').value = data.model; }
+                    if (data.year)  { document.getElementById('modal_car_year').value  = data.year;  }
+                }
+            })
+            .catch(function () {
+                alert('Не удалось получить ответ от сервера');
+            })
+            .finally(function () {
+                vinLookupBtn.disabled = false;
+                vinLookupBtn.textContent = 'Заполнить поля по VIN';
+                
+                // Обновляем баланс после запроса VIN (всегда)
+                updateBalance();
+            });
         });
     }
 
