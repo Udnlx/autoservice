@@ -35,6 +35,7 @@ if ($operator == 'no_operator') {
     $parts_price = !empty($_POST['parts_price'])?$_POST['parts_price']:NULL;
     $total_price = !empty($_POST['total_price'])?$_POST['total_price']:NULL;
     $payment_type = !empty($_POST['payment_type'])?$_POST['payment_type']:NULL;
+    $comment = !empty($_POST['comment']) ? $_POST['comment'] : NULL;
 
     $client_page = $pages->get("template=owner, id=" . $client);
     $client_name = $client_page->title;
@@ -74,6 +75,7 @@ if ($operator == 'no_operator') {
         'car' => $car_name,
         'status' => 'Новая',
         'payment_type' => $payment_type,
+        'comment' => $comment,
 
         'works_price' => $works_price ?? 0,
         'parts_price' => $parts_price ?? 0,
@@ -133,6 +135,7 @@ if ($operator == 'no_operator') {
         $orderPage->client = $order['client'];
         $orderPage->auto = $order['car'];
         $orderPage->payment_type = $order['payment_type'];
+        $orderPage->comment = $order['comment'];
         $orderPage->cost_works = $order['works_price'];
         $orderPage->cost_autoparts = $order['parts_price'];
         $orderPage->cost_total = $order['total_price'];

@@ -336,6 +336,11 @@ if ($operator == 'no_operator') {
                         </select>
                     </div>
 
+                    <div class="uk-margin-small-top">
+                        <label for="comment">Комментарий</label>
+                        <input class="uk-input" id="comment" type="text" name="comment" value="" autocomplete="off">
+                    </div>
+
                     <div class="uk-margin-small-top uk-flex uk-flex-column">
                         <button class="uk-margin-small-top uk-button uk-button-default" type="submit" id="submit_btn" disabled>
                             Зарегистрировать

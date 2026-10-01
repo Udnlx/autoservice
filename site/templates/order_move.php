@@ -152,6 +152,11 @@ if ($operator == 'no_operator') {
                                             <div class="order-list-item-label">Итого</div>
                                             <div class="order-list-item-value order-list-item-total"><?php echo orderClean($orderItem->cost_total); ?> ₽</div>
                                         </div>
+
+                                        <div class="order-list-item-cell">
+                                            <div class="order-list-item-label">Комментарий</div>
+                                            <div class="order-list-item-value"><?php echo orderClean($orderItem->comment); ?></div>
+                                        </div>
                                     </div>
                                 </a>
                             <?php } ?>

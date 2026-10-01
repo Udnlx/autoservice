@@ -98,7 +98,8 @@ if ($operator == 'no_operator') {
         'parts_price' => $orderPage->cost_autoparts,
         'total_price' => $orderPage->cost_total,
         'works' => $works,
-        'parts' => $parts
+        'parts' => $parts,
+        'comment' => $orderPage->comment
     ];
 
     // $order = [
@@ -428,12 +429,18 @@ if ($operator == 'no_operator') {
                         <label for="total_price">Общая стоимость</label>
                         <input class="uk-input" id="total_price" type="text" name="total_price" value="<?php echo orderClean($order['total_price']); ?>" autocomplete="off" required readonly>
                     </div>
+
                     <div class="uk-margin-small-top">
                         <label for="payment_type">Вид платежа</label>
                         <select class="uk-select" id="payment_type" name="payment_type" required>
                             <option value="Наличный расчет" <?php if ($order['payment_type'] == 'Наличный расчет') echo 'selected'; ?>>Наличный расчет</option>
                             <option value="Безналичный расчет" <?php if ($order['payment_type'] == 'Безналичный расчет') echo 'selected'; ?>>Безналичный расчет</option>
                         </select>
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="comment">Комментарий</label>
+                        <input class="uk-input" id="comment" type="text" name="comment" value="<?php echo orderClean($order['comment']); ?>" autocomplete="off">
                     </div>
 
                     <div class="uk-margin-small-top">
