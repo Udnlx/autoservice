@@ -50,9 +50,49 @@ if ($operator == 'no_operator') {
         $is_search = true;
 
         if ($search_client !== '') {
-            $selector .= ", client%=" . $sanitizer->selectorValue($search_client);
+            $value  = $sanitizer->selectorValue($search_client);
+            $digits = $sanitizer->digits($search_client);
+            // ---------- 1. Собираем имена владельцев ----------
+            $ownerNames = [];
+            // по телефону — как ввёл пользователь
+            $byPhone = $pages->find("template=owner, phone%=$value");
+            // если пусто и есть хотя бы 3 цифры — пробуем только цифрами
+            if (!count($byPhone) && strlen($digits) >= 3) {
+                $byPhone = $pages->find("template=owner, phone%=$digits");
+            }
+            foreach ($byPhone as $ownerItem) {
+                if ($ownerItem->title) {
+                    $ownerNames[] = $ownerItem->title;
+                }
+            }
+            // по имени владельца — чтобы поиск по фамилии тоже работал
+            foreach ($pages->find("template=owner, title%=$value") as $ownerItem) {
+                if ($ownerItem->title) {
+                    $ownerNames[] = $ownerItem->title;
+                }
+            }
+            $ownerNames = array_values(array_unique($ownerNames));
+            // ---------- 2. Собираем ID подходящих заявок ----------
+            $orderIds = [];
+            // напрямую по введённому тексту
+            foreach ($pages->find("template=order_item, parent=$orders_page, client%=$value") as $orderItem) {
+                $orderIds[] = $orderItem->id;
+            }
+            // по именам владельцев, найденных через телефон
+            foreach ($ownerNames as $ownerName) {
+                $nameValue = $sanitizer->selectorValue($ownerName);
+                foreach ($pages->find("template=order_item, parent=$orders_page, client%=$nameValue") as $orderItem) {
+                    $orderIds[] = $orderItem->id;
+                }
+            }
+            $orderIds = array_values(array_unique($orderIds));
+            // ---------- 3. Ограничение выборки ----------
+            if (count($orderIds)) {
+                $selector .= ", id=" . implode('|', $orderIds);
+            } else {
+                $selector .= ", id=-1"; // ничего не нашли — пустой результат
+            }
         }
-
         if ($search_auto !== '') {
             $selector .= ", auto%=" . $sanitizer->selectorValue($search_auto);
         }
@@ -100,7 +140,7 @@ if ($operator == 'no_operator') {
                     <div class="order-view-grid">
                         <div>
                             <label for="search_client">Клиент</label>
-                            <input class="uk-input" id="search_client" type="text" name="search_client" value="<?php echo orderClean($search_client); ?>" placeholder="Введите имя клиента" autocomplete="off">
+                            <input class="uk-input" id="search_client" type="text" name="search_client" value="<?php echo orderClean($search_client); ?>" placeholder="Введите имя клиента или номер телефона" autocomplete="off">
                         </div>
 
                         <div>
