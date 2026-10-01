@@ -171,7 +171,7 @@ if ($operator == 'no_operator') {
 
             <div class="uk-margin-small-top">
                 <label for="car_number">Гос. номер</label>
-                <input class="uk-input" id="car_number" type="text" name="car_number" placeholder="Например: О123ХХ58" autocomplete="off" required>
+                <input class="uk-input" id="car_number" type="text" name="car_number" placeholder="Например: О123ХХ58" autocomplete="off">
             </div>
 
             <div class="uk-margin-small-top">
@@ -184,12 +184,12 @@ if ($operator == 'no_operator') {
                         </button>
                     </div>
                 </div>
-                <input class="uk-input uk-margin-small-top" id="car_vin" type="text" name="car_vin" placeholder="17 символов" autocomplete="off" required>
+                <input class="uk-input uk-margin-small-top" id="car_vin" type="text" name="car_vin" placeholder="17 символов" autocomplete="off">
             </div>
 
             <div class="uk-margin-small-top">
                 <label for="car_year">Год выпуска</label>
-                <input class="uk-input" id="car_year" type="text" name="car_year" placeholder="Например: 2022" autocomplete="off" required>
+                <input class="uk-input" id="car_year" type="text" name="car_year" placeholder="Например: 2022" autocomplete="off">
             </div>
 
             <!-- ПОИСК КЛИЕНТА -->
