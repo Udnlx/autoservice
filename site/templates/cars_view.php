@@ -161,7 +161,25 @@ if ($operator == 'no_operator') {
 
             <div class="uk-margin-small-top">
                 <label for="car_brand">Марка</label>
-                <input class="uk-input" id="car_brand" type="text" name="car_brand" placeholder="Например: Renault" autocomplete="off" required>
+
+                <div style="position: relative;">
+                    <input
+                        class="uk-input"
+                        id="car_brand"
+                        type="text"
+                        name="car_brand"
+                        placeholder="Например: Renault"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <ul
+                        id="car_brand_results"
+                        style="display:none; position:absolute; z-index:1100; left:0; right:0; margin:0; padding:0;
+                               list-style:none; background:#fff; border:1px solid #e0e0e0; border-radius:4px;
+                               max-height:220px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,.1);"
+                    ></ul>
+                </div>
             </div>
 
             <div class="uk-margin-small-top">

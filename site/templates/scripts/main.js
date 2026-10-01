@@ -491,3 +491,151 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 // СКРИПТ ДОБАВЛЕНИЯ РАБОТ И ЗАПЧАСТЕЙ
+
+
+
+
+
+// АВТОДОПОЛНЕНИЕ МАРКИ АВТОМОБИЛЯ
+const CAR_BRANDS = [
+    'Acura', 'Alfa Romeo', 'Audi', 'BAIC', 'Belgee', 'Bentley', 'BMW',
+    'Brilliance', 'Buick', 'BYD', 'Cadillac', 'Changan', 'Chery',
+    'Chevrolet', 'Chrysler', 'Citroen', 'Dacia', 'Daewoo', 'Daihatsu',
+    'Datsun', 'Dodge', 'Dongfeng', 'DS', 'Evolute', 'Exeed', 'FAW',
+    'Fiat', 'Ford', 'Foton', 'GAZ', 'Geely', 'Genesis', 'GMC',
+    'Great Wall', 'Haval', 'Honda', 'Hummer', 'Hyundai', 'Infiniti',
+    'Isuzu', 'Iveco', 'Jaguar', 'Jeep', 'Jetour', 'Kia', 'KGM', 'Lada',
+    'Lamborghini', 'Land Rover', 'Lexus', 'Li Auto', 'Lifan', 'Lincoln',
+    'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz', 'MG', 'Mini',
+    'Mitsubishi', 'Moskvich', 'Nissan', 'Omoda', 'Opel', 'Peugeot',
+    'Porsche', 'Ravon', 'Renault', 'Rolls-Royce', 'Saab', 'Seat',
+    'Skoda', 'Smart', 'Sollers', 'SsangYong', 'Subaru', 'Suzuki',
+    'Tank', 'Tesla', 'Toyota', 'UAZ', 'Volkswagen', 'Volvo', 'Voyah',
+    'Xcite', 'Zeekr', 'Zotye'
+];
+
+document.addEventListener('DOMContentLoaded', function () {
+    const brandInput   = document.getElementById('car_brand');
+    const brandResults = document.getElementById('car_brand_results');
+
+    if (!brandInput || !brandResults) {
+        return;
+    }
+
+    let matches = [];
+    let activeIndex = -1;
+
+    function hideBrandList() {
+        brandResults.style.display = 'none';
+        brandResults.innerHTML = '';
+        matches = [];
+        activeIndex = -1;
+    }
+
+    function setActiveItem(index) {
+        const items = brandResults.querySelectorAll('li');
+
+        items.forEach(function (item) {
+            item.style.background = '#fff';
+        });
+
+        if (index < 0 || index >= items.length) {
+            activeIndex = -1;
+            return;
+        }
+
+        activeIndex = index;
+        items[index].style.background = '#f5f5f5';
+        items[index].scrollIntoView({ block: 'nearest' });
+    }
+
+    function selectBrand(brand) {
+        brandInput.value = brand;
+        hideBrandList();
+        brandInput.focus();
+    }
+
+    function showBrandMatches(query) {
+        const q = query.trim().toLowerCase();
+
+        if (q === '') {
+            hideBrandList();
+            return;
+        }
+
+        matches = CAR_BRANDS.filter(function (brand) {
+            return brand.toLowerCase().indexOf(q) !== -1;
+        }).slice(0, 20); // не больше 20 пунктов в списке
+
+        if (matches.length === 0) {
+            hideBrandList();
+            return;
+        }
+
+        brandResults.innerHTML = '';
+        activeIndex = -1;
+
+        matches.forEach(function (brand, index) {
+            const li = document.createElement('li');
+
+            li.textContent = brand;
+            li.style.padding = '8px 12px';
+            li.style.cursor = 'pointer';
+            li.style.borderBottom = '1px solid #f0f0f0';
+
+            li.addEventListener('mouseenter', function () {
+                setActiveItem(index);
+            });
+
+            // mousedown + preventDefault, чтобы выбор сработал
+            // раньше, чем поле потеряет фокус
+            li.addEventListener('mousedown', function (event) {
+                event.preventDefault();
+                selectBrand(brand);
+            });
+
+            brandResults.appendChild(li);
+        });
+
+        brandResults.style.display = 'block';
+    }
+
+    brandInput.addEventListener('input', function () {
+        showBrandMatches(this.value);
+    });
+
+    brandInput.addEventListener('focus', function () {
+        if (this.value.trim() !== '') {
+            showBrandMatches(this.value);
+        }
+    });
+
+    brandInput.addEventListener('keydown', function (event) {
+        if (brandResults.style.display !== 'block') {
+            return;
+        }
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            setActiveItem(activeIndex + 1);
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            setActiveItem(activeIndex - 1);
+        } else if (event.key === 'Enter') {
+            if (activeIndex >= 0 && matches[activeIndex]) {
+                event.preventDefault();
+                selectBrand(matches[activeIndex]);
+            }
+        } else if (event.key === 'Escape') {
+            hideBrandList();
+        }
+    });
+
+    // Закрытие по клику вне поля
+    document.addEventListener('click', function (event) {
+        if (!brandInput.contains(event.target) && !brandResults.contains(event.target)) {
+            hideBrandList();
+        }
+    });
+});
+// АВТОДОПОЛНЕНИЕ МАРКИ АВТОМОБИЛЯ
