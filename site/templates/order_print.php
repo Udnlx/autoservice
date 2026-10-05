@@ -439,7 +439,7 @@ if ($operator == 'no_operator') {
 
     // Рекомендованные работы (заглушка)
     $content .= '<p class="section-title">Рекомендованные работы</p>';
-    $content .= '<table class="works-table"><tr><td style="height: 30px;">&nbsp;</td></tr></table>';
+    $content .= '<table class="works-table"><tr><td style="height: 30px;">' . $orderPage->recomend . '</td></tr></table>';
 
     // Итого + прописью
     $content .= '

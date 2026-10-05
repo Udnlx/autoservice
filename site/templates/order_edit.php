@@ -40,6 +40,7 @@ if ($operator == 'no_operator') {
     $total_price = !empty($_POST['total_price']) ? $_POST['total_price'] : 0;
     $payment_type = !empty($_POST['payment_type']) ? $_POST['payment_type'] : NULL;
     $comment = !empty($_POST['comment']) ? $_POST['comment'] : NULL;
+    $recomend = !empty($_POST['recomend']) ? $_POST['recomend'] : NULL;
     $order_status = !empty($_POST['order_status']) ? $_POST['order_status'] : NULL;
 
     $order_works = [];
@@ -169,6 +170,7 @@ if ($operator == 'no_operator') {
                 $orderPage->status_order = $order_status;
                 $orderPage->payment_type = $payment_type;
                 $orderPage->comment = $comment;
+                $orderPage->recomend = $recomend;
                 $orderPage->cost_works = $works_price;
                 $orderPage->cost_autoparts = $parts_price;
                 $orderPage->cost_total = $total_price;

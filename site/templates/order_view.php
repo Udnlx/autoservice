@@ -99,7 +99,8 @@ if ($operator == 'no_operator') {
         'total_price' => $orderPage->cost_total,
         'works' => $works,
         'parts' => $parts,
-        'comment' => $orderPage->comment
+        'comment' => $orderPage->comment,
+        'recomend' => $orderPage->recomend
     ];
 
     // $order = [
@@ -441,6 +442,11 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="comment">Комментарий</label>
                         <input class="uk-input" id="comment" type="text" name="comment" value="<?php echo orderClean($order['comment']); ?>" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="recomend">Рекомендации для клиента</label>
+                        <input class="uk-input" id="recomend" type="text" name="recomend" value="<?php echo orderClean($order['recomend']); ?>" autocomplete="off">
                     </div>
 
                     <div class="uk-margin-small-top">
