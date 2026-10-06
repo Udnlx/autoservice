@@ -437,9 +437,17 @@ if ($operator == 'no_operator') {
     </tr>';
     $content .= '</table>';
 
-    // Рекомендованные работы (заглушка)
+    // Номер турбины
+    $content .= '<p class="section-title">Номер турбины</p>';
+    $content .= '<table class="works-table"><tr><td style="height: 30px;">' . $orderPage->num_turbo . '</td></tr></table>';
+
+    // Рекомендованные работы
     $content .= '<p class="section-title">Рекомендованные работы</p>';
     $content .= '<table class="works-table"><tr><td style="height: 30px;">' . $orderPage->recomend . '</td></tr></table>';
+
+    // Гарантийные обязательства
+    $content .= '<p class="section-title">Гарантийные обязательства</p>';
+    $content .= '<table class="works-table"><tr><td style="height: 30px;">' . $orderPage->warranty . '</td></tr></table>';
 
     // Итого + прописью
     $content .= '

@@ -94,11 +94,13 @@ if ($operator == 'no_operator') {
         'car' => $orderPage->auto,
         'status' => $orderPage->status_order,
         'payment_type' => $orderPage->payment_type,
+        'num_turbo' => $orderPage->num_turbo,
         'works_price' => $orderPage->cost_works,
         'parts_price' => $orderPage->cost_autoparts,
         'total_price' => $orderPage->cost_total,
         'works' => $works,
         'parts' => $parts,
+        'warranty' => $orderPage->warranty,
         'comment' => $orderPage->comment,
         'recomend' => $orderPage->recomend
     ];
@@ -417,6 +419,11 @@ if ($operator == 'no_operator') {
                     <!--КОРЗИНА ЗАПЧАСТЕЙ-->
 
                     <div class="uk-margin-small-top">
+                        <label for="num_turbo">№ турбины</label>
+                        <input class="uk-input" id="num_turbo" type="text" name="num_turbo" value="<?php echo orderClean($order['num_turbo']); ?>" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top">
                         <label for="works_price">Стоимость работ</label>
                         <input class="uk-input" id="works_price" type="text" name="works_price" value="<?php echo orderClean($order['works_price']); ?>" autocomplete="off" required readonly>
                     </div>
@@ -436,6 +443,22 @@ if ($operator == 'no_operator') {
                         <select class="uk-select" id="payment_type" name="payment_type" required>
                             <option value="Наличный расчет" <?php if ($order['payment_type'] == 'Наличный расчет') echo 'selected'; ?>>Наличный расчет</option>
                             <option value="Безналичный расчет" <?php if ($order['payment_type'] == 'Безналичный расчет') echo 'selected'; ?>>Безналичный расчет</option>
+                        </select>
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="warranty">Гарантийные обязательства</label>
+                        <select class="uk-select" id="warranty" name="warranty" required>
+                            <option value="6 месяцев" <?php if ($order['warranty'] == '6 месяцев') echo 'selected'; ?>>6 месяцев</option>
+                            <option value="12 месяцев" <?php if ($order['warranty'] == '12 месяцев') echo 'selected'; ?>>12 месяцев</option>
+                            <option value="18 месяцев" <?php if ($order['warranty'] == '18 месяцев') echo 'selected'; ?>>18 месяцев</option>
+                            <option value="24 месяцев" <?php if ($order['warranty'] == '24 месяцев') echo 'selected'; ?>>24 месяцев</option>
+                            <option value="30 месяцев" <?php if ($order['warranty'] == '30 месяцев') echo 'selected'; ?>>30 месяцев</option>
+                            <option value="36 месяцев" <?php if ($order['warranty'] == '36 месяцев') echo 'selected'; ?>>36 месяцев</option>
+                            <option value="42 месяцев" <?php if ($order['warranty'] == '42 месяцев') echo 'selected'; ?>>42 месяцев</option>
+                            <option value="48 месяцев" <?php if ($order['warranty'] == '48 месяцев') echo 'selected'; ?>>48 месяцев</option>
+                            <option value="54 месяцев" <?php if ($order['warranty'] == '54 месяцев') echo 'selected'; ?>>54 месяцев</option>
+                            <option value="60 месяцев" <?php if ($order['warranty'] == '60 месяцев') echo 'selected'; ?>>60 месяцев</option>
                         </select>
                     </div>
 

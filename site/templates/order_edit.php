@@ -35,10 +35,12 @@ if ($operator == 'no_operator') {
     $parts_prices = $_POST['parts_prices'] ?? [];
     $parts_ids = $_POST['parts_ids'] ?? [];
 
+    $num_turbo = !empty($_POST['num_turbo'])?$_POST['num_turbo']:NULL;
     $works_price = !empty($_POST['works_price']) ? $_POST['works_price'] : 0;
     $parts_price = !empty($_POST['parts_price']) ? $_POST['parts_price'] : 0;
     $total_price = !empty($_POST['total_price']) ? $_POST['total_price'] : 0;
     $payment_type = !empty($_POST['payment_type']) ? $_POST['payment_type'] : NULL;
+    $warranty = !empty($_POST['warranty']) ? $_POST['warranty'] : NULL;
     $comment = !empty($_POST['comment']) ? $_POST['comment'] : NULL;
     $recomend = !empty($_POST['recomend']) ? $_POST['recomend'] : NULL;
     $order_status = !empty($_POST['order_status']) ? $_POST['order_status'] : NULL;
@@ -169,8 +171,10 @@ if ($operator == 'no_operator') {
                 $orderPage->of(false);
                 $orderPage->status_order = $order_status;
                 $orderPage->payment_type = $payment_type;
+                $orderPage->warranty = $warranty;
                 $orderPage->comment = $comment;
                 $orderPage->recomend = $recomend;
+                $orderPage->num_turbo = $num_turbo;
                 $orderPage->cost_works = $works_price;
                 $orderPage->cost_autoparts = $parts_price;
                 $orderPage->cost_total = $total_price;

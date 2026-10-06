@@ -314,6 +314,11 @@ if ($operator == 'no_operator') {
                     <!--КОРЗИНА ЗАПЧАСТЕЙ-->
 
                     <div class="uk-margin-small-top">
+                        <label for="num_turbo">№ турбины</label>
+                        <input class="uk-input" id="num_turbo" type="text" name="num_turbo" value="" autocomplete="off">
+                    </div>
+
+                    <div class="uk-margin-small-top">
                         <label for="works_price">Стоимость работ</label>
                         <input class="uk-input" id="works_price" type="text" name="works_price" value="0" autocomplete="off" required readonly>
                     </div>
@@ -333,6 +338,22 @@ if ($operator == 'no_operator') {
                         <select class="uk-select" id="payment_type" name="payment_type" required>
                             <option value="Наличный расчет">Наличный расчет</option>
                             <option value="Безналичный расчет">Безналичный расчет</option>
+                        </select>
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="warranty">Гарантийные обязательства</label>
+                        <select class="uk-select" id="warranty" name="warranty" required>
+                            <option value="6 месяцев">6 месяцев</option>
+                            <option value="12 месяцев">12 месяцев</option>
+                            <option value="18 месяцев">18 месяцев</option>
+                            <option value="24 месяцев">24 месяцев</option>
+                            <option value="30 месяцев">30 месяцев</option>
+                            <option value="36 месяцев">36 месяцев</option>
+                            <option value="42 месяцев">42 месяцев</option>
+                            <option value="48 месяцев">48 месяцев</option>
+                            <option value="54 месяцев">54 месяцев</option>
+                            <option value="60 месяцев">60 месяцев</option>
                         </select>
                     </div>
 
