@@ -695,5 +695,7 @@ document.addEventListener('DOMContentLoaded', function () {
     checkboxes.forEach(function (checkbox) {
         checkbox.addEventListener('change', applyFilter);
     });
+
+    applyFilter();
 });
 // ФИЛЬТР ПО СТАТУСАМ ЗАЯВОК

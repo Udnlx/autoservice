@@ -181,7 +181,7 @@ if ($operator == 'no_operator') {
                             </label>
 
                             <label style="display:block; margin-bottom:6px; cursor:pointer;">
-                                <input type="checkbox" class="status-filter-checkbox" data-status="status-done" checked>
+                                <input type="checkbox" class="status-filter-checkbox" data-status="status-done">
                                 Завершена
                             </label>
 
