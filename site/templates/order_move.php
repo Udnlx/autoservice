@@ -155,6 +155,41 @@ if ($operator == 'no_operator') {
                         <?php if ($is_search) { ?>
                             <a class="uk-margin-small-top uk-button uk-button-default" href="/zakaz-dvizhenie/">Сбросить поиск</a>
                         <?php } ?>
+
+                        <!-- КНОПКА ФИЛЬТРА -->
+                        <button type="button" id="toggle_filter_btn" class="uk-margin-small-top uk-button uk-button-default">
+                            Фильтр по статусам
+                        </button>
+
+                        <!-- ПАНЕЛЬ ФИЛЬТРА -->
+                        <div id="filter_panel" style="display:none; margin-top:10px; padding:12px; background:#f8f8f8; border-radius:4px;">
+                            <div style="font-weight:600; margin-bottom:8px;">Показывать статусы:</div>
+
+                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                <input type="checkbox" class="status-filter-checkbox" data-status="status-new" checked>
+                                Новая
+                            </label>
+
+                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                <input type="checkbox" class="status-filter-checkbox" data-status="status-progress" checked>
+                                В работе
+                            </label>
+
+                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                <input type="checkbox" class="status-filter-checkbox" data-status="status-waiting" checked>
+                                Ожидает запчасти
+                            </label>
+
+                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                <input type="checkbox" class="status-filter-checkbox" data-status="status-done" checked>
+                                Завершена
+                            </label>
+
+                            <label style="display:block; cursor:pointer;">
+                                <input type="checkbox" class="status-filter-checkbox" data-status="status-canceled" checked>
+                                Отменена
+                            </label>
+                        </div>
                     </div>
                 </form>
                 <!--ФОРМА ПОИСКА-->

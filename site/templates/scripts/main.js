@@ -639,3 +639,61 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 // АВТОДОПОЛНЕНИЕ МАРКИ АВТОМОБИЛЯ
+
+
+
+
+
+
+// ФИЛЬТР ПО СТАТУСАМ ЗАЯВОК
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn   = document.getElementById('toggle_filter_btn');
+    const filterPanel = document.getElementById('filter_panel');
+    const checkboxes  = document.querySelectorAll('.status-filter-checkbox');
+    const orderItems  = document.querySelectorAll('.order-list-item');
+
+    if (!toggleBtn || !filterPanel || !checkboxes.length || !orderItems.length) {
+        return;
+    }
+
+    // Открыть/закрыть панель фильтра
+    toggleBtn.addEventListener('click', function () {
+        if (filterPanel.style.display === 'none') {
+            filterPanel.style.display = 'block';
+        } else {
+            filterPanel.style.display = 'none';
+        }
+    });
+
+    // Применить фильтр при изменении галочки
+    function applyFilter() {
+        const activeStatuses = [];
+
+        checkboxes.forEach(function (checkbox) {
+            if (checkbox.checked) {
+                activeStatuses.push(checkbox.dataset.status);
+            }
+        });
+
+        orderItems.forEach(function (item) {
+            let visible = false;
+
+            activeStatuses.forEach(function (statusClass) {
+                if (item.classList.contains(statusClass)) {
+                    visible = true;
+                }
+            });
+
+            if (visible) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', applyFilter);
+    });
+});
+// ФИЛЬТР ПО СТАТУСАМ ЗАЯВОК
