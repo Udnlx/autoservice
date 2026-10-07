@@ -275,11 +275,11 @@ if ($operator == 'no_operator') {
                                     class="uk-input"
                                     id="work_filter"
                                     type="text"
-                                    placeholder="Фильтр по названию работы..."
+                                    placeholder="Выберите работу..."
                                     autocomplete="off"
                                 >
 
-                                <select class="uk-select" id="work_select">
+                                <select class="uk-select" id="work_select" style="display: none;">
                                     <option value="" disabled selected>Выберите работу</option>
 
                                     <?php foreach ($all_works as $workPage) { ?>

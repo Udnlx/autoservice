@@ -65,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     workTypeSelect.addEventListener('change', function () {
+        if (workFilter) {
+            workFilter.value = '';
+        }
         updateWorkOptions();
     });
 
@@ -251,6 +254,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         workSelect.selectedIndex = 0;
+        workFilter.value = '';
+
+        // Принудительно вызываем событие input для обновления автодополнения
+        workFilter.dispatchEvent(new Event('input'));
     });
 
 
@@ -491,6 +498,164 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 // СКРИПТ ДОБАВЛЕНИЯ РАБОТ И ЗАПЧАСТЕЙ
+
+
+
+
+
+// АВТОДОПОЛНЕНИЕ РАБОТ
+document.addEventListener('DOMContentLoaded', function () {
+    const workFilter = document.getElementById('work_filter');
+    const workSelect = document.getElementById('work_select');
+    const workTypeSelect = document.getElementById('work_type');
+
+    if (!workFilter || !workSelect) {
+        return;
+    }
+
+    let workMatches = [];
+    let activeWorkIndex = -1;
+    let workResultsList = null;
+
+    function hideWorkList() {
+        if (workResultsList) {
+            workResultsList.style.display = 'none';
+            workResultsList.innerHTML = '';
+        }
+        workMatches = [];
+        activeWorkIndex = -1;
+    }
+
+    function setActiveWorkItem(index) {
+        if (!workResultsList) return;
+
+        const items = workResultsList.querySelectorAll('li');
+        items.forEach(function (item) {
+            item.style.background = '#fff';
+        });
+
+        if (index < 0 || index >= items.length) {
+            activeWorkIndex = -1;
+            return;
+        }
+
+        activeWorkIndex = index;
+        items[index].style.background = '#f5f5f5';
+        items[index].scrollIntoView({ block: 'nearest' });
+    }
+
+    function selectWorkFromList(workValue) {
+        const selectedOption = Array.from(workSelect.options).find(function (opt) {
+            return opt.value === workValue;
+        });
+
+        if (selectedOption) {
+            workFilter.value = selectedOption.textContent.replace(/\s+/g, ' ').trim();
+            workSelect.value = selectedOption.value;
+        }
+
+        hideWorkList();
+        workFilter.focus();
+    }
+
+    function showWorkMatches(query) {
+        const q = query.trim().toLowerCase();
+
+        // Берём все опции из текущего work_select (они уже отфильтрованы по типу работ)
+        const allOptions = Array.from(workSelect.options).filter(function (opt) {
+            return opt.value !== '';
+        });
+
+        if (q === '') {
+            // При пустом поле показываем все работы из select
+            workMatches = allOptions;
+        } else {
+            // При вводе — фильтруем по тексту
+            workMatches = allOptions.filter(function (opt) {
+                return opt.textContent.toLowerCase().indexOf(q) !== -1;
+            });
+        }
+
+        if (workMatches.length === 0) {
+            hideWorkList();
+            return;
+        }
+
+        if (!workResultsList) {
+            workResultsList = document.createElement('ul');
+            workResultsList.id = 'work_filter_results';
+            workResultsList.style.cssText = 'display:none; position:absolute; z-index:1100; top:100%; left:0; right:0; margin-top:4px; padding:0; list-style:none; background:#fff; border:1px solid #e0e0e0; border-radius:4px; max-height:220px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,.1);';
+
+            const parent = workFilter.parentElement;
+            if (parent.style.position !== 'relative' && parent.style.position !== 'absolute') {
+                parent.style.position = 'relative';
+            }
+            parent.appendChild(workResultsList);
+        }
+
+        workResultsList.innerHTML = '';
+        activeWorkIndex = -1;
+
+        workMatches.forEach(function (opt, index) {
+            const li = document.createElement('li');
+            li.textContent = opt.textContent.replace(/\s+/g, ' ').trim();
+            li.style.padding = '8px 12px';
+            li.style.cursor = 'pointer';
+            li.style.borderBottom = '1px solid #f0f0f0';
+
+            li.addEventListener('mouseenter', function () {
+                setActiveWorkItem(index);
+            });
+
+            li.addEventListener('mousedown', function (event) {
+                event.preventDefault();
+                selectWorkFromList(opt.value);
+            });
+
+            workResultsList.appendChild(li);
+        });
+
+        workResultsList.style.display = 'block';
+    }
+
+    workFilter.addEventListener('input', function () {
+        showWorkMatches(this.value);
+    });
+
+    workFilter.addEventListener('click', function () {
+        showWorkMatches(this.value);
+    });
+
+    workFilter.addEventListener('keydown', function (event) {
+        if (!workResultsList || workResultsList.style.display !== 'block') {
+            return;
+        }
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            setActiveWorkItem(activeWorkIndex + 1);
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            setActiveWorkItem(activeWorkIndex - 1);
+        } else if (event.key === 'Enter') {
+            if (activeWorkIndex >= 0 && workMatches[activeWorkIndex]) {
+                event.preventDefault();
+                selectWorkFromList(workMatches[activeWorkIndex].value);
+            }
+        } else if (event.key === 'Escape') {
+            hideWorkList();
+        }
+    });
+
+    document.addEventListener('click', function (event) {
+        if (workFilter && workResultsList &&
+            !workFilter.contains(event.target) &&
+            !workResultsList.contains(event.target)) {
+            hideWorkList();
+        }
+    });
+});
+// АВТОДОПОЛНЕНИЕ РАБОТ
 
 
 
