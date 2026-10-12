@@ -320,6 +320,16 @@ form button[type="submit"]:hover {
     margin-top: 3px;
     font-size: 13px;
     color: #6b7280;}
+.order-cart-price .cart-price-input {
+    width: 92px;
+    display: inline-block;
+    padding: 2px 6px;
+    height: 28px;}
+.order-cart-price .cart-price-unit {
+    margin-left: 4px;}
+.cart-price-input.cart-price-changed {
+    border-color: #f0a500;
+    box-shadow: inset 0 0 0 1px #f0a500;}
 .order-cart-badge-work {
     background: #1e87f0;
     color: #ffffff;}

@@ -189,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 id: itemIdCounter++,
                 name: itemName,
                 price: itemPrice,
+                basePrice: itemPrice,
                 partId: 0
             });
         });
@@ -313,6 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
             id: itemIdCounter++,
             name: itemName,
             price: itemPrice,
+            basePrice: itemPrice,
             partId: itemPartId
         };
 
@@ -399,7 +401,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div>
                     <strong>${escapeHtml(item.name)}</strong>
                     <div class="order-cart-price">
-                        ${item.price} ₽
+                        ${
+                            type === 'work'
+                                ? `<input
+                                        type="text"
+                                        class="uk-input uk-form-small cart-price-input${item.price !== item.basePrice ? ' cart-price-changed' : ''}"
+                                        data-id="${item.id}"
+                                        data-base-price="${item.basePrice}"
+                                        value="${item.price}"
+                                        inputmode="numeric"
+                                        autocomplete="off"
+                                    >
+                                    <span class="cart-price-unit">₽</span>`
+                                : `${item.price} ₽`
+                        }
                     </div>
                 </div>
 
@@ -494,6 +509,73 @@ document.addEventListener('DOMContentLoaded', function () {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    // =========================
+    // ПРАВКА ЦЕНЫ РАБОТ В КОРЗИНЕ
+    // =========================
+
+    if (worksCart) {
+        // Enter = подтвердить и выйти из поля (вызовет change)
+        worksCart.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && e.target.classList.contains('cart-price-input')) {
+                e.preventDefault();   // чтобы не отправить форму
+                e.target.blur();
+            }
+        });
+
+        worksCart.addEventListener('change', function (e) {
+            const input = e.target;
+            if (!input || !input.classList.contains('cart-price-input')) return;
+
+            const itemId    = Number(input.dataset.id);
+            const basePrice = Number(input.dataset.basePrice);
+
+            const item = selectedWorks.find(function (w) {
+                return w.id === itemId;
+            });
+            if (!item) return;
+
+            const raw = String(input.value).replace(/\s/g, '').replace(',', '.');
+
+            // ПУСТО — это не ноль: возвращаем как было
+            if (raw === '') {
+                input.value = item.price;
+                return;
+            }
+
+            let price = Number(raw);
+
+            // Мусор или минус — возвращаем как было
+            if (isNaN(price) || price < 0) {
+                input.value = item.price;
+                return;
+            }
+
+            price = Math.round(price);   // целые рубли, как (int) в PHP
+
+            // 1) Пишем в массив — источник истины
+            item.price = price;
+            input.value = price;
+
+            // 2) Синхронизируем скрытое поле этой строки
+            const row = input.closest('.order-cart-item');
+            if (row) {
+                const hidden = row.querySelector('input[name="works_prices[]"]');
+                if (hidden) hidden.value = price;
+            }
+
+            // 3) Пересчёт. Корзину ЦЕЛИКОМ не перерисовываем —
+            //    иначе инпут потеряет фокус
+            updatePrices();
+
+            // 4) Метка «цена изменена»
+            if (price === basePrice) {
+                input.classList.remove('cart-price-changed');
+            } else {
+                input.classList.add('cart-price-changed');
+            }
+        });
     }
 
 });
