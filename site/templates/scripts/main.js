@@ -231,11 +231,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            // Кол-во из базы (если страница редактирования его отдаёт), иначе 1
+            const qtyInput = cartItem.querySelector('input[name="parts_qty[]"]');
+            const itemQty  = qtyInput ? (Number(qtyInput.value) || 1) : 1;
+
             selectedParts.push({
                 id: itemIdCounter++,
                 name: itemName,
                 price: itemPrice,
-                qty: 1,
+                basePrice: itemPrice,
+                qty: itemQty,
                 partId: itemPartId
             });
         });
@@ -358,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function () {
             type: 'part',
             hiddenName: 'parts[]',
             hiddenPriceName: 'parts_prices[]',
-            hiddenQtyName: '',
+            hiddenQtyName: 'parts_qty[]',
             hiddenIdName: 'parts_ids[]',
             removeClass: 'remove-part'
         });
@@ -411,30 +416,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="order-cart-item-main">
                     <strong>${escapeHtml(item.name)}</strong>
                     <div class="order-cart-price">
-                        ${
-                            type === 'work'
-                                ? `<input
-                                        type="text"
-                                        class="uk-input uk-form-small cart-price-input${item.price !== item.basePrice ? ' cart-price-changed' : ''}"
-                                        data-id="${item.id}"
-                                        data-base-price="${item.basePrice}"
-                                        value="${item.price}"
-                                        inputmode="numeric"
-                                        autocomplete="off"
-                                    >
-                                    <span class="cart-price-unit">₽</span>
-                                    <span class="cart-price-times">×</span>
-                                    <input
-                                        type="text"
-                                        class="uk-input uk-form-small cart-qty-input"
-                                        data-id="${item.id}"
-                                        value="${item.qty || 1}"
-                                        inputmode="numeric"
-                                        autocomplete="off"
-                                    >
-                                    <span class="cart-row-sum-wrap">= <span class="cart-row-sum" data-id="${item.id}">${item.price * (item.qty || 1)}</span> ₽</span>`
-                                : `${item.price} ₽`
-                        }
+                        <input
+                            type="text"
+                            class="uk-input uk-form-small cart-price-input${item.price !== item.basePrice ? ' cart-price-changed' : ''}"
+                            data-id="${item.id}"
+                            data-type="${type}"
+                            data-base-price="${item.basePrice}"
+                            value="${item.price}"
+                            inputmode="numeric"
+                            autocomplete="off"
+                        >
+                        <span class="cart-price-unit">₽</span>
+                        <span class="cart-price-times">×</span>
+                        <input
+                            type="text"
+                            class="uk-input uk-form-small cart-qty-input"
+                            data-id="${item.id}"
+                            data-type="${type}"
+                            value="${item.qty || 1}"
+                            inputmode="numeric"
+                            autocomplete="off"
+                        >
+                        <span class="cart-row-sum-wrap">= <span class="cart-row-sum" data-id="${item.id}" data-type="${type}">${item.price * (item.qty || 1)}</span> ₽</span>
                     </div>
                 </div>
 
@@ -526,12 +529,12 @@ document.addEventListener('DOMContentLoaded', function () {
         partsPriceInput.value = partsTotal;
         totalPriceInput.value = total;
 
-        // Построчные суммы работ
+        // Построчные суммы работ и запчастей
         document.querySelectorAll('.cart-row-sum').forEach(function (el) {
-            const id = Number(el.dataset.id);
-            const item = selectedWorks.find(function (w) {
-                return w.id === id;
-            });
+            const id   = Number(el.dataset.id);
+            const type = el.dataset.type;
+            const list = type === 'work' ? selectedWorks : selectedParts;
+            const item = list.find(function (x) { return x.id === id; });
             if (item) {
                 el.textContent = item.price * (item.qty || 1);
             }
@@ -556,9 +559,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // ПРАВКА ЦЕНЫ РАБОТ В КОРЗИНЕ
     // =========================
 
-    if (worksCart) {
-        // Enter = подтвердить и выйти из поля (вызовет change)
-        worksCart.addEventListener('keydown', function (e) {
+    // Один обработчик на обе корзины — работы и запчасти ведут себя одинаково
+    function handleCartInput(cart) {
+        if (!cart) return;
+
+        cart.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' &&
                 (e.target.classList.contains('cart-price-input') ||
                  e.target.classList.contains('cart-qty-input'))) {
@@ -567,7 +572,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        worksCart.addEventListener('change', function (e) {
+        cart.addEventListener('change', function (e) {
             const input = e.target;
             if (!input) return;
 
@@ -575,11 +580,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const isQty   = input.classList.contains('cart-qty-input');
             if (!isPrice && !isQty) return;
 
-            const itemId = Number(input.dataset.id);
+            const itemId   = Number(input.dataset.id);
+            const itemType = input.dataset.type;   // 'work' или 'part'
 
-            const item = selectedWorks.find(function (w) {
-                return w.id === itemId;
-            });
+            const list = itemType === 'work' ? selectedWorks : selectedParts;
+            const item = list.find(function (x) { return x.id === itemId; });
             if (!item) return;
 
             const raw = String(input.value).replace(/\s/g, '').replace(',', '.');
@@ -605,17 +610,20 @@ document.addEventListener('DOMContentLoaded', function () {
             // Синхронизируем скрытые поля строки
             const row = input.closest('.order-cart-item');
             if (row) {
-                const hiddenPrice = row.querySelector('input[name="works_prices[]"]');
+                const priceFieldName = itemType === 'work' ? 'works_prices[]' : 'parts_prices[]';
+                const qtyFieldName   = itemType === 'work' ? 'works_qty[]'    : 'parts_qty[]';
+
+                const hiddenPrice = row.querySelector('input[name="' + priceFieldName + '"]');
                 if (hiddenPrice) hiddenPrice.value = item.price;
 
-                const hiddenQty = row.querySelector('input[name="works_qty[]"]');
+                const hiddenQty = row.querySelector('input[name="' + qtyFieldName + '"]');
                 if (hiddenQty) hiddenQty.value = item.qty;
             }
 
-            // Пересчёт: итоги + построчная сумма. Корзину целиком НЕ перерисовываем
+            // Пересчёт — корзину целиком НЕ перерисовываем, иначе инпут потеряет фокус
             updatePrices();
 
-            // Метка «цена изменена» — по-прежнему на инпуте цены
+            // Метка «цена изменена»
             const priceInput = row ? row.querySelector('.cart-price-input') : null;
             if (priceInput) {
                 if (item.price === item.basePrice) {
@@ -626,6 +634,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    handleCartInput(worksCart);
+    handleCartInput(partsCart);
 
 });
 // СКРИПТ ДОБАВЛЕНИЯ РАБОТ И ЗАПЧАСТЕЙ

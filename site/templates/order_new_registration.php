@@ -30,12 +30,14 @@ if ($operator == 'no_operator') {
     $works_qty = $_POST['works_qty'] ?? [];
     $parts = $_POST['parts'] ?? [];
     $parts_prices = $_POST['parts_prices'] ?? [];
+    $parts_qty = $_POST['parts_qty'] ?? [];
     $parts_ids = $_POST['parts_ids'] ?? [];
 
     $num_turbo = !empty($_POST['num_turbo'])?$_POST['num_turbo']:NULL;
-    $works_price = (isset($_POST['works_price']) && $_POST['works_price'] !== '') ? (int)$_POST['works_price'] : 0;
-    $parts_price = (isset($_POST['parts_price']) && $_POST['parts_price'] !== '') ? (int)$_POST['parts_price'] : 0;
-    $total_price = (isset($_POST['total_price']) && $_POST['total_price'] !== '') ? (int)$_POST['total_price'] : 0;
+    // Итоги считаем из строк корзины — ниже, после их сборки (чтобы шапка не разошлась с составом)
+    // $works_price = (isset($_POST['works_price']) && $_POST['works_price'] !== '') ? (int)$_POST['works_price'] : 0;
+    // $parts_price = (isset($_POST['parts_price']) && $_POST['parts_price'] !== '') ? (int)$_POST['parts_price'] : 0;
+    // $total_price = (isset($_POST['total_price']) && $_POST['total_price'] !== '') ? (int)$_POST['total_price'] : 0;
     $payment_type = !empty($_POST['payment_type'])?$_POST['payment_type']:NULL;
     $warranty = !empty($_POST['warranty']) ? $_POST['warranty'] : NULL;
     $comment = !empty($_POST['comment']) ? $_POST['comment'] : NULL;
@@ -67,24 +69,45 @@ if ($operator == 'no_operator') {
     $order_parts = [];
     foreach ($parts as $index => $part_name) {
         $row_price = (int)($parts_prices[$index] ?? 0);
+        $row_qty   = (int)($parts_qty[$index] ?? 1);
+
+        // Пусто/0/мусор — минимум 1
+        if ($row_qty < 1) {
+            $row_qty = 1;
+        }
 
         $order_parts[] = [
             'name'    => $part_name,
             'price'   => $row_price,
             'part_id' => (int)($parts_ids[$index] ?? 0),
-            'qty'     => 1,            // запчасти пока всегда по 1
-            'total'   => $row_price
+            'qty'     => $row_qty,
+            'total'   => $row_price * $row_qty
         ];
     }
 
-    // Сколько раз каждая запчасть встречается в корзине (по part_id)
+    // Сколько ВСЕГО единиц каждой запчасти в корзине (по part_id).
+    // Суммируем qty, потому что одна и та же запчасть может быть
+    // двумя строками с разными ценами/количествами.
     $new_part_counts = [];
     foreach ($order_parts as $row) {
         $pid = (int)$row['part_id'];
         if ($pid > 0) {
-            $new_part_counts[$pid] = ($new_part_counts[$pid] ?? 0) + 1;
+            $new_part_counts[$pid] = ($new_part_counts[$pid] ?? 0) + (int)$row['qty'];
         }
     }
+
+    // Итоги — из строк, а не из POST
+    $works_price = 0;
+    foreach ($order_works as $row) {
+        $works_price += $row['total'];
+    }
+
+    $parts_price = 0;
+    foreach ($order_parts as $row) {
+        $parts_price += $row['total'];
+    }
+
+    $total_price = $works_price + $parts_price;
 
     $order = [
         'date' => $selected_date,
@@ -98,9 +121,9 @@ if ($operator == 'no_operator') {
         'recomend' => $recomend,
 
         'num_turbo' => $num_turbo,
-        'works_price' => $works_price ?? 0,
-        'parts_price' => $parts_price ?? 0,
-        'total_price' => $total_price ?? 0,
+        'works_price' => $works_price,
+        'parts_price' => $parts_price,
+        'total_price' => $total_price,
 
         'works' => $order_works,
         'parts' => $order_parts

@@ -80,9 +80,10 @@ if ($operator == 'no_operator') {
     if (count($orderPage->autoparts)) {
         foreach ($orderPage->autoparts as $item) {
             $parts[] = [
-                'name' => $item->autopart,
-                'price' => $item->price,
-                'part_id' => (int)$item->part_id
+                'name'    => $item->autopart,
+                'price'   => $item->price,
+                'part_id' => (int)$item->part_id,
+                'qty'     => max(1, (int)$item->qty)   // старые заявки без qty → 1
             ];
         }
     }
@@ -407,6 +408,7 @@ if ($operator == 'no_operator') {
 
                                             <input type="hidden" name="parts[]" value="<?php echo orderClean($part['name']); ?>">
                                             <input type="hidden" name="parts_prices[]" value="<?php echo orderClean($part['price']); ?>">
+                                            <input type="hidden" name="parts_qty[]" value="<?php echo (int)$part['qty']; ?>">
                                             <input type="hidden" name="parts_ids[]" value="<?php echo (int)$part['part_id']; ?>">
                                         </div>
                                     <?php } ?>
