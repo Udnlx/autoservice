@@ -181,6 +181,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const itemName = nameBlock.textContent.trim();
             const itemPrice = Number(priceInput.value) || 0;
 
+            // Кол-во из базы (если страница редактирования его отдаёт), иначе 1
+            const qtyInput = cartItem.querySelector('input[name="works_qty[]"]');
+            const itemQty  = qtyInput ? (Number(qtyInput.value) || 1) : 1;
+
             if (!itemName) {
                 return;
             }
@@ -190,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 name: itemName,
                 price: itemPrice,
                 basePrice: itemPrice,
+                qty: itemQty,
                 partId: 0
             });
         });
@@ -230,6 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 id: itemIdCounter++,
                 name: itemName,
                 price: itemPrice,
+                qty: 1,
                 partId: itemPartId
             });
         });
@@ -315,6 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
             name: itemName,
             price: itemPrice,
             basePrice: itemPrice,
+            qty: 1,
             partId: itemPartId
         };
 
@@ -339,6 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
             type: 'work',
             hiddenName: 'works[]',
             hiddenPriceName: 'works_prices[]',
+            hiddenQtyName: 'works_qty[]',
             hiddenIdName: '',
             removeClass: 'remove-work'
         });
@@ -350,6 +358,7 @@ document.addEventListener('DOMContentLoaded', function () {
             type: 'part',
             hiddenName: 'parts[]',
             hiddenPriceName: 'parts_prices[]',
+            hiddenQtyName: '',
             hiddenIdName: 'parts_ids[]',
             removeClass: 'remove-part'
         });
@@ -367,6 +376,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const type = options.type;
         const hiddenName = options.hiddenName;
         const hiddenPriceName = options.hiddenPriceName;
+        const hiddenQtyName = options.hiddenQtyName;
         const hiddenIdName = options.hiddenIdName;
         const removeClass = options.removeClass;
 
@@ -398,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
             cartItem.dataset.id = item.id;
 
             cartItem.innerHTML = `
-                <div>
+                <div class="order-cart-item-main">
                     <strong>${escapeHtml(item.name)}</strong>
                     <div class="order-cart-price">
                         ${
@@ -412,7 +422,17 @@ document.addEventListener('DOMContentLoaded', function () {
                                         inputmode="numeric"
                                         autocomplete="off"
                                     >
-                                    <span class="cart-price-unit">₽</span>`
+                                    <span class="cart-price-unit">₽</span>
+                                    <span class="cart-price-times">×</span>
+                                    <input
+                                        type="text"
+                                        class="uk-input uk-form-small cart-qty-input"
+                                        data-id="${item.id}"
+                                        value="${item.qty || 1}"
+                                        inputmode="numeric"
+                                        autocomplete="off"
+                                    >
+                                    <span class="cart-row-sum-wrap">= <span class="cart-row-sum" data-id="${item.id}">${item.price * (item.qty || 1)}</span> ₽</span>`
                                 : `${item.price} ₽`
                         }
                     </div>
@@ -438,6 +458,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     name="${hiddenPriceName}"
                     value="${item.price}"
                 >
+
+                ${
+                    hiddenQtyName
+                        ? `<input
+                            type="hidden"
+                            name="${hiddenQtyName}"
+                            value="${item.qty || 1}"
+                        >`
+                        : ''
+                }
 
                 ${
                     hiddenIdName
@@ -483,11 +513,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updatePrices() {
         const worksTotal = selectedWorks.reduce(function (sum, item) {
-            return sum + item.price;
+            return sum + item.price * (item.qty || 1);
         }, 0);
 
         const partsTotal = selectedParts.reduce(function (sum, item) {
-            return sum + item.price;
+            return sum + item.price * (item.qty || 1);
         }, 0);
 
         const total = worksTotal + partsTotal;
@@ -495,6 +525,17 @@ document.addEventListener('DOMContentLoaded', function () {
         worksPriceInput.value = worksTotal;
         partsPriceInput.value = partsTotal;
         totalPriceInput.value = total;
+
+        // Построчные суммы работ
+        document.querySelectorAll('.cart-row-sum').forEach(function (el) {
+            const id = Number(el.dataset.id);
+            const item = selectedWorks.find(function (w) {
+                return w.id === id;
+            });
+            if (item) {
+                el.textContent = item.price * (item.qty || 1);
+            }
+        });
     }
 
 
@@ -518,7 +559,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (worksCart) {
         // Enter = подтвердить и выйти из поля (вызовет change)
         worksCart.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && e.target.classList.contains('cart-price-input')) {
+            if (e.key === 'Enter' &&
+                (e.target.classList.contains('cart-price-input') ||
+                 e.target.classList.contains('cart-qty-input'))) {
                 e.preventDefault();   // чтобы не отправить форму
                 e.target.blur();
             }
@@ -526,10 +569,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         worksCart.addEventListener('change', function (e) {
             const input = e.target;
-            if (!input || !input.classList.contains('cart-price-input')) return;
+            if (!input) return;
 
-            const itemId    = Number(input.dataset.id);
-            const basePrice = Number(input.dataset.basePrice);
+            const isPrice = input.classList.contains('cart-price-input');
+            const isQty   = input.classList.contains('cart-qty-input');
+            if (!isPrice && !isQty) return;
+
+            const itemId = Number(input.dataset.id);
 
             const item = selectedWorks.find(function (w) {
                 return w.id === itemId;
@@ -538,42 +584,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const raw = String(input.value).replace(/\s/g, '').replace(',', '.');
 
-            // ПУСТО — это не ноль: возвращаем как было
-            if (raw === '') {
+            if (isPrice) {
+                if (raw === '') { input.value = item.price; return; }   // пусто ≠ 0
+                let price = Number(raw);
+                if (isNaN(price) || price < 0) { input.value = item.price; return; }
+                item.price = Math.round(price);
                 input.value = item.price;
-                return;
             }
 
-            let price = Number(raw);
-
-            // Мусор или минус — возвращаем как было
-            if (isNaN(price) || price < 0) {
-                input.value = item.price;
-                return;
+            if (isQty) {
+                if (raw === '') { input.value = item.qty; return; }
+                let qty = Number(raw);
+                if (isNaN(qty)) { input.value = item.qty; return; }
+                qty = Math.round(qty);
+                if (qty < 1) { input.value = item.qty; return; }        // минимум 1
+                item.qty = qty;
+                input.value = item.qty;
             }
 
-            price = Math.round(price);   // целые рубли, как (int) в PHP
-
-            // 1) Пишем в массив — источник истины
-            item.price = price;
-            input.value = price;
-
-            // 2) Синхронизируем скрытое поле этой строки
+            // Синхронизируем скрытые поля строки
             const row = input.closest('.order-cart-item');
             if (row) {
-                const hidden = row.querySelector('input[name="works_prices[]"]');
-                if (hidden) hidden.value = price;
+                const hiddenPrice = row.querySelector('input[name="works_prices[]"]');
+                if (hiddenPrice) hiddenPrice.value = item.price;
+
+                const hiddenQty = row.querySelector('input[name="works_qty[]"]');
+                if (hiddenQty) hiddenQty.value = item.qty;
             }
 
-            // 3) Пересчёт. Корзину ЦЕЛИКОМ не перерисовываем —
-            //    иначе инпут потеряет фокус
+            // Пересчёт: итоги + построчная сумма. Корзину целиком НЕ перерисовываем
             updatePrices();
 
-            // 4) Метка «цена изменена»
-            if (price === basePrice) {
-                input.classList.remove('cart-price-changed');
-            } else {
-                input.classList.add('cart-price-changed');
+            // Метка «цена изменена» — по-прежнему на инпуте цены
+            const priceInput = row ? row.querySelector('.cart-price-input') : null;
+            if (priceInput) {
+                if (item.price === item.basePrice) {
+                    priceInput.classList.remove('cart-price-changed');
+                } else {
+                    priceInput.classList.add('cart-price-changed');
+                }
             }
         });
     }

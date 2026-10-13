@@ -27,14 +27,15 @@ if ($operator == 'no_operator') {
 
     $works = $_POST['works'] ?? [];
     $works_prices = $_POST['works_prices'] ?? [];
+    $works_qty = $_POST['works_qty'] ?? [];
     $parts = $_POST['parts'] ?? [];
     $parts_prices = $_POST['parts_prices'] ?? [];
     $parts_ids = $_POST['parts_ids'] ?? [];
 
     $num_turbo = !empty($_POST['num_turbo'])?$_POST['num_turbo']:NULL;
-    $works_price = !empty($_POST['works_price'])?$_POST['works_price']:NULL;
-    $parts_price = !empty($_POST['parts_price'])?$_POST['parts_price']:NULL;
-    $total_price = !empty($_POST['total_price'])?$_POST['total_price']:NULL;
+    $works_price = (isset($_POST['works_price']) && $_POST['works_price'] !== '') ? (int)$_POST['works_price'] : 0;
+    $parts_price = (isset($_POST['parts_price']) && $_POST['parts_price'] !== '') ? (int)$_POST['parts_price'] : 0;
+    $total_price = (isset($_POST['total_price']) && $_POST['total_price'] !== '') ? (int)$_POST['total_price'] : 0;
     $payment_type = !empty($_POST['payment_type'])?$_POST['payment_type']:NULL;
     $warranty = !empty($_POST['warranty']) ? $_POST['warranty'] : NULL;
     $comment = !empty($_POST['comment']) ? $_POST['comment'] : NULL;
@@ -48,17 +49,31 @@ if ($operator == 'no_operator') {
 
     $order_works = [];
     foreach ($works as $index => $work_name) {
+        $row_price = (int)($works_prices[$index] ?? 0);
+        $row_qty   = (int)($works_qty[$index] ?? 1);
+
+        // Пусто/0/мусор — минимум 1
+        if ($row_qty < 1) {
+            $row_qty = 1;
+        }
+
         $order_works[] = [
-            'name' => $work_name,
-            'price' => $works_prices[$index] ?? 0
+            'name'  => $work_name,
+            'price' => $row_price,
+            'qty'   => $row_qty,
+            'total' => $row_price * $row_qty
         ];
     }
     $order_parts = [];
     foreach ($parts as $index => $part_name) {
+        $row_price = (int)($parts_prices[$index] ?? 0);
+
         $order_parts[] = [
-            'name' => $part_name,
-            'price' => $parts_prices[$index] ?? 0,
-            'part_id' => (int)($parts_ids[$index] ?? 0)
+            'name'    => $part_name,
+            'price'   => $row_price,
+            'part_id' => (int)($parts_ids[$index] ?? 0),
+            'qty'     => 1,            // запчасти пока всегда по 1
+            'total'   => $row_price
         ];
     }
 
@@ -95,7 +110,7 @@ if ($operator == 'no_operator') {
     // print_r($order);
     // echo '</pre>';
 
-	if ($selected_worker && $client && $car && $total_price && $payment_type && $operator != 'no_operator') {
+	if ($selected_worker && $client && $car && $payment_type && $operator != 'no_operator') {
 
         // --- ПРОВЕРКА НАЛИЧИЯ НА СКЛАДЕ (до создания заказа) ---
         $stock_errors = [];
@@ -163,6 +178,8 @@ if ($operator == 'no_operator') {
             $item->of(false);
             $item->work = $row['name'];
             $item->price = $row['price'];
+            $item->qty = $row['qty'];
+            $item->total = $row['total'];
             $item->save();
             $orderPage->works->add($item);
         }
@@ -185,6 +202,8 @@ if ($operator == 'no_operator') {
             $item->autopart = $row['name'];
             $item->price = $row['price'];
             $item->part_id = (int)$row['part_id'];
+            $item->qty = $row['qty'];
+            $item->total = $row['total'];
             $item->save();
             $orderPage->autoparts->add($item);
         }

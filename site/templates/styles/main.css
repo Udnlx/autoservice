@@ -342,6 +342,39 @@ form button[type="submit"]:hover {
     color: #111827;
     font-weight: 800;
     font-size: 16px;}
+.order-cart-item-main {
+    flex: 1;
+    min-width: 0;}
+.order-cart-price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;}
+.order-cart-price .cart-price-input {
+    width: 88px;
+    display: inline-block;
+    padding: 2px 6px;
+    height: 28px;}
+.order-cart-price .cart-qty-input   {
+    width: 60px;
+    display: inline-block;
+    padding: 2px 6px;
+    height: 28px;
+    text-align: center;}
+.order-cart-price .cart-price-unit  {
+    margin-right: 4px;}
+.order-cart-price .cart-price-times {
+    margin: 0 4px;
+    color: #999;}
+.cart-row-sum-wrap {
+    margin-left: 6px;
+    color: #333;
+    font-weight: 600;}
+.cart-price-input.cart-price-changed,
+.cart-qty-input.cart-qty-changed {
+    border-color: #f0a500;
+    box-shadow: inset 0 0 0 1px #f0a500;}
 
 
 
