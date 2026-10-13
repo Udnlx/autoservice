@@ -69,8 +69,9 @@ if ($operator == 'no_operator') {
     if (count($orderPage->works)) {
         foreach ($orderPage->works as $item) {
             $works[] = [
-                'name' => $item->work,
-                'price' => $item->price
+                'name'  => $item->work,
+                'price' => $item->price,
+                'qty'   => max(1, (int)$item->qty)   // старые заявки без qty → 1
             ];
         }
     }
@@ -329,8 +330,9 @@ if ($operator == 'no_operator') {
                                             <button type="button" class="uk-button uk-button-danger uk-button-small remove-work" data-id="<?php echo $work_item_id; ?>" data-type="work">
                                             </button>
 
-                                            <input type="hidden" name="works[]" value="<?php echo orderClean($work['name']); ?> - <?php echo orderClean($work['price']); ?>">
+                                            <input type="hidden" name="works[]" value="<?php echo orderClean($work['name']); ?>">
                                             <input type="hidden" name="works_prices[]" value="<?php echo orderClean($work['price']); ?>">
+                                            <input type="hidden" name="works_qty[]" value="<?php echo (int)$work['qty']; ?>">
                                         </div>
                                     <?php } ?>
                                 <?php } else { ?>
@@ -403,7 +405,7 @@ if ($operator == 'no_operator') {
                                                 ✕
                                             </button>
 
-                                            <input type="hidden" name="parts[]" value="<?php echo orderClean($part['name']); ?> - <?php echo orderClean($part['price']); ?>">
+                                            <input type="hidden" name="parts[]" value="<?php echo orderClean($part['name']); ?>">
                                             <input type="hidden" name="parts_prices[]" value="<?php echo orderClean($part['price']); ?>">
                                             <input type="hidden" name="parts_ids[]" value="<?php echo (int)$part['part_id']; ?>">
                                         </div>
