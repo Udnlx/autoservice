@@ -34,6 +34,7 @@ if ($operator == 'no_operator') {
     $works_qty = $_POST['works_qty'] ?? [];
     $parts = $_POST['parts'] ?? [];
     $parts_prices = $_POST['parts_prices'] ?? [];
+    $parts_qty = $_POST['parts_qty'] ?? [];
     $parts_ids = $_POST['parts_ids'] ?? [];
 
     $num_turbo = !empty($_POST['num_turbo'])?$_POST['num_turbo']:NULL;
@@ -67,13 +68,19 @@ if ($operator == 'no_operator') {
     $order_parts = [];
     foreach ($parts as $index => $part_name) {
         $row_price = (int)($parts_prices[$index] ?? 0);
+        $row_qty   = (int)($parts_qty[$index] ?? 1);
+
+        // Пусто/0/мусор — минимум 1 (зеркало регистрации и работ)
+        if ($row_qty < 1) {
+            $row_qty = 1;
+        }
 
         $order_parts[] = [
             'name'    => $part_name,
             'price'   => $row_price,
             'part_id' => (int)($parts_ids[$index] ?? 0),
-            'qty'     => 1,             // запчасти пока всегда по 1
-            'total'   => $row_price
+            'qty'     => $row_qty,
+            'total'   => $row_price * $row_qty
         ];
     }
 
@@ -90,12 +97,14 @@ if ($operator == 'no_operator') {
 
     $total_price = $works_price + $parts_price;
 
-    // Сколько раз каждая запчасть встречается в НОВОЙ корзине
+    // Сколько ВСЕГО единиц каждой запчасти в НОВОЙ корзине (по part_id).
+    // Суммируем qty, потому что одна и та же запчасть может быть
+    // двумя строками с разными ценами/количествами.
     $new_part_counts = [];
     foreach ($order_parts as $row) {
         $pid = (int)$row['part_id'];
         if ($pid > 0) {
-            $new_part_counts[$pid] = ($new_part_counts[$pid] ?? 0) + 1;
+            $new_part_counts[$pid] = ($new_part_counts[$pid] ?? 0) + (int)$row['qty'];
         }
     }
 
@@ -135,8 +144,12 @@ if ($operator == 'no_operator') {
                         continue;   // запчасть удалена из справочника
                     }
 
+                    // Возвращаем на склад СТОЛЬКО, сколько было в строке.
+                    // max(1, ...) — страховка от очень старых заявок, где qty в базе пустое.
+                    $return_qty = max(1, (int)$oldItem->qty);
+
                     $partPage->of(false);
-                    $partPage->part_qty = (int)$partPage->part_qty + 1;
+                    $partPage->part_qty = (int)$partPage->part_qty + $return_qty;
                     $partPage->save('part_qty');
                 }
 
@@ -151,12 +164,15 @@ if ($operator == 'no_operator') {
             // =========================================================
 
             // --- СЛЕПОК ЗАКАЗА ДО ПРАВКИ ---
-            // Читаем ДО того, как повторитель будет перезаписан
+            // Читаем ДО того, как повторитель будет перезаписан.
+            // Суммируем qty (а не считаем строки) — чтобы дельта в движении склада
+            // ниже сравнивала "штуки с штуками", а не "строки со штуками".
+            // max(1, ...) — страховка от очень старых заявок, где qty в базе пустое.
             $old_part_counts = [];
             foreach ($orderPage->autoparts as $oldItem) {
                 $pid = (int)$oldItem->part_id;
                 if ($pid > 0) {
-                    $old_part_counts[$pid] = ($old_part_counts[$pid] ?? 0) + 1;
+                    $old_part_counts[$pid] = ($old_part_counts[$pid] ?? 0) + max(1, (int)$oldItem->qty);
                 }
             }
             // --- /СЛЕПОК ЗАКАЗА ДО ПРАВКИ ---
