@@ -86,16 +86,17 @@ if ($operator == 'no_operator') {
     }
 
     $part = [
-        'id'       => $partPage->id,
-        'title'    => $partPage->title,
-        'sku'      => $partPage->part_sku,
-        'price'    => $partPage->part_price,
-        'qty'      => $partPage->part_qty,
-        'unit'     => $partPage->part_unit,
-        'brand'    => $partPage->part_brand,
-        'oem'      => $partPage->part_oem,
-        'location' => $partPage->part_location,
-        'notes'    => $partPage->part_notes
+        'id'                => $partPage->id,
+        'title'             => $partPage->title,
+        'sku'               => $partPage->part_sku,
+        'price'             => $partPage->part_price,
+        'price_purchase'    => $partPage->part_price_purchase,
+        'qty'               => $partPage->part_qty,
+        'unit'              => $partPage->part_unit,
+        'brand'             => $partPage->part_brand,
+        'oem'               => $partPage->part_oem,
+        'location'          => $partPage->part_location,
+        'notes'             => $partPage->part_notes
     ];
 
     $part_unit_label = partUnitLabel($part['unit'], $units_map);
@@ -298,6 +299,11 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="part_sku">Артикул</label>
                         <input class="uk-input" id="part_sku" type="text" name="part_sku" value="<?php echo partClean($part['sku']); ?>" placeholder="Например: W914/2" autocomplete="off" required>
+                    </div>
+
+                    <div class="uk-margin-small-top">
+                        <label for="part_price">Цена закупки (₽)</label>
+                        <input class="uk-input" id="part_price_purchase" type="number" name="part_price_purchase" min="0" step="1" value="<?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '' : (int)$part['price_purchase']; ?>" placeholder="Например: 450" autocomplete="off" required>
                     </div>
 
                     <div class="uk-margin-small-top">

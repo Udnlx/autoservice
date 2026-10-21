@@ -20,14 +20,15 @@ if ($operator == 'no_operator') {
 
 	$part_id = !empty($_POST['part_id']) ? (int)$_POST['part_id'] : 0;
 
-    $part_title    = !empty($_POST['part_title'])    ? trim($_POST['part_title'])    : '';
-    $part_sku      = !empty($_POST['part_sku'])      ? trim($_POST['part_sku'])      : '';
-    $part_price    = $input->post->int('part_price');   // 0 допустим
-    $part_unit     = !empty($_POST['part_unit'])     ? trim($_POST['part_unit'])     : '';
-    $part_brand    = !empty($_POST['part_brand'])    ? trim($_POST['part_brand'])    : '';
-    $part_oem      = !empty($_POST['part_oem'])      ? trim($_POST['part_oem'])      : '';
-    $part_location = !empty($_POST['part_location']) ? trim($_POST['part_location']) : '';
-    $part_notes    = !empty($_POST['part_notes'])    ? trim($_POST['part_notes'])    : '';
+    $part_title             = !empty($_POST['part_title'])    ? trim($_POST['part_title'])    : '';
+    $part_sku               = !empty($_POST['part_sku'])      ? trim($_POST['part_sku'])      : '';
+    $part_price_purchase    = $input->post->int('part_price_purchase');     // 0 допустим
+    $part_price             = $input->post->int('part_price');              // 0 допустим
+    $part_unit              = !empty($_POST['part_unit'])     ? trim($_POST['part_unit'])     : '';
+    $part_brand             = !empty($_POST['part_brand'])    ? trim($_POST['part_brand'])    : '';
+    $part_oem               = !empty($_POST['part_oem'])      ? trim($_POST['part_oem'])      : '';
+    $part_location          = !empty($_POST['part_location']) ? trim($_POST['part_location']) : '';
+    $part_notes             = !empty($_POST['part_notes'])    ? trim($_POST['part_notes'])    : '';
 
     // --- Допустимые значения единицы измерения ---
     $unit_values = [];
@@ -53,15 +54,16 @@ if ($operator == 'no_operator') {
 
             $partPage->of(false);
 
-            $partPage->title         = $part_title;
-            $partPage->part_sku      = $part_sku;
-            $partPage->part_price    = $part_price;
-            $partPage->part_qty      = $part_qty;
-            $partPage->part_unit     = $part_unit;   // значение опции: 1..5, НЕ подпись
-            $partPage->part_brand    = $part_brand;
-            $partPage->part_oem      = $part_oem;
-            $partPage->part_location = $part_location;
-            $partPage->part_notes    = $part_notes;
+            $partPage->title                    = $part_title;
+            $partPage->part_sku                 = $part_sku;
+            $partPage->part_price_purchase      = $part_price_purchase;
+            $partPage->part_price               = $part_price;
+            $partPage->part_qty                 = $part_qty;
+            $partPage->part_unit                = $part_unit;   // значение опции: 1..5, НЕ подпись
+            $partPage->part_brand               = $part_brand;
+            $partPage->part_oem                 = $part_oem;
+            $partPage->part_location            = $part_location;
+            $partPage->part_notes               = $part_notes;
 
             $partPage->save();
 
