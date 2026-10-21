@@ -158,6 +158,13 @@ label {
     min-width: 0;}
 #payment_type {
     font-weight: 700;}
+.filter-type-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
 
 
 
@@ -558,6 +565,24 @@ form button[type="submit"]:hover {
     font-weight: 700;}
 .order-list-item-total {
     color: #faa05a;}
+
+.order-list-item-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+    margin-bottom: 6px;}
+.order-type-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #fff;}
+.order-type-badge.type-1 { background: #e07b00; } /* Антикор */
+.order-type-badge.type-2 { background: #0b6bcb; } /* Фильтры */
+.order-type-badge.type-3 { background: #2a9d4a; } /* Турбины */
 
 
 

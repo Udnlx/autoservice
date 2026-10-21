@@ -37,6 +37,36 @@ if ($operator == 'no_operator') {
         }
     }
 
+    // --- СПРАВОЧНИК ТИПОВ РАБОТ ---
+    // Хардкодим зеркально тому, что уже стоит в HTML селектах на других страницах.
+    $work_type_labels = [
+        1 => 'Антикор',
+        2 => 'Фильтры',
+        3 => 'Турбины',
+    ];
+
+    // --- КАРТА ВСЕХ РАБОТ ИЗ СПРАВОЧНИКА: [название => тип] ---
+    // Один раз читаем из базы, дальше внутри цикла заявок — только массив, без запросов.
+    $works_catalog = [];
+    foreach ($pages->find("template=work_item, include=all") as $workPage) {
+        // work_type — поле Select Options: получаем объект, у которого есть id (1/2/3)
+        $wtObj = $workPage->work_type;
+        $wt = 0;
+
+        if ($wtObj) {
+            if (is_object($wtObj) && isset($wtObj->id)) {
+                $wt = (int)$wtObj->id;                               // одиночное значение
+            } elseif ($wtObj instanceof \ProcessWire\WireArray && count($wtObj)) {
+                $wt = (int)$wtObj->first()->id;                      // мультиселект — берём первое
+            }
+        }
+
+        if ($wt > 0) {
+            $works_catalog[(string)$workPage->title] = $wt;
+        }
+    }
+    // --- КАРТА ВСЕХ РАБОТ ИЗ СПРАВОЧНИКА: [название => тип] ---
+
     $search_client = trim($input->get->text('search_client'));
     $search_auto = trim($input->get->text('search_auto'));
 
@@ -131,7 +161,7 @@ if ($operator == 'no_operator') {
                     </div>
 
                     <div class="order-status-badge">
-                        Всего: <?php echo count($orders_list); ?>
+                        Всего: <span id="orders_visible_count_num"><?php echo count($orders_list); ?></span>
                     </div>
                 </div>
 
@@ -163,32 +193,59 @@ if ($operator == 'no_operator') {
 
                         <!-- ПАНЕЛЬ ФИЛЬТРА -->
                         <div id="filter_panel" style="display:none; margin-top:10px; padding:12px; background:#f8f8f8; border-radius:4px;">
-                            <div style="font-weight:600; margin-bottom:8px;">Показывать статусы:</div>
+                            <div style="display:flex; gap:28px; flex-wrap:wrap;">
 
-                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
-                                <input type="checkbox" class="status-filter-checkbox" data-status="status-new" checked>
-                                Новая
-                            </label>
+                                <!-- КОЛОНКА 1: СТАТУСЫ -->
+                                <div style="flex:1; min-width:190px;">
+                                    <div style="font-weight:600; margin-bottom:8px;">Показывать статусы:</div>
 
-                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
-                                <input type="checkbox" class="status-filter-checkbox" data-status="status-progress" checked>
-                                В работе
-                            </label>
+                                    <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                        <input type="checkbox" class="status-filter-checkbox" data-status="status-new" checked>
+                                        Новая
+                                    </label>
 
-                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
-                                <input type="checkbox" class="status-filter-checkbox" data-status="status-waiting" checked>
-                                Ожидает запчасти
-                            </label>
+                                    <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                        <input type="checkbox" class="status-filter-checkbox" data-status="status-progress" checked>
+                                        В работе
+                                    </label>
 
-                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
-                                <input type="checkbox" class="status-filter-checkbox" data-status="status-done">
-                                Завершена
-                            </label>
+                                    <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                        <input type="checkbox" class="status-filter-checkbox" data-status="status-waiting" checked>
+                                        Ожидает запчасти
+                                    </label>
 
-                            <label style="display:block; cursor:pointer;">
-                                <input type="checkbox" class="status-filter-checkbox" data-status="status-canceled" checked>
-                                Отменена
-                            </label>
+                                    <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                        <input type="checkbox" class="status-filter-checkbox" data-status="status-done">
+                                        Завершена
+                                    </label>
+
+                                    <label style="display:block; cursor:pointer;">
+                                        <input type="checkbox" class="status-filter-checkbox" data-status="status-canceled" checked>
+                                        Отменена
+                                    </label>
+                                </div>
+
+                                <!-- КОЛОНКА 2: ТИПЫ РАБОТ -->
+                                <div style="flex:1; min-width:190px;">
+                                    <div style="font-weight:600; margin-bottom:8px;">Показывать типы работ:</div>
+
+                                    <label class="filter-type-label">
+                                        <input type="checkbox" class="type-filter-checkbox" data-type="1" checked>
+                                        <span class="order-type-badge type-1">Антикор</span>
+                                    </label>
+
+                                    <label class="filter-type-label">
+                                        <input type="checkbox" class="type-filter-checkbox" data-type="2" checked>
+                                        <span class="order-type-badge type-2">Фильтры</span>
+                                    </label>
+
+                                    <label class="filter-type-label">
+                                        <input type="checkbox" class="type-filter-checkbox" data-type="3" checked>
+                                        <span class="order-type-badge type-3">Турбины</span>
+                                    </label>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -199,13 +256,47 @@ if ($operator == 'no_operator') {
                     <?php if (count($orders_list)) { ?>
                         <div class="orders-list uk-flex uk-flex-column">
                             <?php foreach ($orders_list as $orderItem) { ?>
-                                <a class="order-list-item <?php echo orderStatusClass($orderItem->status_order); ?>" href="/zakaz-prosmotr/?idorder=<?php echo $orderItem->id; ?>">
+                                <?php
+                                    // --- СБОР УНИКАЛЬНЫХ ТИПОВ РАБОТ ДЛЯ ЭТОЙ ЗАЯВКИ ---
+                                    $order_type_ids = [];   // будет [1 => true, 3 => true] и т.п.
+
+                                    if (count($orderItem->works)) {
+                                        foreach ($orderItem->works as $workRow) {
+                                            $name = (string)$workRow->work;
+                                            if ($name === '') continue;
+
+                                            // Работы нет в справочнике ИЛИ у неё пустой work_type → пропускаем
+                                            if (!isset($works_catalog[$name])) continue;
+
+                                            $tid = (int)$works_catalog[$name];
+                                            if (!isset($work_type_labels[$tid])) continue;   // мусорный тип
+
+                                            $order_type_ids[$tid] = true;
+                                        }
+                                    }
+                                    // Собираем классы для карточки — пригодятся на этапе фильтра
+                                    $type_classes = '';
+                                    foreach ($order_type_ids as $tid => $_) {
+                                        $type_classes .= ' has-type-' . $tid;
+                                    }
+                                ?>
+                                <a class="order-list-item <?php echo orderStatusClass($orderItem->status_order); ?><?php echo $type_classes; ?>" href="/zakaz-prosmotr/?idorder=<?php echo $orderItem->id; ?>">
                                     <div class="order-list-item-top">
                                         <div class="order-list-item-title"><?php echo orderClean($orderItem->title); ?></div>
                                         <div class="order-status-badge <?php echo orderStatusClass($orderItem->status_order); ?>">
                                             <?php echo orderClean($orderItem->status_order); ?>
                                         </div>
                                     </div>
+
+                                    <?php if (!empty($order_type_ids)) { ?>
+                                        <div class="order-list-item-types">
+                                            <?php foreach ($order_type_ids as $tid => $_) { ?>
+                                                <span class="order-type-badge type-<?php echo (int)$tid; ?>">
+                                                    <?php echo orderClean($work_type_labels[$tid]); ?>
+                                                </span>
+                                            <?php } ?>
+                                        </div>
+                                    <?php } ?>
 
                                     <div class="order-list-item-grid">
                                         <div class="order-list-item-cell">

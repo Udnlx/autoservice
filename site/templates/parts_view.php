@@ -178,7 +178,7 @@ if ($operator == 'no_operator') {
 
 <!--МОДАЛЬНОЕ ОКНО НОВАЯ ЗАПЧАСТЬ-->
 <div id="new_part_modal" uk-modal>
-    <div class="uk-modal-dialog uk-modal-body uk-overflow-auto">
+    <div class="uk-modal-dialog uk-modal-body">
         <button class="uk-modal-close-default" type="button" uk-close></button>
 
         <h3 class="uk-card-title uk-text-center">Новая запчасть</h3>

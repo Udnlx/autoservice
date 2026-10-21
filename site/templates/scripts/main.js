@@ -952,14 +952,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-// ФИЛЬТР ПО СТАТУСАМ ЗАЯВОК
+// ФИЛЬТР ПО СТАТУСАМ И ТИПАМ РАБОТ
 document.addEventListener('DOMContentLoaded', function () {
-    const toggleBtn   = document.getElementById('toggle_filter_btn');
-    const filterPanel = document.getElementById('filter_panel');
-    const checkboxes  = document.querySelectorAll('.status-filter-checkbox');
-    const orderItems  = document.querySelectorAll('.order-list-item');
+    const toggleBtn        = document.getElementById('toggle_filter_btn');
+    const filterPanel      = document.getElementById('filter_panel');
+    const statusCheckboxes = document.querySelectorAll('.status-filter-checkbox');
+    const typeCheckboxes   = document.querySelectorAll('.type-filter-checkbox');
+    const orderItems       = document.querySelectorAll('.order-list-item');
+    const countNum         = document.getElementById('orders_visible_count_num');
 
-    if (!toggleBtn || !filterPanel || !checkboxes.length || !orderItems.length) {
+    if (!toggleBtn || !filterPanel || !orderItems.length) {
         return;
     }
 
@@ -972,37 +974,88 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Применить фильтр при изменении галочки
-    function applyFilter() {
-        const activeStatuses = [];
+    const TOTAL_TYPES = typeCheckboxes.length;   // сколько типов вообще есть в панели
 
-        checkboxes.forEach(function (checkbox) {
-            if (checkbox.checked) {
-                activeStatuses.push(checkbox.dataset.status);
+    function applyFilter() {
+        // --- 1. Активные статусы ---
+        const activeStatuses = [];
+        statusCheckboxes.forEach(function (cb) {
+            if (cb.checked) {
+                activeStatuses.push(cb.dataset.status);
             }
         });
 
+        // --- 2. Активные типы работ ---
+        const activeTypes = [];
+        typeCheckboxes.forEach(function (cb) {
+            if (cb.checked) {
+                activeTypes.push(String(cb.dataset.type));
+            }
+        });
+
+        // Типовой фильтр "спит", пока стоят ВСЕ галочки.
+        // Как только сняли хоть одну — начинает фильтровать.
+        const typeFilterActive = TOTAL_TYPES > 0 && activeTypes.length < TOTAL_TYPES;
+
+        // Сняли вообще все типы — не показываем ничего (как и со статусами)
+        const noTypesAtAll = TOTAL_TYPES > 0 && activeTypes.length === 0;
+
+        let visibleCount = 0;
+
         orderItems.forEach(function (item) {
-            let visible = false;
+            // --- Статус ---
+            // Если чекбоксов статусов на странице нет — считаем, что статус подходит
+            let statusOK = statusCheckboxes.length === 0;
 
             activeStatuses.forEach(function (statusClass) {
                 if (item.classList.contains(statusClass)) {
-                    visible = true;
+                    statusOK = true;
                 }
             });
 
+            // --- Тип работ ---
+            let typeOK = true;
+
+            if (noTypesAtAll) {
+                // Ни одного типа не выбрано — скрываем всё
+                typeOK = false;
+            } else if (typeFilterActive) {
+                // Ищем хотя бы один выбранный тип у карточки
+                typeOK = false;
+
+                activeTypes.forEach(function (tid) {
+                    if (item.classList.contains('has-type-' + tid)) {
+                        typeOK = true;
+                    }
+                });
+            }
+            // иначе (все типы стоят) typeOK остаётся true —
+            // заявки без работ тоже видны, ничего не пропадает
+
+            // --- Итог: карточка видна, только если прошла ОБА фильтра ---
+            const visible = statusOK && typeOK;
+
+            item.style.display = visible ? '' : 'none';
+
             if (visible) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
+                visibleCount++;
             }
         });
+
+        // Пересчитываем счётчик в шапке
+        if (countNum) {
+            countNum.textContent = visibleCount;
+        }
     }
 
-    checkboxes.forEach(function (checkbox) {
-        checkbox.addEventListener('change', applyFilter);
+    statusCheckboxes.forEach(function (cb) {
+        cb.addEventListener('change', applyFilter);
+    });
+
+    typeCheckboxes.forEach(function (cb) {
+        cb.addEventListener('change', applyFilter);
     });
 
     applyFilter();
 });
-// ФИЛЬТР ПО СТАТУСАМ ЗАЯВОК
+// ФИЛЬТР ПО СТАТУСАМ И ТИПАМ РАБОТ
