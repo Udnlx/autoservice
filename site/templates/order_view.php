@@ -394,8 +394,12 @@ if ($operator == 'no_operator') {
                                     <?php foreach ($order['parts'] as $part_index => $part) { ?>
                                         <?php $part_item_id = 'part_' . $part_index . '_' . time(); ?>
 
-                                        <div class="order-cart-item uk-flex uk-flex-between uk-flex-middle" data-id="<?php echo orderClean($part_item_id); ?>">
+                                        <div class="order-cart-item uk-flex uk-flex-between uk-flex-middle" data-id="<?php echo orderClean($part_item_id); ?>" data-part-index="<?php echo (int)$part_index; ?>">
                                             <div>
+                                                <label class="part-print-label" title="Печатать эту запчасть в документе">
+                                                    <input type="checkbox" class="part-print-checkbox" checked>
+                                                    <span class="part-print-label-text">в печать</span>
+                                                </label>
                                                 <strong><?php echo orderClean($part['name']); ?></strong>
                                                 <div class="order-cart-price">
                                                     <?php echo orderClean($part['price']); ?> ₽
@@ -533,9 +537,22 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        window.location.href =
-            '/zakaz-pechat/?idorder=<?php echo (int)$order_id ?>&company=' +
-            encodeURIComponent(company);
+        // Собираем индексы запчастей, у которых снята галочка «печатать».
+        // Берём только те строки, что пришли из базы (у них есть data-part-index).
+        var skip = [];
+        document.querySelectorAll('#parts_cart .order-cart-item[data-part-index]').forEach(function (row) {
+            var cb = row.querySelector('.part-print-checkbox');
+            if (cb && !cb.checked) {
+                skip.push(row.dataset.partIndex);
+            }
+        });
+
+        var url = '/zakaz-pechat/?idorder=<?php echo (int)$order_id ?>&company=' + encodeURIComponent(company);
+        if (skip.length) {
+            url += '&skip=' + encodeURIComponent(skip.join(','));
+        }
+
+        window.location.href = url;
     });
 });
 </script>

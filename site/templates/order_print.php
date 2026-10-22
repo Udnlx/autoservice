@@ -108,6 +108,20 @@ if ($operator == 'no_operator') {
     // ---------- Данные заказа ----------
     $orderPage = $pages->get("id=$order_id, template=order_item");
 
+    // ---------- Список индексов запчастей, которые НЕ надо печатать ----------
+    // Приходит из order_view.php в адресе: &skip=0,3,5
+    // Это 0-based позиции в повторителе autoparts в том виде, как они видны оператору.
+    $skip_parts = [];
+    $skip_raw   = $input->get->string('skip');
+    if ($skip_raw !== '') {
+        foreach (explode(',', $skip_raw) as $idx) {
+            $idx = trim($idx);
+            if (ctype_digit($idx)) {
+                $skip_parts[(int)$idx] = true;
+            }
+        }
+    }
+
     // Номер заказа из title
     $order_number = $order_id;
     if (preg_match('/(\d+)/u', $orderPage->title, $m)) {
@@ -117,22 +131,34 @@ if ($operator == 'no_operator') {
     $order_date    = $orderPage->date_order;
     $client_name   = $orderPage->client;
     $car_full      = $orderPage->auto;
-    $total_price   = (float)$orderPage->cost_total;
-    $total_words   = num2wordsRub($total_price);
+    // $total_price и $total_words посчитаем ниже, после сбора таблиц работ и запчастей,
+    // чтобы учесть и qty, и исключённые запчасти.
 
     // Работы
     $works = [];
     if (count($orderPage->works)) {
         foreach ($orderPage->works as $item) {
-            $works[] = ['name' => $item->work, 'price' => $item->price];
+            $works[] = [
+                'name'  => $item->work,
+                'price' => (float)$item->price,
+                'qty'   => max(1, (int)$item->qty),   // старые заявки без qty → 1
+            ];
         }
     }
 
-    // Запчасти
+    // Запчасти — пропускаем те, что в $skip_parts
     $parts = [];
     if (count($orderPage->autoparts)) {
+        $idx = 0;
         foreach ($orderPage->autoparts as $item) {
-            $parts[] = ['name' => $item->autopart, 'price' => $item->price];
+            if (!isset($skip_parts[$idx])) {
+                $parts[] = [
+                    'name'  => $item->autopart,
+                    'price' => (float)$item->price,
+                    'qty'   => max(1, (int)$item->qty),   // старые заявки без qty → 1
+                ];
+            }
+            $idx++;
         }
     }
 
@@ -375,11 +401,13 @@ if ($operator == 'no_operator') {
 
     // Таблица работ
     $works_sum = 0;
-        $content .= '<p class="section-title">Перечень выполненных работ</p>';
+    $content .= '<p class="section-title">Перечень выполненных работ</p>';
     $content .= '<table class="works-table">
         <tr>
             <th style="width: 40px;">№</th>
             <th>Наименование</th>
+            <th style="width: 60px;">Кол-во</th>
+            <th style="width: 100px;">Цена</th>
             <th style="width: 120px;">Стоимость</th>
         </tr>';
 
@@ -387,20 +415,24 @@ if ($operator == 'no_operator') {
         $i = 1;
         foreach ($works as $w) {
             $price = (float)$w['price'];
-            $works_sum += $price;
+            $qty   = (int)$w['qty'];
+            $row_sum = $price * $qty;
+            $works_sum += $row_sum;
             $content .= '<tr>
                 <td class="num">' . $i . '</td>
                 <td>' . htmlspecialchars($w['name'], ENT_QUOTES, 'UTF-8') . '</td>
+                <td class="qty">' . $qty . '</td>
                 <td class="price">' . number_format($price, 2, '.', ' ') . '</td>
+                <td class="price">' . number_format($row_sum, 2, '.', ' ') . '</td>
             </tr>';
             $i++;
         }
     } else {
-        $content .= '<tr><td colspan="3" style="text-align:center; color:#666;">—</td></tr>';
+        $content .= '<tr><td colspan="5" style="text-align:center; color:#666;">—</td></tr>';
     }
 
     $content .= '<tr class="total-row">
-        <td colspan="2">СУММА:</td>
+        <td colspan="4">СУММА:</td>
         <td class="price">' . number_format($works_sum, 2, '.', ' ') . '</td>
     </tr>';
     $content .= '</table>';
@@ -412,6 +444,8 @@ if ($operator == 'no_operator') {
         <tr>
             <th style="width: 40px;">№</th>
             <th>Наименование</th>
+            <th style="width: 60px;">Кол-во</th>
+            <th style="width: 100px;">Цена</th>
             <th style="width: 120px;">Стоимость</th>
         </tr>';
 
@@ -419,20 +453,24 @@ if ($operator == 'no_operator') {
         $i = 1;
         foreach ($parts as $p) {
             $price = (float)$p['price'];
-            $parts_sum += $price;
+            $qty   = (int)$p['qty'];
+            $row_sum = $price * $qty;
+            $parts_sum += $row_sum;
             $content .= '<tr>
                 <td class="num">' . $i . '</td>
                 <td>' . htmlspecialchars($p['name'], ENT_QUOTES, 'UTF-8') . '</td>
+                <td class="qty">' . $qty . '</td>
                 <td class="price">' . number_format($price, 2, '.', ' ') . '</td>
+                <td class="price">' . number_format($row_sum, 2, '.', ' ') . '</td>
             </tr>';
             $i++;
         }
     } else {
-        $content .= '<tr><td colspan="3" style="text-align:center; color:#666;">—</td></tr>';
+        $content .= '<tr><td colspan="5" style="text-align:center; color:#666;">—</td></tr>';
     }
 
     $content .= '<tr class="total-row">
-        <td colspan="2">СУММА:</td>
+        <td colspan="4">СУММА:</td>
         <td class="price">' . number_format($parts_sum, 2, '.', ' ') . '</td>
     </tr>';
     $content .= '</table>';
@@ -449,7 +487,10 @@ if ($operator == 'no_operator') {
     $content .= '<p class="section-title">Гарантийные обязательства</p>';
     $content .= '<table class="works-table"><tr><td style="height: 30px;">' . $orderPage->warranty . '</td></tr></table>';
 
-    // Итого + прописью
+    // Итого + прописью (считаем от фактических таблиц, с учётом qty и исключений)
+    $total_price = $works_sum + $parts_sum;
+    $total_words = num2wordsRub($total_price);
+
     $content .= '
     <p class="total-final">ИТОГО К ОПЛАТЕ: ' . number_format($total_price, 2, '.', ' ') . ' руб.</p>
     <p class="words">Всего получено: (' . number_format($total_price, 2, '.', ' ') . ') ' . $total_words . '</p>

@@ -163,8 +163,19 @@ label {
     align-items: center;
     gap: 8px;
     margin-bottom: 6px;
+    cursor: pointer;}
+.part-print-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 8px;
     cursor: pointer;
-}
+    user-select: none;
+    font-size: 11px;
+    color: #666;
+    vertical-align: middle;}
+.part-print-label-text {
+    line-height: 1;}
 
 
 

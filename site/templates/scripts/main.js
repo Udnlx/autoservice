@@ -241,7 +241,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 price: itemPrice,
                 basePrice: itemPrice,
                 qty: itemQty,
-                partId: itemPartId
+                partId: itemPartId,
+                fromDb: true   // пришла из базы, индекс в повторителе autoparts валиден
             });
         });
     }
@@ -404,7 +405,12 @@ document.addEventListener('DOMContentLoaded', function () {
             emptyBlock.style.display = 'none';
         }
 
-        list.forEach(function (item) {
+        // Индекс для печати: позиция в повторителе autoparts.
+        // Валиден, только если ВСЕ запчасти пришли из базы (никто не удалял/не добавлял).
+        // В ином случае порядок разъехался с базой — тогда скрываем галочки печати.
+        const allFromDb = type === 'part' && list.every(function (it) { return it.fromDb; });
+
+        list.forEach(function (item, idx) {
             const cartItem = document.createElement('div');
 
             cartItem.className =
@@ -412,8 +418,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
             cartItem.dataset.id = item.id;
 
+            if (type === 'part' && allFromDb) {
+                cartItem.dataset.partIndex = idx;
+            }
+
             cartItem.innerHTML = `
                 <div class="order-cart-item-main">
+                    ${type === 'part' && allFromDb ? `
+                        <label class="part-print-label" title="Печатать эту запчасть в документе">
+                            <input type="checkbox" class="part-print-checkbox" checked>
+                            <span class="part-print-label-text">в печать</span>
+                        </label>
+                    ` : ''}
                     <strong>${escapeHtml(item.name)}</strong>
                     <div class="order-cart-price">
                         <input
