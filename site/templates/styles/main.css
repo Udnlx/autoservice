@@ -480,6 +480,19 @@ form button[type="submit"]:hover {
     color: #111827;
     font-size: 16px;
     font-weight: 900;}
+.order-client-link {
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px dashed #999;}
+.order-client-link:hover {
+    color: #1e87f0;
+    border-bottom-color: #1e87f0;
+    text-decoration: none;}
+.order-client-sep {
+    color: #999;
+    margin: 0 2px;}
+.order-client-phone {
+    white-space: nowrap;}
 
 
 

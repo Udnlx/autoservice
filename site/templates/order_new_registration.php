@@ -43,10 +43,14 @@ if ($operator == 'no_operator') {
     $comment = !empty($_POST['comment']) ? $_POST['comment'] : NULL;
     $recomend = !empty($_POST['recomend']) ? $_POST['recomend'] : NULL;
 
-    $client_page = $pages->get("template=owner, id=" . $client);
-    $client_name = $client_page->title;
+    $client_id = (int)$client;
+    $client_page = $pages->get("template=owner, id=$client_id");
+    if (!$client_page->id) {
+        $client_id = 0;   // клиент не найден — сбросим, валидация ниже не пропустит
+    }
 
-    $car_page = $pages->get("template=car, id=" . $car);
+    $car_id   = (int)$car;
+    $car_page = $pages->get("template=car, id=$car_id");
     $car_name = $car_page->title;
 
     $order_works = [];
@@ -112,7 +116,7 @@ if ($operator == 'no_operator') {
     $order = [
         'date' => $selected_date,
         'worker' => $selected_worker,
-        'client' => $client_name,
+        'client' => $client_id,
         'car' => $car_name,
         'status' => 'Новая',
         'payment_type' => $payment_type,
@@ -133,7 +137,7 @@ if ($operator == 'no_operator') {
     // print_r($order);
     // echo '</pre>';
 
-	if ($selected_worker && $client && $car && $payment_type && $operator != 'no_operator') {
+	if ($selected_worker && $client_id && $car_id && $payment_type && $operator != 'no_operator') {
 
         // --- ПРОВЕРКА НАЛИЧИЯ НА СКЛАДЕ (до создания заказа) ---
         $stock_errors = [];
@@ -160,8 +164,8 @@ if ($operator == 'no_operator') {
             $session->set('new_order_stock_errors', $stock_errors);
 
             $back = '/zakaz-novyi/?stock_error=1';
-            if ($client > 0) { $back .= '&client_id=' . (int)$client; }
-            if ($car > 0)    { $back .= '&car_id=' . (int)$car; }
+            if ($client_id > 0) { $back .= '&client_id=' . $client_id; }
+            if ($car_id > 0)    { $back .= '&car_id=' . $car_id; }
 
             $session->redirect($back);
         }

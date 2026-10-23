@@ -92,7 +92,7 @@ if ($operator == 'no_operator') {
         'id' => $orderPage->id,
         'date' => $orderPage->date_order,
         'worker' => $orderPage->operator,
-        'client' => $orderPage->client,
+        'client' => $orderPage->client,   // объект страницы owner (или NullPage)
         'car' => $orderPage->auto,
         'status' => $orderPage->status_order,
         'payment_type' => $orderPage->payment_type,
@@ -241,7 +241,25 @@ if ($operator == 'no_operator') {
 
                         <div class="order-info-box">
                             <div class="order-info-label">Клиент</div>
-                            <div class="order-info-value"><?php echo orderClean($order['client']); ?></div>
+                            <div class="order-info-value"><?php
+                                $clientPage = $order['client'];
+                                if ($clientPage->id) {
+                                    // ФИО и телефон рядом, вся связка — ссылка на карточку клиента в новой вкладке
+                                    $fio   = orderClean($clientPage->title);
+                                    $phone = orderClean($clientPage->phone);
+                                    $url   = '/klient-prosmotr/?idowner=' . (int)$clientPage->id;
+
+                                    echo '<a href="' . $url . '" target="_blank" rel="noopener" class="order-client-link">';
+                                    echo    '<span class="order-client-fio">' . $fio . '</span>';
+                                    if ($phone !== '') {
+                                        echo ' <span class="order-client-sep">·</span> ';
+                                        echo '<span class="order-client-phone">' . $phone . '</span>';
+                                    }
+                                    echo '</a>';
+                                } else {
+                                    echo '—';
+                                }
+                            ?></div>
                         </div>
 
                         <div class="order-info-box">

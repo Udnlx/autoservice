@@ -105,9 +105,6 @@ if ($operator == 'no_operator') {
         }
     }
 
-    // ---------- Данные заказа ----------
-    $orderPage = $pages->get("id=$order_id, template=order_item");
-
     // ---------- Список индексов запчастей, которые НЕ надо печатать ----------
     // Приходит из order_view.php в адресе: &skip=0,3,5
     // Это 0-based позиции в повторителе autoparts в том виде, как они видны оператору.
@@ -129,7 +126,6 @@ if ($operator == 'no_operator') {
     }
 
     $order_date    = $orderPage->date_order;
-    $client_name   = $orderPage->client;
     $car_full      = $orderPage->auto;
     // $total_price и $total_words посчитаем ниже, после сбора таблиц работ и запчастей,
     // чтобы учесть и qty, и исключённые запчасти.
@@ -182,8 +178,9 @@ if ($operator == 'no_operator') {
         $company_phone   = '8 985 816-10-10';
     }
 
-    // ---------- Клиент: ищем по title в шаблоне owner ----------
-    $client_display = $client_name; // по умолчанию — исходная строка (если не найден)
+    // ---------- Клиент: берём напрямую из Page Reference ----------
+    // В поле client лежит страница owner (или NullPage, если клиент не задан/удалён).
+    $client_display = '—';
     $client_phone   = '';
     $client_email   = '';
     $client_address = '';
@@ -191,18 +188,15 @@ if ($operator == 'no_operator') {
     $client_inn     = '';
     $client_found   = false;
 
-    if ($client_name) {
-        $ownerPage = $pages->get("template=owner, title=" . $sanitizer->selectorValue($client_name));
-
-        if ($ownerPage->id) {
-            $client_found   = true;
-            $client_display = $ownerPage->title;
-            $client_phone   = $ownerPage->phone;
-            $client_email   = $ownerPage->email;
-            $client_address = $ownerPage->owner_address;
-            $client_company = $ownerPage->owner_company;
-            $client_inn     = $ownerPage->owner_inn;
-        }
+    $ownerPage = $orderPage->client;
+    if ($ownerPage && $ownerPage->id) {
+        $client_found   = true;
+        $client_display = $ownerPage->title;
+        $client_phone   = $ownerPage->phone;
+        $client_email   = $ownerPage->email;
+        $client_address = $ownerPage->owner_address;
+        $client_company = $ownerPage->owner_company;
+        $client_inn     = $ownerPage->owner_inn;
     }
 
     $date_priem  = $order_date;

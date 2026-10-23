@@ -82,45 +82,31 @@ if ($operator == 'no_operator') {
         if ($search_client !== '') {
             $value  = $sanitizer->selectorValue($search_client);
             $digits = $sanitizer->digits($search_client);
-            // ---------- 1. Собираем имена владельцев ----------
-            $ownerNames = [];
-            // по телефону — как ввёл пользователь
-            $byPhone = $pages->find("template=owner, phone%=$value");
-            // если пусто и есть хотя бы 3 цифры — пробуем только цифрами
-            if (!count($byPhone) && strlen($digits) >= 3) {
-                $byPhone = $pages->find("template=owner, phone%=$digits");
-            }
-            foreach ($byPhone as $ownerItem) {
-                if ($ownerItem->title) {
-                    $ownerNames[] = $ownerItem->title;
-                }
-            }
-            // по имени владельца — чтобы поиск по фамилии тоже работал
+
+            // ---------- 1. Собираем ID подходящих owner-ов ----------
+            // по имени (фамилия/имя/отчество — всё через title%=)
+            $ownerIds = [];
             foreach ($pages->find("template=owner, title%=$value") as $ownerItem) {
-                if ($ownerItem->title) {
-                    $ownerNames[] = $ownerItem->title;
+                $ownerIds[$ownerItem->id] = true;
+            }
+
+            // по телефону — как ввёл пользователь
+            foreach ($pages->find("template=owner, phone%=$value") as $ownerItem) {
+                $ownerIds[$ownerItem->id] = true;
+            }
+
+            // если по телефону ничего не нашли и есть хотя бы 3 цифры — пробуем только цифрами
+            if (strlen($digits) >= 3) {
+                foreach ($pages->find("template=owner, phone%=$digits") as $ownerItem) {
+                    $ownerIds[$ownerItem->id] = true;
                 }
             }
-            $ownerNames = array_values(array_unique($ownerNames));
-            // ---------- 2. Собираем ID подходящих заявок ----------
-            $orderIds = [];
-            // напрямую по введённому тексту
-            foreach ($pages->find("template=order_item, parent=$orders_page, client%=$value") as $orderItem) {
-                $orderIds[] = $orderItem->id;
-            }
-            // по именам владельцев, найденных через телефон
-            foreach ($ownerNames as $ownerName) {
-                $nameValue = $sanitizer->selectorValue($ownerName);
-                foreach ($pages->find("template=order_item, parent=$orders_page, client%=$nameValue") as $orderItem) {
-                    $orderIds[] = $orderItem->id;
-                }
-            }
-            $orderIds = array_values(array_unique($orderIds));
-            // ---------- 3. Ограничение выборки ----------
-            if (count($orderIds)) {
-                $selector .= ", id=" . implode('|', $orderIds);
+
+            // ---------- 2. Ограничиваем выборку заявок по client=<id>|<id>|... ----------
+            if (count($ownerIds)) {
+                $selector .= ", client=" . implode('|', array_keys($ownerIds));
             } else {
-                $selector .= ", id=-1"; // ничего не нашли — пустой результат
+                $selector .= ", id=-1"; // ни одного подходящего клиента — пустой результат
             }
         }
         if ($search_auto !== '') {
@@ -306,7 +292,12 @@ if ($operator == 'no_operator') {
 
                                         <div class="order-list-item-cell">
                                             <div class="order-list-item-label">Клиент</div>
-                                            <div class="order-list-item-value"><?php echo orderClean($orderItem->client); ?></div>
+                                            <div class="order-list-item-value"><?php
+                                                // client — Page Reference на owner. Если задан — показываем ФИО, иначе прочерк.
+                                                echo $orderItem->client->id
+                                                    ? orderClean($orderItem->client->title)
+                                                    : '—';
+                                            ?></div>
                                         </div>
 
                                         <div class="order-list-item-cell">
