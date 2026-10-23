@@ -160,7 +160,7 @@ if ($operator == 'no_operator') {
         <form class="uk-flex uk-flex-column" action="/avtomobil-registratciia/" method="post">
 
             <div class="uk-margin-small-top">
-                <label for="car_brand">Марка</label>
+                <label for="car_brand">Марка <span style="color:red;">*</span></label>
 
                 <div style="position: relative;">
                     <input
@@ -183,7 +183,7 @@ if ($operator == 'no_operator') {
             </div>
 
             <div class="uk-margin-small-top">
-                <label for="car_model">Модель</label>
+                <label for="car_model">Модель <span style="color:red;">*</span></label>
                 <input class="uk-input" id="car_model" type="text" name="car_model" placeholder="Например: Sandero" autocomplete="off" required>
             </div>
 

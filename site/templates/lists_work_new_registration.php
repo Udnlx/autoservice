@@ -31,7 +31,7 @@ if ($operator == 'no_operator') {
 
     $success = '';
 
-    if ($work_title && $work_price > 0 && $operator != 'no_operator') {
+    if ($work_title && $operator != 'no_operator') {
 
         $works_page = $pages->get('name=raboty');
         $workPage = $pages->add('work_item', $works_page);

@@ -30,7 +30,7 @@ if ($operator == 'no_operator') {
 
     $success = false;
 
-    if ($car_id && $car_brand && $car_model && $car_number && $car_vin && $car_year) {
+    if ($car_id && $car_brand && $car_model) {
 
         $carPage = $pages->get("id=$car_id, template=car");
 

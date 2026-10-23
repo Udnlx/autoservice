@@ -184,23 +184,23 @@ if ($operator == 'no_operator') {
                     <input type="hidden" name="car_id" value="<?php echo carClean($car['id']); ?>">
 
                     <div class="uk-margin-small-top">
-                        <label for="car_brand">Марка</label>
+                        <label for="car_brand">Марка <span style="color:red;">*</span></label>
                         <input class="uk-input" id="car_brand" type="text" name="car_brand" value="<?php echo carClean($car['brand']); ?>" placeholder="Например: Renault" autocomplete="off" required>
                     </div>
 
                     <div class="uk-margin-small-top">
-                        <label for="car_model">Модель</label>
+                        <label for="car_model">Модель <span style="color:red;">*</span></label>
                         <input class="uk-input" id="car_model" type="text" name="car_model" value="<?php echo carClean($car['model']); ?>" placeholder="Например: Sandero" autocomplete="off" required>
                     </div>
 
                     <div class="uk-margin-small-top">
                         <label for="car_number">Гос. номер</label>
-                        <input class="uk-input" id="car_number" type="text" name="car_number" value="<?php echo carClean($car['number']); ?>" placeholder="Например: О123ХХ58" autocomplete="off" required>
+                        <input class="uk-input" id="car_number" type="text" name="car_number" value="<?php echo carClean($car['number']); ?>" placeholder="Например: О123ХХ58" autocomplete="off">
                     </div>
 
                     <div class="uk-margin-small-top">
                         <label for="car_vin">VIN</label>
-                        <input class="uk-input" id="car_vin" type="text" name="car_vin" value="<?php echo carClean($car['vin']); ?>" placeholder="17 символов" autocomplete="off" required>
+                        <input class="uk-input" id="car_vin" type="text" name="car_vin" value="<?php echo carClean($car['vin']); ?>" placeholder="17 символов" autocomplete="off">
                     </div>
 
                     <div class="uk-margin-small-top">
