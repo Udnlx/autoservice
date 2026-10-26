@@ -532,17 +532,50 @@ if ($operator == 'no_operator') {
                     </form>
                 <?php } ?>
 
+                <ul uk-accordion="multiple: true" class="print-accordion uk-margin-small-top">
+                    <li>
+                        <a class="uk-accordion-title print-accordion-title" href="#">
+                            <span>Печать</span>
+                            <span class="print-accordion-arrow" aria-hidden="true"></span>
+                        </a>
+
+                        <div class="uk-accordion-content" style="margin-top: -20px!Important;">
+                            <div class="print-panel-placeholder">
+                                <div class="uk-margin-small-top uk-flex uk-flex-column">
+                                    <select class="uk-select uk-margin-small-top" id="print_company">
+                                        <option value="" disabled selected>— Выберите компанию для формирования документа —</option>
+                                        <option value="turbina_plus">Турбина Плюс</option>
+                                        <option value="antikor_rf">Антикор РФ</option>
+                                    </select>
+
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_btn">
+                                        Заказ-наряд
+                                    </button>
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_act">
+                                        Акт (в разработке)
+                                    </button>
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_waranty">
+                                        Гарантийный сертификат (в разработке)
+                                    </button>
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_app_acc">
+                                        Заявка + Приемка (в разработке)
+                                    </button>
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_pdn">
+                                        ПДН (в разработке)
+                                    </button>
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_payment">
+                                        Счёт (в разработке)
+                                    </button>
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_updd">
+                                        УПДД (в разработке)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
                 <div class="uk-margin-small-top uk-flex uk-flex-column">
-                    <select class="uk-select uk-margin-small-top" id="print_company">
-                        <option value="" disabled selected>— Выберите компанию для формирования документа —</option>
-                        <option value="turbina_plus">Турбина Плюс</option>
-                        <option value="antikor_rf">Антикор РФ</option>
-                    </select>
-
-                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_btn">
-                        Распечатать
-                    </button>
-
                     <a class="uk-margin-small-top uk-button uk-button-default" href="/">Перейти на главную</a>
                 </div>
 

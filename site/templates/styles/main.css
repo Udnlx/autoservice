@@ -672,6 +672,56 @@ body > .uk-padding-small.uk-container.uk-flex.uk-flex-column.uk-flex-middle p {
 
 
 
+/*Панель печати, аккардеон*/
+.print-accordion {
+    margin: 0;
+    padding: 0;
+    list-style: none;}
+/* Гасим штатный маркер UIkit — у нас свой шеврон */
+.print-accordion .uk-accordion-title::before,
+.print-accordion .uk-accordion-title::after {
+    content: none !important;
+    display: none !important;}
+.print-accordion .print-accordion-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #c7c7c7;
+    color: #333333;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;}
+.print-accordion .print-accordion-title:hover {
+    background: #b0b0b0;
+    text-decoration: none;}
+/* Шеврон: квадрат с двумя сторонами, повёрнутый на 45° */
+.print-accordion .print-accordion-arrow {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    margin-bottom: 3px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;}
+/* Открыто — UIkit сам вешает uk-open на <li> */
+.print-accordion .uk-open .print-accordion-arrow {
+    margin-bottom: 0;
+    margin-top: 3px;
+    transform: rotate(225deg);}
+.print-accordion .print-panel-placeholder {
+    padding: 16px;
+    color: #666666;
+    font-size: 15px;}
+
+
+
 /*Адаптив 700*/
 @media (max-width: 700px) {
     .uk-container {
