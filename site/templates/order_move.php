@@ -147,7 +147,7 @@ if ($operator == 'no_operator') {
                     </div>
 
                     <div class="order-status-badge">
-                        Всего: <span id="orders_visible_count_num"><?php echo count($orders_list); ?></span>
+                        <span style="margin-right:5px;">По фильтру:</span><span id="orders_visible_count_num"><?php echo count($orders_list); ?></span>
                     </div>
                 </div>
 
@@ -206,7 +206,7 @@ if ($operator == 'no_operator') {
                                     </label>
 
                                     <label style="display:block; cursor:pointer;">
-                                        <input type="checkbox" class="status-filter-checkbox" data-status="status-canceled" checked>
+                                        <input type="checkbox" class="status-filter-checkbox" data-status="status-canceled">
                                         Отменена
                                     </label>
                                 </div>

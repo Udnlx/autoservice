@@ -246,6 +246,11 @@ form button[type="submit"]:hover {
     padding-left: 10px !important;
     padding-right: 10px !important;
     font-weight: 800;}
+form button[type="submit"].uk-button-danger {
+    background: linear-gradient(135deg, #e03131, #c92a2a);
+    box-shadow: 0 10px 22px rgba(224, 49, 49, 0.25);}
+form button[type="submit"].uk-button-danger:hover {
+    background: linear-gradient(135deg, #c92a2a, #b02525);}
 
 
 

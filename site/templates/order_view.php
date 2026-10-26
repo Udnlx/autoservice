@@ -478,16 +478,13 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="warranty">Гарантийные обязательства</label>
                         <select class="uk-select" id="warranty" name="warranty" required>
-                            <option value="6 месяцев" <?php if ($order['warranty'] == '6 месяцев') echo 'selected'; ?>>6 месяцев</option>
-                            <option value="12 месяцев" <?php if ($order['warranty'] == '12 месяцев') echo 'selected'; ?>>12 месяцев</option>
-                            <option value="18 месяцев" <?php if ($order['warranty'] == '18 месяцев') echo 'selected'; ?>>18 месяцев</option>
-                            <option value="24 месяцев" <?php if ($order['warranty'] == '24 месяцев') echo 'selected'; ?>>24 месяцев</option>
-                            <option value="30 месяцев" <?php if ($order['warranty'] == '30 месяцев') echo 'selected'; ?>>30 месяцев</option>
-                            <option value="36 месяцев" <?php if ($order['warranty'] == '36 месяцев') echo 'selected'; ?>>36 месяцев</option>
-                            <option value="42 месяцев" <?php if ($order['warranty'] == '42 месяцев') echo 'selected'; ?>>42 месяцев</option>
-                            <option value="48 месяцев" <?php if ($order['warranty'] == '48 месяцев') echo 'selected'; ?>>48 месяцев</option>
-                            <option value="54 месяцев" <?php if ($order['warranty'] == '54 месяцев') echo 'selected'; ?>>54 месяцев</option>
-                            <option value="60 месяцев" <?php if ($order['warranty'] == '60 месяцев') echo 'selected'; ?>>60 месяцев</option>
+                            <option value="Без гарантии"
+                                <?php if ($order['warranty'] == 'Без гарантии') echo 'selected'; ?>>Без гарантии
+                            </option>
+                            <option value="6 месяцев"   <?php if ($order['warranty'] == '6 месяцев') echo 'selected'; ?>>6 месяцев</option>
+                            <option value="1 год"       <?php if ($order['warranty'] == '1 год') echo 'selected'; ?>>1 год</option>
+                            <option value="3 года"      <?php if ($order['warranty'] == '3 года') echo 'selected'; ?>>3 года</option>
+                            <option value="5 лет"       <?php if ($order['warranty'] == '5 лет') echo 'selected'; ?>>5 лет</option>
                         </select>
                     </div>
 
@@ -527,7 +524,7 @@ if ($operator == 'no_operator') {
 
                 <?php if (!in_array($order['status'], ['Отменена', 'Завершена'], true)) { ?>
                     <form action="/zakaz-udalit/" method="post"
-                          onsubmit="return confirm('Удалить <?php echo orderClean($orderPage->title); ?>?\n\nОн больше не будет отображаться в списке заказов.');">
+                          onsubmit="return confirm('Удалить <?php echo orderClean($orderPage->title); ?>?\nОн больше не будет отображаться в списке заказов.');">
                         <input type="hidden" name="order_id" value="<?php echo orderClean($order['id']); ?>">
                         <button type="submit" class="uk-margin-small-top uk-button uk-button-danger uk-width-1-1">
                             Удалить

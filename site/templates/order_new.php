@@ -344,16 +344,11 @@ if ($operator == 'no_operator') {
                     <div class="uk-margin-small-top">
                         <label for="warranty">Гарантийные обязательства</label>
                         <select class="uk-select" id="warranty" name="warranty" required>
+                            <option value="Без гарантии">Без гарантии</option>
                             <option value="6 месяцев">6 месяцев</option>
-                            <option value="12 месяцев">12 месяцев</option>
-                            <option value="18 месяцев">18 месяцев</option>
-                            <option value="24 месяцев">24 месяцев</option>
-                            <option value="30 месяцев">30 месяцев</option>
-                            <option value="36 месяцев">36 месяцев</option>
-                            <option value="42 месяцев">42 месяцев</option>
-                            <option value="48 месяцев">48 месяцев</option>
-                            <option value="54 месяцев">54 месяцев</option>
-                            <option value="60 месяцев">60 месяцев</option>
+                            <option value="1 год">1 год</option>
+                            <option value="3 года">3 года</option>
+                            <option value="5 лет">5 лет</option>
                         </select>
                     </div>
 
