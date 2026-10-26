@@ -65,6 +65,20 @@ if ($operator == 'no_operator') {
     // Автомобили этого клиента
     $owner_cars = $pages->find("template=car, car_owner=$owner_id, sort=title");
 
+    // ---------- Откуда пришли: со страницы заявки или нет ----------
+    // Если from_order передан и такая заявка существует — покажем кнопку возврата.
+    // Если ID битый или заявка удалена — молча считаем, что пришли не с заявки.
+    $from_order      = $input->get->int('from_order');
+    $from_order_page = null;
+
+    if ($from_order) {
+        $from_order_page = $pages->get("id=$from_order, template=order_item");
+        if (!$from_order_page->id) {
+            $from_order      = 0;
+            $from_order_page = null;
+        }
+    }
+
 ?>
 
 <div id="content">
@@ -187,6 +201,13 @@ if ($operator == 'no_operator') {
                     <!--АВТОМОБИЛИ КЛИЕНТА-->
 
                     <div class="uk-margin-small-top uk-flex uk-flex-column">
+                        <?php if ($from_order_page) { ?>
+                            <a class="uk-margin-small-top uk-button uk-button-primary"
+                               href="/zakaz-prosmotr/?idorder=<?php echo (int)$from_order; ?>">
+                                Вернуться к заявке №<?php echo ownerClean($from_order_page->title); ?>
+                            </a>
+                        <?php } ?>
+
                         <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="toggle_edit_btn">
                             Изменить
                         </button>
@@ -198,6 +219,7 @@ if ($operator == 'no_operator') {
                 <!--БЛОК РЕДАКТИРОВАНИЯ (скрыт по умолчанию)-->
                 <form id="owner_edit_form" class="uk-flex uk-flex-column" action="/klient-redaktirovanie/" method="post" hidden>
                     <input type="hidden" name="owner_id" value="<?php echo ownerClean($owner['id']); ?>">
+                    <input type="hidden" name="from_order" value="<?php echo (int)$from_order; ?>">
 
                     <div class="uk-margin-small-top">
                         <label for="owner_type">Тип клиента</label>

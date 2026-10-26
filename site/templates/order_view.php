@@ -247,9 +247,12 @@ if ($operator == 'no_operator') {
                                     // ФИО и телефон рядом, вся связка — ссылка на карточку клиента в новой вкладке
                                     $fio   = orderClean($clientPage->title);
                                     $phone = orderClean($clientPage->phone);
-                                    $url   = '/klient-prosmotr/?idowner=' . (int)$clientPage->id;
 
-                                    echo '<a href="' . $url . '" target="_blank" rel="noopener" class="order-client-link">';
+                                    // from_order — чтобы на странице клиента появилась кнопка возврата к заявке
+                                    $url = '/klient-prosmotr/?idowner=' . (int)$clientPage->id
+                                         . '&from_order=' . (int)$order['id'];
+
+                                    echo '<a href="' . $url . '" class="order-client-link">';
                                     echo    '<span class="order-client-fio">' . $fio . '</span>';
                                     if ($phone !== '') {
                                         echo ' <span class="order-client-sep">·</span> ';

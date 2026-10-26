@@ -20,6 +20,9 @@ if ($operator == 'no_operator') {
 
     $owner_id = !empty($_POST['owner_id']) ? (int)$_POST['owner_id'] : 0;
 
+    // Заявка, с которой пришли (если пришли) — чтобы вернуть оператора обратно
+    $from_order = !empty($_POST['from_order']) ? (int)$_POST['from_order'] : 0;
+
     $owner_title   = !empty($_POST['owner_title'])   ? trim($_POST['owner_title'])   : '';
     $owner_phone   = !empty($_POST['owner_phone'])   ? trim($_POST['owner_phone'])   : '';
     $owner_email   = !empty($_POST['owner_email'])   ? trim($_POST['owner_email'])   : '';
@@ -52,10 +55,13 @@ if ($operator == 'no_operator') {
         }
     }
 
+    // Сохраняем контекст возврата в адресе, иначе кнопка «Вернуться к заявке» пропадёт
+    $from_suffix = $from_order > 0 ? '&from_order=' . $from_order : '';
+
     if ($success) {
-        $session->redirect('/klient-prosmotr/?idowner=' . $owner_id . '&saved=1');
+        $session->redirect('/klient-prosmotr/?idowner=' . $owner_id . '&saved=1' . $from_suffix);
     } else {
-        $session->redirect('/klient-prosmotr/?idowner=' . $owner_id . '&saved=0');
+        $session->redirect('/klient-prosmotr/?idowner=' . $owner_id . '&saved=0' . $from_suffix);
     }
 }
 ?>
