@@ -525,6 +525,16 @@ if ($operator == 'no_operator') {
                     </div>
                 </form>
 
+                <?php if (!in_array($order['status'], ['Отменена', 'Завершена'], true)) { ?>
+                    <form action="/zakaz-udalit/" method="post"
+                          onsubmit="return confirm('Удалить <?php echo orderClean($orderPage->title); ?>?\n\nОн больше не будет отображаться в списке заказов.');">
+                        <input type="hidden" name="order_id" value="<?php echo orderClean($order['id']); ?>">
+                        <button type="submit" class="uk-margin-small-top uk-button uk-button-danger uk-width-1-1">
+                            Удалить
+                        </button>
+                    </form>
+                <?php } ?>
+
                 <div class="uk-margin-small-top uk-flex uk-flex-column">
                     <select class="uk-select uk-margin-small-top" id="print_company">
                         <option value="" disabled selected>— Выберите компанию для формирования документа —</option>
