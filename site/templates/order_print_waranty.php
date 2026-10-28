@@ -55,6 +55,39 @@ if ($operator == 'no_operator') {
         $order_number = $m[1];
     }
 
+    // ---------- Исключаемые запчасти (та же логика, что в заказ-наряде и акте) ----------
+    $skip_parts = [];
+    $skip_raw   = $input->get->string('skip');
+    if ($skip_raw !== '') {
+        foreach (explode(',', $skip_raw) as $idx) {
+            $idx = trim($idx);
+            if (ctype_digit($idx)) {
+                $skip_parts[(int)$idx] = true;
+            }
+        }
+    }
+
+    // ---------- Запчасти для поля «Используемые материалы» ----------
+    // Берём только те, что НЕ в skip. Формат: «Название (N шт)»
+    $materials_parts = [];
+    if (count($orderPage->autoparts)) {
+        $idx = 0;
+        foreach ($orderPage->autoparts as $item) {
+            if (!isset($skip_parts[$idx])) {
+                $qty  = max(1, (int)$item->qty);
+                $name = trim((string)$item->autopart);
+                if ($name !== '') {
+                    $materials_parts[] = $name . ' (' . $qty . ' шт)';
+                }
+            }
+            $idx++;
+        }
+    }
+    $materials_text = implode(', ', $materials_parts);
+
+    // ---------- Рекомендации для клиента (пойдут в первую строку комментария мастера) ----------
+    $recomend_text = trim((string)$orderPage->recomend);
+
     // ---------- Реквизиты компании ----------
     $company_name    = '-';
     $company_address = '-';
@@ -376,7 +409,7 @@ if ($operator == 'no_operator') {
     </tr>';
     $content .= '<tr>
         <td class="car-label">Используемые материалы:</td>
-        <td colspan="3">&nbsp;</td>
+        <td colspan="3">' . ($materials_text !== '' ? htmlspecialchars($materials_text, ENT_QUOTES, 'UTF-8') : '&nbsp;') . '</td>
     </tr>';
     $content .= '</table>';
 
@@ -490,13 +523,24 @@ if ($operator == 'no_operator') {
     // ПРАВАЯ КОЛОНКА
     $content .= '<td class="col-right">';
 
-    // Комментарий мастера — заголовок + много пустых строк
+    // Комментарий мастера — заголовок + первая строка с рекомендациями из заказа (если есть) + пустые строки
     $content .= '<p style="margin: 0 0 2px 0;"><b>Комментарий Мастера:</b></p>';
     $content .= '<table class="comment-table">';
-    // 12 пустых строк для записей
-    for ($i = 0; $i < 12; $i++) {
-        $content .= '<tr><td>&nbsp;</td></tr>';
+
+    if ($recomend_text !== '') {
+        // Первая строка — рекомендации из заказ-наряда
+        $content .= '<tr><td>' . htmlspecialchars($recomend_text, ENT_QUOTES, 'UTF-8') . '</td></tr>';
+        // Остальные 11 строк — пустые под рукописные пометки мастера
+        for ($i = 0; $i < 11; $i++) {
+            $content .= '<tr><td>&nbsp;</td></tr>';
+        }
+    } else {
+        // Рекомендаций нет — все 12 строк пустые
+        for ($i = 0; $i < 12; $i++) {
+            $content .= '<tr><td>&nbsp;</td></tr>';
+        }
     }
+
     $content .= '</table>';
 
     $content .= '</td>'; // конец col-right
