@@ -552,10 +552,10 @@ if ($operator == 'no_operator') {
                                         Заказ-наряд
                                     </button>
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_act">
-                                        Акт (в разработке)
+                                        Акт
                                     </button>
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_waranty">
-                                        Гарантийный сертификат (в разработке)
+                                        Гарантийный сертификат
                                     </button>
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_app_acc">
                                         Заявка + Приемка (в разработке)
@@ -587,19 +587,13 @@ if ($operator == 'no_operator') {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var printBtn     = document.getElementById('print_btn');
-    var printCompany = document.getElementById('print_company');
+    var printBtn      = document.getElementById('print_btn');
+    var printActBtn   = document.getElementById('print_act');
+    var printWarBtn   = document.getElementById('print_waranty');
+    var printCompany  = document.getElementById('print_company');
 
-    printBtn.addEventListener('click', function () {
-        var company = printCompany.value;
-
-        if (!company) {
-            alert('Выберите компанию для формирования документа');
-            return;
-        }
-
-        // Собираем индексы запчастей, у которых снята галочка «печатать».
-        // Берём только те строки, что пришли из базы (у них есть data-part-index).
+    // Общая функция сборки skip-индексов для исключённых запчастей
+    function collectSkip() {
         var skip = [];
         document.querySelectorAll('#parts_cart .order-cart-item[data-part-index]').forEach(function (row) {
             var cb = row.querySelector('.part-print-checkbox');
@@ -607,13 +601,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 skip.push(row.dataset.partIndex);
             }
         });
+        return skip;
+    }
 
-        var url = '/zakaz-pechat/?idorder=<?php echo (int)$order_id ?>&company=' + encodeURIComponent(company);
+    // Общая функция формирования URL печати для любого документа
+    function buildPrintUrl(basePath) {
+        var company = printCompany.value;
+
+        if (!company) {
+            alert('Выберите компанию для формирования документа');
+            return null;
+        }
+
+        var url = basePath + '?idorder=<?php echo (int)$order_id ?>&company=' + encodeURIComponent(company);
+        var skip = collectSkip();
         if (skip.length) {
             url += '&skip=' + encodeURIComponent(skip.join(','));
         }
+        return url;
+    }
 
-        window.location.href = url;
+    // Заказ-наряд
+    printBtn.addEventListener('click', function () {
+        var url = buildPrintUrl('/zakaz-pechat/');
+        if (url) window.location.href = url;
+    });
+
+// Акт
+    printActBtn.addEventListener('click', function () {
+        var url = buildPrintUrl('/pechat-akta/');
+        if (url) window.location.href = url;
+    });
+
+    // Гарантийный сертификат (skip не нужен — там нет корзины запчастей)
+    printWarBtn.addEventListener('click', function () {
+        var url = buildPrintUrl('/pechat-garantiinogo-sertifikata/');
+        if (url) window.location.href = url;
     });
 });
 </script>

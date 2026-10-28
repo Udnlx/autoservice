@@ -325,6 +325,17 @@ if ($operator == 'no_operator') {
         margin: 4px 0 10px 0;
     }
 
+    .qr-img {
+        float: left;
+        width: 140px;
+        height: 140px;
+        margin: 0 10px 6px 0;
+    }
+
+    .qr-clear {
+        clear: both;
+    }
+
     .agreement {
         font-size: 10px;
         text-align: justify;
@@ -490,8 +501,22 @@ if ($operator == 'no_operator') {
     <p class="words">Всего получено: (' . number_format($total_price, 2, '.', ' ') . ') ' . $total_words . '</p>
     ';
 
-        // Соглашение
-        $content .= '
+    // Соглашение + QR-код слева (текст обтекает справа)
+    // QR встраиваем в HTML как base64 — Dompdf гарантированно подхватит,
+    // не зависит от путей, remote и прав.
+    $qr_path = $config->paths->templates . 'imgpdf/order_print_qr.png';
+
+    $content .= '<div class="qr-agreement-block">';
+
+    if (is_file($qr_path)) {
+        $qr_data   = base64_encode(file_get_contents($qr_path));
+        $qr_mime   = 'image/png'; // файл .png, так что фиксируем
+        $qr_src    = 'data:' . $qr_mime . ';base64,' . $qr_data;
+
+        $content .= '<img src="' . $qr_src . '" alt="QR" class="qr-img">';
+    }
+
+    $content .= '
     <p class="agreement">
     Все перечисленные работы выполнены полностью, претензий к качеству не имею. Автомобиль и комплектация получены.
     Согласен на проведение работ по устранению выявленных в процессе ремонта неисправностей, без устранения которых
@@ -499,6 +524,9 @@ if ($operator == 'no_operator') {
     С правилами предоставления услуг ' . htmlspecialchars($company_name, ENT_QUOTES, 'UTF-8') . ' ознакомлен и согласен.
     Согласен на обработку персональных данных.
     </p>
+
+    <div class="qr-clear"></div>
+    </div>
     ';
 
     // Подписи
