@@ -548,6 +548,9 @@ if ($operator == 'no_operator') {
                                         <option value="antikor_rf">Антикор РФ</option>
                                     </select>
 
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_btn_pred">
+                                        Предварительный заказ-наряд
+                                    </button>
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_btn">
                                         Заказ-наряд
                                     </button>
@@ -587,6 +590,7 @@ if ($operator == 'no_operator') {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    var printBtnPred      = document.getElementById('print_btn_pred');
     var printBtn      = document.getElementById('print_btn');
     var printActBtn   = document.getElementById('print_act');
     var printWarBtn   = document.getElementById('print_waranty');
@@ -621,13 +625,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return url;
     }
 
+    // Предварительный заказ-наряд
+    printBtnPred.addEventListener('click', function () {
+        var url = buildPrintUrl('/zakaz-pechat-pred/');
+        if (url) window.location.href = url;
+    });
+
     // Заказ-наряд
     printBtn.addEventListener('click', function () {
         var url = buildPrintUrl('/zakaz-pechat/');
         if (url) window.location.href = url;
     });
 
-// Акт
+    // Акт
     printActBtn.addEventListener('click', function () {
         var url = buildPrintUrl('/pechat-akta/');
         if (url) window.location.href = url;
