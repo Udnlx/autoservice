@@ -567,10 +567,10 @@ if ($operator == 'no_operator') {
                                         ПДН
                                     </button>
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_payment">
-                                        Счёт (в разработке)
+                                        Счёт
                                     </button>
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_updd">
-                                        УПДД (в разработке)
+                                        УПДД
                                     </button>
                                 </div>
                             </div>
@@ -596,6 +596,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var printWarBtn   = document.getElementById('print_waranty');
     var printReqBtn   = document.getElementById('print_request');
     var printPdnBtn   = document.getElementById('print_pdn');
+    var printPayBtn   = document.getElementById('print_payment');
+    var printUpdBtn   = document.getElementById('print_updd');
     var printCompany  = document.getElementById('print_company');
 
     // Общая функция сборки skip-индексов для исключённых запчастей
@@ -660,6 +662,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // ПДН (skip не нужен)
     printPdnBtn.addEventListener('click', function () {
         var url = buildPrintUrl('/pechat-pdn/');
+        if (url) window.location.href = url;
+    });
+
+    // Счёт (skip нужен — запчасти с снятой галочкой не попадут в документ)
+    printPayBtn.addEventListener('click', function () {
+        var url = buildPrintUrl('/pechat-schet/');
+        if (url) window.location.href = url;
+    });
+
+    // УПДД (skip нужен так же)
+    printUpdBtn.addEventListener('click', function () {
+        var url = buildPrintUrl('/pechat-updd/');
         if (url) window.location.href = url;
     });
 });
