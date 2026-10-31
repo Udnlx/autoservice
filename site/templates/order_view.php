@@ -560,11 +560,11 @@ if ($operator == 'no_operator') {
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_waranty">
                                         Гарантийный сертификат
                                     </button>
-                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_app_acc">
-                                        Заявка + Приемка (в разработке)
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_request">
+                                        Заявка + Приемка
                                     </button>
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_pdn">
-                                        ПДН (в разработке)
+                                        ПДН
                                     </button>
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_payment">
                                         Счёт (в разработке)
@@ -590,10 +590,12 @@ if ($operator == 'no_operator') {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var printBtnPred      = document.getElementById('print_btn_pred');
+    var printBtnPred  = document.getElementById('print_btn_pred');
     var printBtn      = document.getElementById('print_btn');
     var printActBtn   = document.getElementById('print_act');
     var printWarBtn   = document.getElementById('print_waranty');
+    var printReqBtn   = document.getElementById('print_request');
+    var printPdnBtn   = document.getElementById('print_pdn');
     var printCompany  = document.getElementById('print_company');
 
     // Общая функция сборки skip-индексов для исключённых запчастей
@@ -646,6 +648,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // Гарантийный сертификат (skip не нужен — там нет корзины запчастей)
     printWarBtn.addEventListener('click', function () {
         var url = buildPrintUrl('/pechat-garantiinogo-sertifikata/');
+        if (url) window.location.href = url;
+    });
+
+    // Заявка + Приёмка (skip тоже не нужен)
+    printReqBtn.addEventListener('click', function () {
+        var url = buildPrintUrl('/pechat-zaiavka-priemka/');
+        if (url) window.location.href = url;
+    });
+
+    // ПДН (skip не нужен)
+    printPdnBtn.addEventListener('click', function () {
+        var url = buildPrintUrl('/pechat-pdn/');
         if (url) window.location.href = url;
     });
 });
