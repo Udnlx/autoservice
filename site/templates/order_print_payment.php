@@ -320,11 +320,11 @@ if ($operator == 'no_operator') {
 
     $content .= '</td>';
 
-    $content .= '<td class="top-right">';
-    if ($qr_src !== '') {
-        $content .= '<img src="' . $qr_src . '" alt="QR">';
-    }
-    $content .= '</td>';
+    // $content .= '<td class="top-right">';
+    // if ($qr_src !== '') {
+    //     $content .= '<img src="' . $qr_src . '" alt="QR">';
+    // }
+    // $content .= '</td>';
 
     $content .= '</tr></table>';
 
