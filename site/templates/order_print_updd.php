@@ -151,59 +151,59 @@ if ($operator == 'no_operator') {
     // ---------- HTML документа ----------
     $content = '
     <style type="text/css">
-    @page { margin: 22px 20px 22px 20px; }
+    @page { margin: 14px 20px 12px 20px; }
     * {
         font-family: "DejaVu Sans", sans-serif;
         box-sizing: border-box;
     }
-    body { font-size: 7px; color: #000; line-height: 1.25; }
+    body { font-size: 7px; color: #000; line-height: 1.2; }
     p { margin: 0; }
 
     /* ================= ВЕРХНИЙ БЛОК ================= */
     .upd-top { width: 100%; border-collapse: collapse; }
     .upd-top > tbody > tr > td { vertical-align: top; padding: 0; }
-    .upd-top td.ut-left  { width: 13.5%; padding-right: 6px; }
-    .upd-top td.ut-right { width: 86.5%; }
+    .upd-top td.ut-left  { width: 11%; padding-right: 8px; }
+    .upd-top td.ut-right { width: 89%; }
 
-    .ul-title { font-size: 8.5px; line-height: 1.3; margin-bottom: 10px; }
+    .ul-title { font-size: 8px; line-height: 1.25; margin-bottom: 6px; }
 
     .status-tbl { border-collapse: collapse; margin-bottom: 3px; }
     .status-tbl td { padding: 0; vertical-align: middle; }
-    .status-tbl td.st-lbl { font-size: 8.5px; padding-right: 5px; }
+    .status-tbl td.st-lbl { font-size: 8px; padding-right: 5px; }
     .status-tbl td.st-num {
         border: 1px solid #000;
-        font-size: 9.5px;
+        font-size: 9px;
         font-weight: bold;
         text-align: center;
-        width: 22px;
-        height: 15px;
+        width: 20px;
+        height: 13px;
     }
-    .st-legend { font-size: 6.5px; line-height: 1.35; }
+    .st-legend { font-size: 6px; line-height: 1.3; }
 
     .ut-inner { width: 100%; border-collapse: collapse; }
     .ut-inner > tbody > tr > td { vertical-align: top; padding: 0; }
-    .ut-inner td.ut-main { width: 68%; }
-    .ut-inner td.ut-note { width: 32%; text-align: right; font-size: 6.5px; line-height: 1.3; }
+    .ut-inner td.ut-main { width: 72%; }
+    .ut-inner td.ut-note { width: 28%; text-align: right; font-size: 6px; line-height: 1.25; }
 
-    .inv-title { font-size: 12px; font-weight: bold; margin-bottom: 1px; }
-    .inv-sub   { font-size: 10px; font-weight: bold; margin-bottom: 5px; }
+    .inv-title { font-size: 11px; font-weight: bold; margin-bottom: 1px; }
+    .inv-sub   { font-size: 9px; font-weight: bold; margin-bottom: 3px; }
 
-    .fld { font-size: 7.5px; line-height: 1.45; margin-bottom: 1px; }
-    .fld .cap { font-size: 6px; }
+    .fld { font-size: 7px; line-height: 1.35; margin-bottom: 0; }
+    .fld .cap { font-size: 5.8px; }
     .fld-b { font-weight: bold; }
 
     /* ================= ТАБЛИЦА ПОЗИЦИЙ ================= */
     .items {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 8px;
+        margin-top: 6px;
         table-layout: fixed;
     }
     .items th, .items td {
         border: 1px solid #000;
         padding: 1px 2px;
-        font-size: 6px;
-        line-height: 1.2;
+        font-size: 6.2px;
+        line-height: 1.18;
         vertical-align: middle;
     }
     .items th {
@@ -215,7 +215,7 @@ if ($operator == 'no_operator') {
         text-align: center;
         font-weight: bold;
         padding: 0;
-        height: 9px;
+        height: 8px;
     }
     .items td.c-num    { text-align: center; }
     .items td.c-name   { text-align: left; }
@@ -225,37 +225,37 @@ if ($operator == 'no_operator') {
     .items tr.total td.t-lbl { text-align: left; font-weight: normal; }
 
     /* ================= НИЖНИЙ БЛОК ================= */
-    .bottom { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    .bottom { width: 100%; border-collapse: collapse; margin-top: 4px; }
     .bottom > tbody > tr > td { vertical-align: top; padding: 0; }
-    .bottom td.b-narrow { width: 13.5%; padding-right: 6px; font-size: 7px; line-height: 1.35; }
-    .bottom td.b-wide   { width: 86.5%; }
+    .bottom td.b-narrow { width: 11%; padding-right: 8px; font-size: 7px; line-height: 1.25; }
+    .bottom td.b-wide   { width: 89%; }
 
     /* сетка подписей руководителя */
     .sign-grid { width: 100%; border-collapse: collapse; }
     .sign-grid td { padding: 0; vertical-align: bottom; }
-    .sign-grid td.sg-lbl { font-size: 6.5px; line-height: 1.25; width: 20%; padding-right: 4px; vertical-align: middle; }
+    .sign-grid td.sg-lbl { font-size: 6.2px; line-height: 1.2; width: 20%; padding-right: 4px; vertical-align: middle; }
     .sign-grid td.sg-cell { width: 30%; padding: 0 3px; }
 
-    .uline { border-bottom: 1px solid #000; height: 9px; }
-    .ucap  { text-align: center; font-size: 5.5px; line-height: 1.1; }
+    .uline { border-bottom: 1px solid #000; height: 8px; }
+    .ucap  { text-align: center; font-size: 5.2px; line-height: 1.05; }
 
     /* полноширинные строки с подчёркиванием */
-    .fline { width: 100%; border-collapse: collapse; margin-top: 5px; }
+    .fline { width: 100%; border-collapse: collapse; margin-top: 3px; }
     .fline td { padding: 0; vertical-align: bottom; }
-    .fline td.fl-lbl { white-space: nowrap; font-size: 7px; padding-right: 4px; }
+    .fline td.fl-lbl { white-space: nowrap; font-size: 6.5px; padding-right: 4px; }
 
     /* нижняя двухколоночная часть */
-    .duo { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    .duo { width: 100%; border-collapse: collapse; margin-top: 4px; }
     .duo > tbody > tr > td { vertical-align: top; padding: 0; }
-    .duo td.d-left  { width: 50%; padding-right: 6px; border-right: 1px solid #000; }
-    .duo td.d-right { width: 50%; padding-left: 6px; }
+    .duo td.d-left  { width: 50%; padding-right: 8px; border-right: 1px solid #000; }
+    .duo td.d-right { width: 50%; padding-left: 8px; }
 
-    .d-title { font-size: 7px; margin-bottom: 2px; }
+    .d-title { font-size: 6.5px; margin-bottom: 1px; }
 
-    .sig-row { width: 100%; border-collapse: collapse; margin-top: 4px; }
+    .sig-row { width: 100%; border-collapse: collapse; margin-top: 3px; }
     .sig-row td { padding: 0 3px; vertical-align: bottom; }
 
-    .mp-sign { font-size: 7px; margin-top: 6px; }
+    .mp-sign { font-size: 6.5px; margin-top: 3px; }
     </style>
     ';
 
@@ -309,18 +309,18 @@ if ($operator == 'no_operator') {
     // Ширины колонок
     $content .= '<colgroup>
         <col style="width: 2.5%;">
-        <col style="width: 5.5%;">
-        <col style="width: 20%;">
         <col style="width: 5%;">
+        <col style="width: 22.5%;">
+        <col style="width: 4%;">
         <col style="width: 3.5%;">
         <col style="width: 4.5%;">
         <col style="width: 5%;">
-        <col style="width: 5.5%;">
-        <col style="width: 7%;">
-        <col style="width: 4.5%;">
-        <col style="width: 4.5%;">
         <col style="width: 6%;">
+        <col style="width: 8%;">
+        <col style="width: 4%;">
+        <col style="width: 4%;">
         <col style="width: 7%;">
+        <col style="width: 8%;">
         <col style="width: 4%;">
         <col style="width: 5%;">
         <col style="width: 7%;">
@@ -521,7 +521,7 @@ if ($operator == 'no_operator') {
     $content .= '</tr></table>';
 
     // --- Ответственный за оформление ---
-    $content .= '<table class="duo" style="margin-top: 8px;"><tr>';
+    $content .= '<table class="duo"><tr>';
 
     $content .= '<td class="d-left">';
     $content .= '<p class="d-title">Ответственный за правильность оформления факта хозяйственной жизни</p>';
@@ -544,7 +544,7 @@ if ($operator == 'no_operator') {
     $content .= '</tr></table>';
 
     // --- Наименование экономического субъекта ---
-    $content .= '<table class="duo" style="margin-top: 8px;"><tr>';
+    $content .= '<table class="duo"><tr>';
 
     $content .= '<td class="d-left">';
     $content .= '<p class="d-title">Наименование экономического субъекта – составителя документа (в т.ч. комиссионера / агента)</p>';
@@ -567,7 +567,7 @@ if ($operator == 'no_operator') {
     $dompdf = new Dompdf\Dompdf();
     $dompdf->set_option('isRemoteEnabled', TRUE);
     $dompdf->set_option('defaultFont', 'DejaVu Sans');
-    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->setPaper('A4', 'landscape');
     $dompdf->loadHtml($content, 'UTF-8');
     $dompdf->render();
 
