@@ -110,7 +110,7 @@ if ($operator == 'no_operator') {
 
                         <div class="order-info-box">
                             <div class="order-info-label">Цена</div>
-                            <div class="order-info-value"><?php echo !empty($work['price']) ? (int)$work['price'] . ' ₽' : '—'; ?></div>
+                            <div class="order-info-value"><?php echo !empty($work['price']) ? (int)$work['price'] . ' ₽' : '0'; ?></div>
                         </div>
 
                         <div class="order-info-box">

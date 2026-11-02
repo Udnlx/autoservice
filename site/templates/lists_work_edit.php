@@ -28,7 +28,7 @@ if ($operator == 'no_operator') {
 
     $success = false;
 
-    if ($work_id && $work_title && $work_price > 0) {
+    if ($work_id && $work_title && $work_price >= 0) {
 
         $workPage = $pages->get("id=$work_id, template=work_item");
 
