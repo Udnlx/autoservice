@@ -50,7 +50,8 @@ if ($url == '/login/') {
         <link rel="stylesheet" href="<?php echo $config->urls->templates; ?>styles/uikit.min.css" />
         <link rel="stylesheet" type="text/css" href="<?php echo $config->urls->templates; ?>styles/main.css?v=<?php echo uniqid(); ?>">
         
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.2/css/all.css">
+        <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.2/css/all.css">-->
+        <link rel="stylesheet" href="<?php echo $config->urls->templates; ?>assets/fontawesome/css/all.min.css">
         
         <script src="<?php echo $config->urls->templates; ?>scripts/uikit.min.js"></script>
         <script src="<?php echo $config->urls->templates; ?>scripts/uikit-icons.min.js"></script>
