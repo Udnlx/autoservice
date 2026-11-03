@@ -140,7 +140,7 @@ if ($operator == 'no_operator') {
     // ---------- HTML документа ----------
     $content = '
     <style type="text/css">
-    @page { margin: 26px 30px 26px 30px; }
+    @page { margin: 14px 24px 10px 24px; }
     * {
         font-family: "DejaVu Sans", sans-serif;
         box-sizing: border-box;
@@ -152,42 +152,42 @@ if ($operator == 'no_operator') {
     /* ---------- шапка ---------- */
     .hdr { width: 100%; border-collapse: collapse; }
     .hdr > tbody > tr > td { vertical-align: top; padding: 0; }
-    .company-name { font-size: 11px; margin-bottom: 4px; }
-    .company-line { font-size: 10px; line-height: 1.4; }
+    .company-name { font-size: 10.5px; margin-bottom: 2px; }
+    .company-line { font-size: 9.5px; line-height: 1.3; }
 
     .fields { width: 100%; border-collapse: collapse; }
     .fields td {
         border-bottom: 1px solid #000;
-        padding: 2px 3px;
-        font-size: 10px;
+        padding: 1px 3px;
+        font-size: 9.5px;
     }
     .fields td.fl { white-space: nowrap; width: 1%; }
 
     /* ---------- заголовок с РСТ и QR ---------- */
-    .title-tbl { width: 100%; border-collapse: collapse; margin: 12px 0 6px 0; }
+    .title-tbl { width: 100%; border-collapse: collapse; margin: 6px 0 4px 0; }
     .title-tbl > tbody > tr > td { vertical-align: middle; padding: 0; }
     .title-tbl td.t-rst { width: 90px; }
     .title-tbl td.t-qr  { width: 90px; text-align: right; }
-    .doc-title { text-align: center; font-size: 15px; font-weight: bold; }
+    .doc-title { text-align: center; font-size: 14px; font-weight: bold; }
 
     /* ---------- рамка «заполняется клиентом» ---------- */
-    .client-box { border: 1px solid #000; padding: 4px 6px 6px 6px; }
+    .client-box { border: 1px solid #000; padding: 3px 5px 4px 5px; }
     .note-right {
         text-align: right;
         font-style: italic;
-        font-size: 9px;
-        padding-bottom: 2px;
+        font-size: 8.5px;
+        padding-bottom: 1px;
     }
     .line-row {
         border-bottom: 1px solid #000;
-        height: 15px;
+        height: 11px;
     }
 
-    .parts-chk { width: 100%; border-collapse: collapse; margin-top: 4px; }
+    .parts-chk { width: 100%; border-collapse: collapse; margin-top: 2px; }
     .parts-chk td {
         border: none;
-        padding: 3px 4px;
-        font-size: 9.5px;
+        padding: 2px 3px;
+        font-size: 9px;
         vertical-align: middle;
     }
     .parts-chk td.ptxt { font-weight: bold; }
@@ -195,61 +195,62 @@ if ($operator == 'no_operator') {
     .parts-chk td.psign { width: 130px; text-align: right; font-style: italic; }
     .chk-wide {
         display: inline-block;
-        width: 44px;
-        height: 11px;
+        width: 42px;
+        height: 10px;
         border: 1px solid #000;
     }
 
     /* ---------- акт приёмки ---------- */
     .act-title {
         text-align: center;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: bold;
         letter-spacing: 1px;
-        margin: 10px 0 4px 0;
+        margin: 6px 0 3px 0;
     }
-    .act-box { border: 1px solid #000; padding: 4px; }
+    .act-box { border: 1px solid #000; padding: 3px; }
     .act-sub {
         text-align: center;
         font-style: italic;
         font-weight: bold;
-        font-size: 10px;
-        margin-bottom: 2px;
+        font-size: 9.5px;
+        margin-bottom: 1px;
     }
-    .act-box img { width: 100%; height: auto; }
+    .act-box img { display: block; width: 72%; height: auto; margin: 0 auto; }
 
     /* ---------- ЛКП ---------- */
     .lkp-box {
         border: 1px solid #000;
-        padding: 5px 7px;
-        font-size: 11px;
-        line-height: 1.45;
-        margin-top: 8px;
+        padding: 3px 6px;
+        font-size: 10px;
+        line-height: 1.3;
+        margin-top: 5px;
     }
 
     /* ---------- комплектация / примечания ---------- */
-    .two-tbl { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .two-tbl { width: 100%; border-collapse: collapse; margin-top: 5px; }
     .two-tbl > tbody > tr > td { vertical-align: top; padding: 0; }
     .two-tbl td.left  { width: 52%; padding-right: 5px !important; }
 
     .comp-table { width: 100%; border-collapse: collapse; }
     .comp-table td {
         border: 1px solid #000;
-        padding: 2px 4px;
-        font-size: 9px;
-        height: 15px;
+        padding: 1px 4px;
+        font-size: 8px;
+        height: 11px;
+        line-height: 1.15;
     }
     .comp-table td.head {
         text-align: center;
         font-weight: bold;
         font-style: italic;
-        font-size: 10px;
+        font-size: 9px;
     }
     .comp-table td.daynot {
         text-align: center;
         font-weight: bold;
         font-style: italic;
-        font-size: 9px;
+        font-size: 8px;
         width: 45px;
     }
     .comp-table td.item-name { font-weight: bold; font-style: italic; }
@@ -257,28 +258,29 @@ if ($operator == 'no_operator') {
     .note-table { width: 100%; border-collapse: collapse; }
     .note-table td {
         border: 1px solid #000;
-        padding: 2px 4px;
-        font-size: 9px;
-        height: 15px;
+        padding: 1px 4px;
+        font-size: 8px;
+        height: 11px;
+        line-height: 1.15;
     }
     .note-table td.head {
         text-align: center;
         font-weight: bold;
         font-style: italic;
-        font-size: 10px;
+        font-size: 9px;
     }
     .note-table td.bag { font-weight: bold; font-style: italic; }
 
     /* ---------- мелкий текст и подписи ---------- */
     .small-note {
-        font-size: 7.5px;
-        line-height: 1.35;
-        margin-top: 6px;
+        font-size: 7px;
+        line-height: 1.25;
+        margin-top: 3px;
     }
-    .signs { width: 100%; border-collapse: collapse; margin-top: 14px; }
+    .signs { width: 100%; border-collapse: collapse; margin-top: 8px; }
     .signs td {
         width: 50%;
-        font-size: 10px;
+        font-size: 9.5px;
         font-weight: bold;
         padding: 0;
     }
