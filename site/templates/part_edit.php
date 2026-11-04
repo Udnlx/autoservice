@@ -22,7 +22,6 @@ if ($operator == 'no_operator') {
 
     $part_title             = !empty($_POST['part_title'])    ? trim($_POST['part_title'])    : '';
     $part_sku               = !empty($_POST['part_sku'])      ? trim($_POST['part_sku'])      : '';
-    $part_price_purchase    = $input->post->int('part_price_purchase');     // 0 допустим
     $part_price             = $input->post->int('part_price');              // 0 допустим
     $part_unit              = !empty($_POST['part_unit'])     ? trim($_POST['part_unit'])     : '';
     $part_brand             = !empty($_POST['part_brand'])    ? trim($_POST['part_brand'])    : '';
@@ -46,7 +45,7 @@ if ($operator == 'no_operator') {
 
     $success = false;
 
-    if ($part_title && $part_sku && $unit_valid && $part_price >= 0) {
+    if ($part_title !== '' && $part_sku !== '' && $unit_valid && $part_price >= 0) {
 
         $partPage = $pages->get("id=$part_id, template=part");
 
@@ -56,9 +55,7 @@ if ($operator == 'no_operator') {
 
             $partPage->title                    = $part_title;
             $partPage->part_sku                 = $part_sku;
-            $partPage->part_price_purchase      = $part_price_purchase;
             $partPage->part_price               = $part_price;
-            $partPage->part_qty                 = $part_qty;
             $partPage->part_unit                = $part_unit;   // значение опции: 1..5, НЕ подпись
             $partPage->part_brand               = $part_brand;
             $partPage->part_oem                 = $part_oem;

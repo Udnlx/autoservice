@@ -149,6 +149,11 @@ label {
     background-color: #f3f4f6;
     color: #6b7280;
     border-color: #d1d5db;}
+/* Поле только для чтения — визуально «неактивное», но значение отправляется */
+.uk-input[readonly] {
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;}
 #selected_date,
 #selected_worker {
     background-color: #f9fafb !important;
@@ -176,6 +181,19 @@ label {
     vertical-align: middle;}
 .part-print-label-text {
     line-height: 1;}
+
+.part-badges .order-status-badge { margin: 0;}
+/* Обёртка под два бейджа в строке */
+.part-badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;}
+/* Бейдж цены закупки — нейтральный серый, чтобы не спорил с ценой клиента */
+.part-badge-purchase {
+    background: #e5e7eb!important;
+    color: #374151!important;
+    border: 1px solid #d1d5db!important;}
 
 
 

@@ -123,8 +123,13 @@ if ($operator == 'no_operator') {
                         <div class="order-view-subtitle">Карточка запчасти ID <?php echo partClean($part['id']); ?></div>
                     </div>
 
-                    <div class="order-status-badge">
-                        <?php echo ($part['price'] === null || $part['price'] === '') ? '—' : (int)$part['price'] . ' ₽'; ?>
+                    <div class="part-badges">
+                        <div class="order-status-badge" title="Цена для клиента">
+                            <?php echo ($part['price'] === null || $part['price'] === '') ? '—' : (int)$part['price'] . ' ₽'; ?>
+                        </div>
+                        <div class="order-status-badge part-badge-purchase" title="Цена закупки">
+                            <?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '—' : (int)$part['price_purchase'] . ' ₽'; ?>
+                        </div>
                     </div>
                 </div>
 
@@ -194,13 +199,18 @@ if ($operator == 'no_operator') {
                         </div>
 
                         <div class="order-info-box">
-                            <div class="order-info-label">Цена</div>
+                            <div class="order-info-label">Цена для клиента</div>
                             <div class="order-info-value"><?php echo ($part['price'] === null || $part['price'] === '') ? '—' : (int)$part['price'] . ' ₽'; ?></div>
                         </div>
 
                         <div class="order-info-box">
+                            <div class="order-info-label">Цена закупки</div>
+                            <div class="order-info-value"><?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '—' : (int)$part['price_purchase'] . ' ₽'; ?></div>
+                        </div>
+
+                        <div class="order-info-box">
                             <div class="order-info-label">Остаток</div>
-                            <div class="order-info-value"><?php echo ($part['qty'] === null || $part['qty'] === '') ? '—' : (int)$part['qty'] . ' ' . partClean($part_unit_label); ?></div>
+                            <div class="order-info-value"><?php echo ($part['qty'] === null || $part['qty'] === '') ? '0' : (int)$part['qty'] . ' ' . partClean($part_unit_label); ?></div>
                         </div>
 
                         <div class="order-info-box">
@@ -302,12 +312,15 @@ if ($operator == 'no_operator') {
                     </div>
 
                     <div class="uk-margin-small-top">
-                        <label for="part_price">Цена закупки (₽)</label>
-                        <input class="uk-input" id="part_price_purchase" type="number" name="part_price_purchase" min="0" step="1" value="<?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '' : (int)$part['price_purchase']; ?>" placeholder="Например: 450" autocomplete="off" required>
+                        <label for="part_price_purchase">Цена закупки (₽)</label>
+                        <input class="uk-input" id="part_price_purchase" type="number" name="part_price_purchase" min="0" step="1" value="<?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '' : (int)$part['price_purchase']; ?>" placeholder="Заполняется при приходе" autocomplete="off" readonly>
+                        <div style="margin-top: 4px; font-size: 0.85em; color: #999;">
+                            Назначается только при приходе запчасти
+                        </div>
                     </div>
 
                     <div class="uk-margin-small-top">
-                        <label for="part_price">Цена (₽)</label>
+                        <label for="part_price">Цена для клиента (₽)</label>
                         <input class="uk-input" id="part_price" type="number" name="part_price" min="0" step="1" value="<?php echo ($part['price'] === null || $part['price'] === '') ? '' : (int)$part['price']; ?>" placeholder="Например: 450" autocomplete="off" required>
                     </div>
 

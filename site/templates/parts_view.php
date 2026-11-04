@@ -77,16 +77,17 @@ if ($operator == 'no_operator') {
 
     foreach ($parts_result as $partPage) {
         $found_parts[] = [
-            'id'       => $partPage->id,
-            'title'    => $partPage->title,
-            'sku'      => $partPage->part_sku,
-            'price'    => $partPage->part_price,
-            'qty'      => $partPage->part_qty,
-            'unit'     => $partPage->part_unit,
-            'brand'    => $partPage->part_brand,
-            'oem'      => $partPage->part_oem,
-            'location' => $partPage->part_location,
-            'notes'    => $partPage->part_notes
+            'id'                => $partPage->id,
+            'title'             => $partPage->title,
+            'sku'               => $partPage->part_sku,
+            'price_purchase'    => $partPage->part_price_purchase,
+            'price'             => $partPage->part_price,
+            'qty'               => $partPage->part_qty,
+            'unit'              => $partPage->part_unit,
+            'brand'             => $partPage->part_brand,
+            'oem'               => $partPage->part_oem,
+            'location'          => $partPage->part_location,
+            'notes'             => $partPage->part_notes
         ];
     }
 
@@ -132,7 +133,15 @@ if ($operator == 'no_operator') {
                             <a class="order-list-item" href="/zapchast-prosmotr/?idpart=<?php echo (int)$part['id']; ?>">
                                 <div class="order-list-item-top">
                                     <div class="order-list-item-title"><?php echo partClean($part['title']); ?></div>
-                                    <div class="order-status-badge status-new"><?php echo !empty($part['price']) ? (int)$part['price'] . ' ₽' : '—'; ?></div>
+
+                                    <div class="part-badges">
+                                        <div class="order-status-badge status-new" title="Цена для клиента">
+                                            <?php echo !empty($part['price']) ? (int)$part['price'] . ' ₽' : '—'; ?>
+                                        </div>
+                                        <div class="order-status-badge part-badge-purchase" title="Цена закупки">
+                                            <?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '—' : (int)$part['price_purchase'] . ' ₽'; ?>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="order-list-item-grid">

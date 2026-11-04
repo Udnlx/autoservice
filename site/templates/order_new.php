@@ -354,7 +354,7 @@ if ($operator == 'no_operator') {
 
                     <div class="uk-margin-small-top">
                         <label for="comment">Комментарий</label>
-                        <input class="uk-input" id="comment" type="text" name="comment" value="" autocomplete="off">
+                        <textarea class="uk-textarea" id="comment" name="comment" rows="3"></textarea>
                     </div>
 
                     <div class="uk-margin-small-top">
