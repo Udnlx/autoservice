@@ -34,6 +34,10 @@ if ($operator == 'no_operator') {
     // Куда возвращаться после регистрации
     $return_to = !empty($_POST['return_to']) ? trim($_POST['return_to']) : '';
 
+    // Контекст возврата к заказу (пришли из карточки заказа)
+    $from_order  = $input->post->int('from_order');
+    $from_suffix = ($from_order > 0) ? '&from_order=' . $from_order : '';
+
     $success = '';
 
     if ($part_title && $part_sku && $part_unit && $part_price_purchase >= 0 && $part_price >= 0 && $part_qty >= 0 && $operator != 'no_operator') {
@@ -69,7 +73,7 @@ if ($operator == 'no_operator') {
                 if ($return_to === 'new_order') {
                     $session->redirect('/zakaz-novyi/?part_created=1');
                 } else {
-                    $session->redirect('/zapchast-prosmotr/?idpart=' . $partPage->id);
+                    $session->redirect('/zapchast-prosmotr/?idpart=' . $partPage->id . $from_suffix);
                 }
 
             } else {
@@ -84,15 +88,20 @@ if ($operator == 'no_operator') {
         $success = 'Запчасть не зарегистрирована!<br>Ошибка в данных';
     }
 
+    // Куда вести с страницы ошибки — с сохранением контекста возврата к заказу
+    $catalog_url = '/zapchasti-spravochnik/';
+    if ($from_order > 0) {
+        $catalog_url .= '?from_order=' . $from_order;
+    }
+
     $info = '';
-    if ($success == 'Запчасть успешно зарегистрирована') {
-        $info .= '
+    if ($success == 'Запчасть успешно зарегистрирована') {        $info .= '
             <p class="uk-margin-remove">Запчасть успешно зарегистрирована<br>Сейчас произойдёт переход на страницу запчасти</p>
         ';
     } else {
         $info .= '
             <p class="uk-margin-remove">' . $success . '<br>Возможно некорректные данные или не заполнены обязательные поля.<br>Попробуйте позже или обратитесь в техподдержку</p>
-            <a class="uk-margin-small-top uk-button uk-button-default" href="/zapchasti-spravochnik/">Вернуться в справочник</a>
+            <a class="uk-margin-small-top uk-button uk-button-default" href="' . $catalog_url . '">Вернуться в справочник</a>
         ';
     }
 
@@ -107,7 +116,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/zapchasti-spravochnik/">Справочник запчастей</a>
+                <a class="menu-link" href="/zapchasti-spravochnik/<?php echo ($from_order > 0) ? '?from_order=' . $from_order : ''; ?>">Справочник запчастей</a>
             </div>
         </div>
 

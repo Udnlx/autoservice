@@ -168,11 +168,9 @@ if ($operator == 'no_operator') {
     <h1 class="uk-margin-remove uk-heading-hero uk-text-center"><?php echo $orderPage->title ?></h1>
     <div>
 
-        <div>
-            <div class="pagemenu uk-width-1-1 uk-flex">
-                <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/zakaz-dvizhenie/">Движение</a>
-            </div>
+        <div class="pagemenu uk-width-1-1 uk-flex">
+            <a class="menu-link" href="/">На главную</a>
+            <a class="menu-link" href="/zakaz-dvizhenie/">Движение</a>
         </div>
 
         <div>
@@ -244,21 +242,35 @@ if ($operator == 'no_operator') {
                             <div class="order-info-value"><?php
                                 $clientPage = $order['client'];
                                 if ($clientPage->id) {
-                                    // ФИО и телефон рядом, вся связка — ссылка на карточку клиента в новой вкладке
                                     $fio   = orderClean($clientPage->title);
                                     $phone = orderClean($clientPage->phone);
 
-                                    // from_order — чтобы на странице клиента появилась кнопка возврата к заявке
-                                    $url = '/klient-prosmotr/?idowner=' . (int)$clientPage->id
-                                         . '&from_order=' . (int)$order['id'];
-
-                                    echo '<a href="' . $url . '" class="order-client-link">';
+                                    // ФИО и телефон — обычный текст, без ссылки
+                                    echo '<div class="order-client-text">';
                                     echo    '<span class="order-client-fio">' . $fio . '</span>';
                                     if ($phone !== '') {
                                         echo ' <span class="order-client-sep">·</span> ';
                                         echo '<span class="order-client-phone">' . $phone . '</span>';
                                     }
-                                    echo '</a>';
+                                    echo '</div>';
+
+                                    // from_order — чтобы на странице клиента появилась кнопка возврата к заявке
+                                    $url = '/klient-prosmotr/?idowner=' . (int)$clientPage->id
+                                         . '&from_order=' . (int)$order['id'];
+
+                                    echo '<div class="order-client-actions">';
+
+                                    echo    '<a href="' . $url . '" class="client-action-btn" id="client_edit_btn" title="Исправить данные текущего клиента">';
+                                    echo        '<span class="client-action-icon">✏️</span>';
+                                    echo        '<span>Исправить данные</span>';
+                                    echo    '</a>';
+
+                                    echo    '<button type="button" class="client-action-btn" title="Заменить клиента">';
+                                    echo        '<span class="client-action-icon">🔄</span>';
+                                    echo        '<span>Заменить клиента</span>';
+                                    echo    '</button>';
+
+                                    echo '</div>';
                                 } else {
                                     echo '—';
                                 }
@@ -393,9 +405,18 @@ if ($operator == 'no_operator') {
                                     <?php } ?>
                                 </select>
                             </div>
-                            <button type="button" class="uk-button uk-button-default" id="add_part">
-                                Добавить
-                            </button>
+                            <div class="part-add-actions">
+                                <button type="button" class="uk-button uk-button-default" id="add_part">
+                                    Добавить
+                                </button>
+
+                                <?php if (!in_array($order['status'], ['Отменена', 'Завершена'], true)) { ?>
+                                    <a class="part-new-link" id="add_part_link"
+                                       href="/zapchasti-spravochnik/?from_order=<?php echo (int)$order['id']; ?>">
+                                        + Новая запчасть
+                                    </a>
+                                <?php } ?>
+                            </div>
                         </div>
                     </div>
 
@@ -586,7 +607,64 @@ if ($operator == 'no_operator') {
         </div>
         
     </div>
+
+    <!--МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЕ ПРАВКИ КЛИЕНТА-->
+    <div id="client_edit_modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+
+            <h3 class="uk-card-title uk-text-center">Исправить данные клиента?</h3>
+
+            <p class="uk-text-center uk-margin-small-top">
+                Откроется карточка <strong>текущего</strong> клиента, где можно поправить ФИО, телефон и адрес.
+                Это <strong>не</strong> замена клиента — заказ останется за ним же.
+            </p>
+
+            <div class="uk-margin-small-top uk-flex uk-flex-center" style="gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="uk-button uk-button-default" id="client_edit_cancel">
+                    Отмена
+                </button>
+                <button type="button" class="uk-button uk-button-primary" id="client_edit_confirm">
+                    Подтвердить
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЕ ПРАВКИ КЛИЕНТА-->
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    var editBtn = document.getElementById('client_edit_btn');
+    var modalEl = document.getElementById('client_edit_modal');
+
+    if (!editBtn || !modalEl) return;
+
+    var editModal = UIkit.modal(modalEl);
+
+    // Клик по ссылке — не переходим, показываем подтверждение
+    editBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        editModal.show();
+    });
+
+    // Отмена — просто закрыть
+    document.getElementById('client_edit_cancel').addEventListener('click', function () {
+        editModal.hide();
+    });
+
+    // Подтвердить — уходим по адресу, который был в ссылке
+    document.getElementById('client_edit_confirm').addEventListener('click', function () {
+        var target = editBtn.getAttribute('href');
+        editModal.hide();
+        if (target) {
+            window.location.href = target;
+        }
+    });
+
+});
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -676,6 +754,36 @@ document.addEventListener('DOMContentLoaded', function () {
         var url = buildPrintUrl('/pechat-updd/');
         if (url) window.location.href = url;
     });
+
+    // --- Защита от потери несохранённой корзины ---
+    var addPartLink = document.getElementById('add_part_link');
+    var orderForm   = document.getElementById('order_view_form');
+
+    function cartSnapshot() {
+        if (!orderForm) return '';
+        var items = [];
+        orderForm.querySelectorAll('#works_cart input[type="hidden"], #parts_cart input[type="hidden"]').forEach(function (inp) {
+            items.push(inp.name + '=' + inp.value);
+        });
+        return items.join('|');
+    }
+
+    var cartInitial = cartSnapshot();
+
+    if (addPartLink) {
+        addPartLink.addEventListener('click', function (e) {
+            if (cartSnapshot() !== cartInitial) {
+                var ok = confirm(
+                    'В корзине есть несохранённые изменения.\n' +
+                    'Если уйти сейчас, они не сохранятся.\n\n' +
+                    'Всё равно перейти в справочник запчастей?'
+                );
+                if (!ok) {
+                    e.preventDefault();
+                }
+            }
+        });
+    }
 });
 </script>
 

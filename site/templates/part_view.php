@@ -85,6 +85,23 @@ if ($operator == 'no_operator') {
         }
     }
 
+    // --- Откуда пришли: возврат к заказу ---
+    $from_order       = $input->get->int('from_order');
+    $from_order_title = '';
+    $from_suffix      = '';
+    $from_query       = '';
+
+    if ($from_order) {
+        $fromOrderPage = $pages->get("id=$from_order, template=order_item");
+        if ($fromOrderPage->id) {
+            $from_order_title = $fromOrderPage->title;
+            $from_suffix      = '&from_order=' . (int)$from_order;
+            $from_query       = '?from_order=' . (int)$from_order;
+        } else {
+            $from_order = 0;
+        }
+    }
+
     $part = [
         'id'                => $partPage->id,
         'title'             => $partPage->title,
@@ -110,7 +127,13 @@ if ($operator == 'no_operator') {
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/zapchasti-spravochnik/">Справочник запчастей</a>
+                <a class="menu-link" href="/zapchasti-spravochnik/<?php echo $from_query; ?>">Справочник запчастей</a>
+
+                <?php if ($from_order) { ?>
+                    <a class="menu-link menu-link-accent" href="/zakaz-prosmotr/?idorder=<?php echo (int)$from_order; ?>">
+                        ← Вернуться к заказу №<?php echo partClean($from_order_title); ?>
+                    </a>
+                <?php } ?>
             </div>
         </div>
 
@@ -125,10 +148,10 @@ if ($operator == 'no_operator') {
 
                     <div class="part-badges">
                         <div class="order-status-badge" title="Цена для клиента">
-                            <?php echo ($part['price'] === null || $part['price'] === '') ? '—' : (int)$part['price'] . ' ₽'; ?>
+                            <?php echo ($part['price'] === null || $part['price'] === '') ? '0 ₽' : (int)$part['price'] . ' ₽'; ?>
                         </div>
                         <div class="order-status-badge part-badge-purchase" title="Цена закупки">
-                            <?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '—' : (int)$part['price_purchase'] . ' ₽'; ?>
+                            <?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '0 ₽' : (int)$part['price_purchase'] . ' ₽'; ?>
                         </div>
                     </div>
                 </div>
@@ -200,12 +223,12 @@ if ($operator == 'no_operator') {
 
                         <div class="order-info-box">
                             <div class="order-info-label">Цена для клиента</div>
-                            <div class="order-info-value"><?php echo ($part['price'] === null || $part['price'] === '') ? '—' : (int)$part['price'] . ' ₽'; ?></div>
+                            <div class="order-info-value"><?php echo ($part['price'] === null || $part['price'] === '') ? '0' : (int)$part['price'] . ' ₽'; ?></div>
                         </div>
 
                         <div class="order-info-box">
                             <div class="order-info-label">Цена закупки</div>
-                            <div class="order-info-value"><?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '—' : (int)$part['price_purchase'] . ' ₽'; ?></div>
+                            <div class="order-info-value"><?php echo ($part['price_purchase'] === null || $part['price_purchase'] === '') ? '0' : (int)$part['price_purchase'] . ' ₽'; ?></div>
                         </div>
 
                         <div class="order-info-box">
@@ -247,6 +270,9 @@ if ($operator == 'no_operator') {
                 <!--БЛОК РАСХОДА (скрыт по умолчанию)-->
                 <form id="part_expend_form" class="uk-flex uk-flex-column" action="/zapchast-raskhod/" method="post" hidden>
                     <input type="hidden" name="part_id" value="<?php echo partClean($part['id']); ?>">
+                    <?php if ($from_order) { ?>
+                        <input type="hidden" name="from_order" value="<?php echo (int)$from_order; ?>">
+                    <?php } ?>
 
                     <div class="uk-margin-small-top">
                         <label for="expend_qty">Количество (<?php echo partClean($part_unit_label); ?>)</label>
@@ -275,6 +301,9 @@ if ($operator == 'no_operator') {
                 <!--БЛОК ПРИХОДА (скрыт по умолчанию)-->
                 <form id="part_coming_form" class="uk-flex uk-flex-column" action="/zapchast-prikhod/" method="post" hidden>
                     <input type="hidden" name="part_id" value="<?php echo partClean($part['id']); ?>">
+                    <?php if ($from_order) { ?>
+                        <input type="hidden" name="from_order" value="<?php echo (int)$from_order; ?>">
+                    <?php } ?>
 
                     <div class="uk-margin-small-top">
                         <label for="coming_qty">Количество (<?php echo partClean($part_unit_label); ?>)</label>
@@ -300,6 +329,9 @@ if ($operator == 'no_operator') {
                 <!--БЛОК РЕДАКТИРОВАНИЯ (скрыт по умолчанию)-->
                 <form id="part_edit_form" class="uk-flex uk-flex-column" action="/zapchast-redaktirovanie/" method="post" hidden>
                     <input type="hidden" name="part_id" value="<?php echo partClean($part['id']); ?>">
+                    <?php if ($from_order) { ?>
+                        <input type="hidden" name="from_order" value="<?php echo (int)$from_order; ?>">
+                    <?php } ?>
 
                     <div class="uk-margin-small-top">
                         <label for="part_title">Наименование запчасти</label>

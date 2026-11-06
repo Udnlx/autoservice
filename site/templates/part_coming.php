@@ -22,6 +22,9 @@ if ($operator == 'no_operator') {
     $coming_qty = !empty($_POST['coming_qty']) ? (int)$_POST['coming_qty']    : 0;
     $coming_note = !empty($_POST['coming_note']) ? trim($_POST['coming_note']) : '';
 
+    $from_order  = $input->post->int('from_order');
+    $from_suffix = ($from_order > 0) ? '&from_order=' . $from_order : '';
+
     $success = false;
 
     if ($part_id > 0 && $coming_qty > 0) {
@@ -42,9 +45,9 @@ if ($operator == 'no_operator') {
         if ($coming_note !== '') {
             $redirect .= '&coming_note=' . urlencode($coming_note);
         }
-        $session->redirect($redirect);
+        $session->redirect($redirect . $from_suffix);
     } else {
-        $session->redirect('/zapchast-prosmotr/?idpart=' . $part_id . '&saved=0');
+        $session->redirect('/zapchast-prosmotr/?idpart=' . $part_id . '&saved=0' . $from_suffix);
     }
 }
 ?>

@@ -22,6 +22,9 @@ if ($operator == 'no_operator') {
     $expend_qty = !empty($_POST['expend_qty']) ? (int)$_POST['expend_qty']     : 0;
     $expend_note = !empty($_POST['expend_note']) ? trim($_POST['expend_note']) : '';
 
+    $from_order  = $input->post->int('from_order');
+    $from_suffix = ($from_order > 0) ? '&from_order=' . $from_order : '';
+
     $success = false;
     $stock_error = false;
     $qty_now = 0;
@@ -52,17 +55,17 @@ if ($operator == 'no_operator') {
         if ($expend_note !== '') {
             $redirect .= '&expend_note=' . urlencode($expend_note);
         }
-        $session->redirect($redirect);
+        $session->redirect($redirect . $from_suffix);
 
     } elseif ($stock_error) {
         $redirect = '/zapchast-prosmotr/?idpart=' . $part_id
             . '&expend_error=1'
             . '&expend_need=' . $expend_qty
             . '&expend_have=' . $qty_now;
-        $session->redirect($redirect);
+        $session->redirect($redirect . $from_suffix);
 
     } else {
-        $session->redirect('/zapchast-prosmotr/?idpart=' . $part_id . '&saved=0');
+        $session->redirect('/zapchast-prosmotr/?idpart=' . $part_id . '&saved=0' . $from_suffix);
     }
 }
 ?>

@@ -239,9 +239,15 @@ if ($operator == 'no_operator') {
                                 </select>
                             </div>
 
-                            <button type="button" class="uk-button uk-button-default" id="add_work">
-                                Добавить
-                            </button>
+                            <div class="part-add-actions">
+                                <button type="button" class="uk-button uk-button-default" id="add_work">
+                                    Добавить
+                                </button>
+
+                                <a class="part-new-link" id="new_work_hint" href="#">
+                                    + Новая работа
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -289,9 +295,15 @@ if ($operator == 'no_operator') {
                                     <?php } ?>
                                 </select>
                             </div>
-                            <button type="button" class="uk-button uk-button-default" id="add_part">
-                                Добавить
-                            </button>
+                            <div class="part-add-actions">
+                                <button type="button" class="uk-button uk-button-default" id="add_part">
+                                    Добавить
+                                </button>
+
+                                <a class="part-new-link" id="new_part_hint" href="#">
+                                    + Новая запчасть
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -561,6 +573,30 @@ if ($operator == 'no_operator') {
     </div>
     <!--МОДАЛЬНОЕ ОКНО НОВЫЙ АВТОМОБИЛЬ-->
 
+    <!--МОДАЛЬНОЕ ОКНО ПОДСКАЗКА ПРО НОВУЮ ЗАПЧАСТЬ-->
+    <div id="new_part_hint_modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+
+            <h3 class="uk-card-title uk-text-center" id="new_part_hint_title">Сначала зарегистрируйте заказ-наряд</h3>
+
+            <p id="new_part_hint_text" class="uk-text-center uk-margin-small-top">
+                Новая запчасть добавляется из карточки уже созданного заказа.
+            </p>
+
+            <div class="uk-margin-small-top uk-flex uk-flex-column">
+                <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="new_part_hint_ok">
+                    Понятно
+                </button>
+
+                <button type="button" class="uk-margin-small-top uk-button uk-button-primary" id="new_part_hint_submit" style="display:none;">
+                    Зарегистрировать
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--МОДАЛЬНОЕ ОКНО ПОДСКАЗКА ПРО НОВУЮ ЗАПЧАСТЬ-->
+
 </div>
 
 <script>
@@ -738,6 +774,76 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // --- Подсказка «+ Новая запчасть» / «+ Новая работа» ---
+    var newPartHint       = document.getElementById('new_part_hint');
+    var newWorkHint       = document.getElementById('new_work_hint');
+    var newPartHintTitle  = document.getElementById('new_part_hint_title');
+    var newPartHintText   = document.getElementById('new_part_hint_text');
+    var newPartHintOk     = document.getElementById('new_part_hint_ok');
+    var newPartHintSubmit = document.getElementById('new_part_hint_submit');
+
+    // what: 'part' или 'work' — чтобы текст говорил про нужную сущность
+    function openRegisterHint(what) {
+        var isWork    = (what === 'work');
+        var entity    = isWork ? 'Работа' : 'Запчасть';
+        var entityLow = isWork ? 'работа' : 'запчасть';
+
+        var clientOk = clientHiddenInput.value !== '0' && clientHiddenInput.value !== '';
+        var carOk    = carHiddenInput.value !== '0' && carHiddenInput.value !== '';
+
+        if (!clientOk || !carOk) {
+            newPartHintTitle.textContent = 'Сначала зарегистрируйте заказ-наряд';
+            newPartHintText.textContent  = 'Выберите клиента и автомобиль, затем нажмите «Зарегистрировать». Новая ' + entityLow + ' добавляется уже из карточки созданного заказа.';
+
+            newPartHintOk.style.display     = 'block';
+            newPartHintSubmit.style.display = 'none';
+
+        } else {
+            newPartHintTitle.textContent = 'Клиент и автомобиль выбраны';
+            newPartHintText.textContent  = entity + ' добавляется только к зарегистрированным заказ-нарядам. Нажмите «Зарегистрировать» — заказ будет создан, и в его карточке появится кнопка «+ Новая ' + entityLow + '».';
+
+            newPartHintOk.style.display     = 'none';
+            newPartHintSubmit.style.display = 'block';
+        }
+
+        UIkit.modal('#new_part_hint_modal').show();
+    }
+
+    // Запчасть
+    if (newPartHint) {
+        newPartHint.addEventListener('click', function (e) {
+            e.preventDefault();
+            openRegisterHint('part');
+        });
+    }
+
+    // Работа
+    if (newWorkHint) {
+        newWorkHint.addEventListener('click', function (e) {
+            e.preventDefault();
+            openRegisterHint('work');
+        });
+    }
+
+    // Кнопка «Понятно» — просто закрывает модалку
+    if (newPartHintOk) {
+        newPartHintOk.addEventListener('click', function () {
+            UIkit.modal('#new_part_hint_modal').hide();
+        });
+    }
+
+    // Кнопка «Зарегистрировать» в модалке — повторяет основную кнопку формы
+    if (newPartHintSubmit) {
+        newPartHintSubmit.addEventListener('click', function () {
+            UIkit.modal('#new_part_hint_modal').hide();
+
+            var realSubmit = document.getElementById('submit_btn');
+            if (realSubmit && !realSubmit.disabled) {
+                realSubmit.click();
+            }
+        });
+    }
+
     // --- Инициализация с предвыбранным клиентом ---
     var preselectedId = parseInt(clientHiddenInput.value, 10);
     if (preselectedId > 0) {
@@ -901,7 +1007,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert('Ошибка запроса: ' + data.error);
                 } else {
                     // Подставляем поля
-                    if (data.brand) { document.getElementById('modal_car_brand').value = data.brand; }
+                    if (data.brand) { document.getElementById('car_brand').value = data.brand; }
                     if (data.model) { document.getElementById('modal_car_model').value = data.model; }
                     if (data.year)  { document.getElementById('modal_car_year').value  = data.year;  }
                 }

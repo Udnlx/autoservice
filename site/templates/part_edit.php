@@ -43,6 +43,9 @@ if ($operator == 'no_operator') {
 
     $unit_valid = in_array((string)$part_unit, $unit_values, true);
 
+    $from_order  = $input->post->int('from_order');
+    $from_suffix = ($from_order > 0) ? '&from_order=' . $from_order : '';
+
     $success = false;
 
     if ($part_title !== '' && $part_sku !== '' && $unit_valid && $part_price >= 0) {
@@ -69,9 +72,9 @@ if ($operator == 'no_operator') {
     }
 
     if ($success) {
-        $session->redirect('/zapchast-prosmotr/?idpart=' . $part_id . '&saved=1');
+        $session->redirect('/zapchast-prosmotr/?idpart=' . $part_id . '&saved=1' . $from_suffix);
     } else {
-        $session->redirect('/zapchast-prosmotr/?idpart=' . $part_id . '&saved=0');
+        $session->redirect('/zapchast-prosmotr/?idpart=' . $part_id . '&saved=0' . $from_suffix);
     }
 }
 ?>
