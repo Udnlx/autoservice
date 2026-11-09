@@ -52,6 +52,23 @@ if ($operator == 'no_operator') {
         }
     }
 
+    // --- Откуда пришли: возврат к заказу ---
+    $from_order       = $input->get->int('from_order');
+    $from_order_title = '';
+    $from_suffix      = '';
+    $from_query       = '';
+
+    if ($from_order) {
+        $fromOrderPage = $pages->get("id=$from_order, template=order_item");
+        if ($fromOrderPage->id) {
+            $from_order_title = $fromOrderPage->title;
+            $from_suffix      = '&from_order=' . (int)$from_order;
+            $from_query       = '?from_order=' . (int)$from_order;
+        } else {
+            $from_order = 0;
+        }
+    }
+
     $work = [
         'id'    => $workPage->id,
         'title' => $workPage->title,
@@ -70,7 +87,13 @@ if ($operator == 'no_operator') {
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/raboty-spravochnik/">Справочник работ</a>
+                <a class="menu-link" href="/raboty-spravochnik/<?php echo $from_query; ?>">Справочник работ</a>
+
+                <?php if ($from_order) { ?>
+                    <a class="menu-link menu-link-accent" href="/zakaz-prosmotr/?idorder=<?php echo (int)$from_order; ?>">
+                        ← Вернуться к заказу №<?php echo workClean($from_order_title); ?>
+                    </a>
+                <?php } ?>
             </div>
         </div>
 
@@ -141,6 +164,9 @@ if ($operator == 'no_operator') {
                 <!--БЛОК РЕДАКТИРОВАНИЯ (скрыт по умолчанию)-->
                 <form id="work_edit_form" class="uk-flex uk-flex-column" action="/rabota-redaktirovanie/" method="post" hidden>
                     <input type="hidden" name="work_id" value="<?php echo workClean($work['id']); ?>">
+                    <?php if ($from_order) { ?>
+                        <input type="hidden" name="from_order" value="<?php echo (int)$from_order; ?>">
+                    <?php } ?>
 
                     <div class="uk-margin-small-top">
                         <label for="work_title">Наименование работы</label>

@@ -26,6 +26,21 @@ if ($operator == 'no_operator') {
         }
     }
 
+    // --- Откуда пришли: возврат к заказу ---
+    $from_order       = $input->get->int('from_order');
+    $from_order_title = '';
+    $from_suffix      = '';
+
+    if ($from_order) {
+        $fromOrderPage = $pages->get("id=$from_order, template=order_item");
+        if ($fromOrderPage->id) {
+            $from_order_title = $fromOrderPage->title;
+            $from_suffix      = '&from_order=' . (int)$from_order;
+        } else {
+            $from_order = 0;   // заказ удалён или ID битый — режим возврата выключаем
+        }
+    }
+
     $search_query = trim((string)$input->get('q'));
     $search_active = $search_query !== '';
 
@@ -61,6 +76,12 @@ if ($operator == 'no_operator') {
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
                 <a class="menu-link" href="#new_work_modal" uk-toggle>Новая работа</a>
+
+                <?php if ($from_order) { ?>
+                    <a class="menu-link menu-link-accent" href="/zakaz-prosmotr/?idorder=<?php echo (int)$from_order; ?>">
+                        ← Вернуться к заказу №<?php echo workClean($from_order_title); ?>
+                    </a>
+                <?php } ?>
             </div>
         </div>
 
@@ -68,6 +89,10 @@ if ($operator == 'no_operator') {
             <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column">
 
                 <form class="uk-flex uk-flex-column" action="/raboty-spravochnik/" method="get" style="margin:0;">
+                    <?php if ($from_order) { ?>
+                        <input type="hidden" name="from_order" value="<?php echo (int)$from_order; ?>">
+                    <?php } ?>
+
                     <label for="q">Поиск работы</label>
 
                     <div class="uk-flex uk-flex-middle order-add-row" style="gap: 10px;">
@@ -90,7 +115,7 @@ if ($operator == 'no_operator') {
                 <?php } else { ?>
                     <div class="orders-list uk-flex uk-flex-column uk-margin-small-top">
                         <?php foreach ($found_works as $work) { ?>
-                            <a class="order-list-item" href="/rabota-prosmotr/?idwork=<?php echo (int)$work['id']; ?>">
+                            <a class="order-list-item" href="/rabota-prosmotr/?idwork=<?php echo (int)$work['id']; ?><?php echo $from_suffix; ?>">
                                 <div class="order-list-item-top">
                                     <div class="order-list-item-title"><?php echo workClean($work['title']); ?></div>
                                     <div class="order-status-badge status-new"><?php echo (int)$work['price']; ?> ₽</div>
@@ -135,6 +160,9 @@ if ($operator == 'no_operator') {
         <h3 class="uk-card-title uk-text-center">Новая работа</h3>
 
         <form class="uk-flex uk-flex-column" action="/rabota-registratciia/" method="post">
+            <?php if ($from_order) { ?>
+                <input type="hidden" name="from_order" value="<?php echo (int)$from_order; ?>">
+            <?php } ?>
 
             <div class="uk-margin-small-top">
                 <label for="work_title">Наименование работы</label>

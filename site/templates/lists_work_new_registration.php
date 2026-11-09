@@ -1,6 +1,7 @@
 <?php namespace ProcessWire;
 
 $today = date("d-m-Y");
+$from_order = 0;   // объявляем заранее: нижний HTML читает её даже при потерянной сессии
 
 if(isset($_SESSION['operator'])){
     $operator = $_SESSION['operator'];
@@ -29,6 +30,10 @@ if ($operator == 'no_operator') {
     // Куда возвращаться после регистрации
     $return_to = !empty($_POST['return_to']) ? trim($_POST['return_to']) : '';
 
+    // Контекст возврата к заказу (пришли из карточки заказа)
+    $from_order  = $input->post->int('from_order');
+    $from_suffix = ($from_order > 0) ? '&from_order=' . $from_order : '';
+
     $success = '';
 
     if ($work_title && $operator != 'no_operator') {
@@ -53,12 +58,20 @@ if ($operator == 'no_operator') {
             $redirect_url = '/zakaz-novyi/?work_created=1';
             $session->redirect($redirect_url);
         } else {
-            $session->redirect('/rabota-prosmotr/?idwork=' . $workPage->id);
+            $session->redirect('/rabota-prosmotr/?idwork=' . $workPage->id . $from_suffix);
         }
 
     } else {
         $success = 'Работа не зарегистрирована!<br>Ошибка в данных';
     }
+
+    // Куда вести со страницы ошибки — с сохранением контекста возврата к заказу
+    $catalog_url = '/raboty-spravochnik/';
+    if ($from_order > 0) {
+        $catalog_url .= '?from_order=' . $from_order;
+    }
+
+    $info = '';
 
     $info = '';
     if ($success == 'Работа успешно зарегистрирована') {
@@ -68,7 +81,7 @@ if ($operator == 'no_operator') {
     } else {
         $info .= '
             <p class="uk-margin-remove">Работа не зарегистрирована!<br>Произошла ошибка, возможно некорректные данные или не заполнены обязательные поля.<br>Попробуйте позже или обратитесь в техподдержку</p>
-            <a class="uk-margin-small-top uk-button uk-button-default" href="/raboty-spravochnik/">Вернуться в справочник</a>
+            <a class="uk-margin-small-top uk-button uk-button-default" href="' . $catalog_url . '">Вернуться в справочник</a>
         ';
     }
 
@@ -83,7 +96,7 @@ if ($operator == 'no_operator') {
         <div>
             <div class="pagemenu uk-width-1-1 uk-flex">
                 <a class="menu-link" href="/">На главную</a>
-                <a class="menu-link" href="/raboty-spravochnik/">Справочник работ</a>
+                <a class="menu-link" href="/raboty-spravochnik/<?php echo ($from_order > 0) ? '?from_order=' . $from_order : ''; ?>">Справочник работ</a>
             </div>
         </div>
 

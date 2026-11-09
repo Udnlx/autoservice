@@ -332,9 +332,18 @@ if ($operator == 'no_operator') {
                                 </select>
                             </div>
 
-                            <button type="button" class="uk-button uk-button-default" id="add_work">
-                                Добавить
-                            </button>
+                            <div class="part-add-actions">
+                                <button type="button" class="uk-button uk-button-default" id="add_work">
+                                    Добавить
+                                </button>
+
+                                <?php if (!in_array($order['status'], ['Отменена', 'Завершена'], true)) { ?>
+                                    <a class="part-new-link" id="add_work_link"
+                                       href="/raboty-spravochnik/?from_order=<?php echo (int)$order['id']; ?>">
+                                        + Новая работа
+                                    </a>
+                                <?php } ?>
+                            </div>
                         </div>
                     </div>
 
@@ -757,6 +766,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Защита от потери несохранённой корзины ---
     var addPartLink = document.getElementById('add_part_link');
+    var addWorkLink = document.getElementById('add_work_link');
     var orderForm   = document.getElementById('order_view_form');
 
     function cartSnapshot() {
@@ -770,13 +780,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var cartInitial = cartSnapshot();
 
-    if (addPartLink) {
-        addPartLink.addEventListener('click', function (e) {
+    function guardCartLink(link, what) {
+        if (!link) return;
+        link.addEventListener('click', function (e) {
             if (cartSnapshot() !== cartInitial) {
                 var ok = confirm(
                     'В корзине есть несохранённые изменения.\n' +
                     'Если уйти сейчас, они не сохранятся.\n\n' +
-                    'Всё равно перейти в справочник запчастей?'
+                    'Всё равно перейти в справочник ' + what + '?'
                 );
                 if (!ok) {
                     e.preventDefault();
@@ -784,6 +795,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    guardCartLink(addPartLink, 'запчастей');
+    guardCartLink(addWorkLink, 'работ');
 });
 </script>
 

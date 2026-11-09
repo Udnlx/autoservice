@@ -26,6 +26,9 @@ if ($operator == 'no_operator') {
     $work_time  = !empty($_POST['work_time'])  ? trim($_POST['work_time'])  : '';
     $work_notes = !empty($_POST['work_notes']) ? trim($_POST['work_notes']) : '';
 
+    $from_order  = $input->post->int('from_order');
+    $from_suffix = ($from_order > 0) ? '&from_order=' . $from_order : '';
+
     $success = false;
 
     if ($work_id && $work_title && $work_price >= 0) {
@@ -47,9 +50,9 @@ if ($operator == 'no_operator') {
     }
 
     if ($success) {
-        $session->redirect('/rabota-prosmotr/?idwork=' . $work_id . '&saved=1');
+        $session->redirect('/rabota-prosmotr/?idwork=' . $work_id . '&saved=1' . $from_suffix);
     } else {
-        $session->redirect('/rabota-prosmotr/?idwork=' . $work_id . '&saved=0');
+        $session->redirect('/rabota-prosmotr/?idwork=' . $work_id . '&saved=0' . $from_suffix);
     }
 }
 ?>

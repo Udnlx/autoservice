@@ -1,6 +1,7 @@
 <?php namespace ProcessWire;
 
 $today = date("d-m-Y");
+$from_order = 0;   // объявляем заранее: нижний HTML читает её даже при потерянной сессии
 
 if(isset($_SESSION['operator'])){
     $operator = $_SESSION['operator'];
