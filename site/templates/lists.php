@@ -23,6 +23,7 @@ $menu = '';
 if ($operator == 'admin') {
     $menu = '
         <a class="uk-margin-small uk-button uk-button-default" href="/raboty-spravochnik/">Справочник работ</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/mastera-spravochnik/">Справочник мастеров</a>
     ';
 }
 ?>
