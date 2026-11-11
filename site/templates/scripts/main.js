@@ -133,6 +133,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const partsPriceInput = document.getElementById('parts_price');
     const totalPriceInput = document.getElementById('total_price');
 
+    // Мастера для строк работ. Страница их не отдала — селект не рисуем.
+    const mastersList = Array.isArray(window.ORDER_MASTERS) ? window.ORDER_MASTERS : [];
+
     let selectedWorks = [];
     let selectedParts = [];
     let itemIdCounter = 1;
@@ -185,6 +188,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const qtyInput = cartItem.querySelector('input[name="works_qty[]"]');
             const itemQty  = qtyInput ? (Number(qtyInput.value) || 1) : 1;
 
+            // На просмотре PHP отдаёт скрытое поле, после перерисовки это уже select
+            const masterField = cartItem.querySelector('[name="works_masters[]"]');
+            const itemMasterId = masterField ? (Number(masterField.value) || 0) : 0;
+
             if (!itemName) {
                 return;
             }
@@ -195,7 +202,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 price: itemPrice,
                 basePrice: itemPrice,
                 qty: itemQty,
-                partId: 0
+                partId: 0,
+                masterId: itemMasterId
             });
         });
     }
@@ -328,7 +336,8 @@ document.addEventListener('DOMContentLoaded', function () {
             price: itemPrice,
             basePrice: itemPrice,
             qty: 1,
-            partId: itemPartId
+            partId: itemPartId,
+            masterId: 0
         };
 
         list.push(item);
@@ -337,6 +346,35 @@ document.addEventListener('DOMContentLoaded', function () {
         updatePrices();
 
         select.selectedIndex = 0;
+    }
+
+    // =========================
+    // СЕЛЕКТ МАСТЕРА В СТРОКЕ РАБОТЫ
+    // =========================
+
+    function buildMasterSelect(item) {
+        if (mastersList.length === 0) {
+            return '';
+        }
+
+        const current = Number(item.masterId) || 0;
+
+        let options = '<option value="0"' + (current === 0 ? ' selected' : '') + '>— Мастер не выбран —</option>';
+
+        mastersList.forEach(function (master) {
+            options +=
+                '<option value="' + master.id + '"' +
+                (current === Number(master.id) ? ' selected' : '') + '>' +
+                escapeHtml(master.title) +
+                '</option>';
+        });
+
+        return '' +
+            '<div class="order-cart-master">' +
+                '<select class="uk-select uk-form-small cart-master-select" name="works_masters[]" data-id="' + item.id + '">' +
+                    options +
+                '</select>' +
+            '</div>';
     }
 
 
@@ -455,6 +493,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         >
                         <span class="cart-row-sum-wrap">= <span class="cart-row-sum" data-id="${item.id}" data-type="${type}">${item.price * (item.qty || 1)}</span> ₽</span>
                     </div>
+                    ${type === 'work' ? buildMasterSelect(item) : ''}
                 </div>
 
                 <button
@@ -591,6 +630,16 @@ document.addEventListener('DOMContentLoaded', function () {
         cart.addEventListener('change', function (e) {
             const input = e.target;
             if (!input) return;
+
+            // Мастер строки работы — только запоминаем, пересчитывать нечего
+            if (input.classList.contains('cart-master-select')) {
+                const masterRowId = Number(input.dataset.id);
+                const masterRow = selectedWorks.find(function (x) { return x.id === masterRowId; });
+                if (masterRow) {
+                    masterRow.masterId = Number(input.value) || 0;
+                }
+                return;
+            }
 
             const isPrice = input.classList.contains('cart-price-input');
             const isQty   = input.classList.contains('cart-qty-input');

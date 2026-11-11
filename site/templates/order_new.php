@@ -66,6 +66,14 @@ if ($operator == 'no_operator') {
     // Все работы для списка
     $all_works = $pages->find("parent.name=raboty, template=work_item, sort=title");
 
+    // Все мастера для селекта в строке работы
+    $all_masters = $pages->find("parent.name=mastera, template=master, sort=title");
+    $masters_json = [];
+    foreach ($all_masters as $m) {
+        $masters_json[] = ['id' => (int)$m->id, 'title' => $m->title];
+    }
+    $masters_json_encoded = json_encode($masters_json, JSON_UNESCAPED_UNICODE);
+
     // Все запчасти для списка
     $all_parts = $pages->find("parent.name=zapchasti, template=part, sort=title");
 
@@ -598,6 +606,10 @@ if ($operator == 'no_operator') {
     <!--МОДАЛЬНОЕ ОКНО ПОДСКАЗКА ПРО НОВУЮ ЗАПЧАСТЬ-->
 
 </div>
+
+<script>
+window.ORDER_MASTERS = <?php echo $masters_json_encoded; ?>;
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

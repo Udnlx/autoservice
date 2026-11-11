@@ -32,6 +32,7 @@ if ($operator == 'no_operator') {
     $works = $_POST['works'] ?? [];
     $works_prices = $_POST['works_prices'] ?? [];
     $works_qty = $_POST['works_qty'] ?? [];
+    $works_masters = $_POST['works_masters'] ?? [];
     $parts = $_POST['parts'] ?? [];
     $parts_prices = $_POST['parts_prices'] ?? [];
     $parts_qty = $_POST['parts_qty'] ?? [];
@@ -48,6 +49,14 @@ if ($operator == 'no_operator') {
     $recomend = !empty($_POST['recomend']) ? $_POST['recomend'] : NULL;
     $order_status = !empty($_POST['order_status']) ? $_POST['order_status'] : NULL;
 
+    // ID мастеров, которые реально есть в справочнике.
+    // Селект легко подменить через инспектор — в id_master должен попасть
+    // только существующий мастер, иначе пусто.
+    $valid_master_ids = [];
+    foreach ($pages->find("parent.name=mastera, template=master, limit=1000") as $masterRef) {
+        $valid_master_ids[(int)$masterRef->id] = true;
+    }
+
     $order_works = [];
     foreach ($works as $index => $work_name) {
         $row_price = (int)($works_prices[$index] ?? 0);
@@ -57,11 +66,19 @@ if ($operator == 'no_operator') {
             $row_qty = 1;   // пусто/мусор/ноль → минимум 1
         }
 
+        // Мастер строки. Массива может не быть вовсе (справочник мастеров пуст) —
+        // тогда 0, то есть «не выбран».
+        $row_master = (int)($works_masters[$index] ?? 0);
+        if ($row_master > 0 && !isset($valid_master_ids[$row_master])) {
+            $row_master = 0;
+        }
+
         $order_works[] = [
-            'name'  => $work_name,
-            'price' => $row_price,
-            'qty'   => $row_qty,
-            'total' => $row_price * $row_qty
+            'name'   => $work_name,
+            'price'  => $row_price,
+            'qty'    => $row_qty,
+            'total'  => $row_price * $row_qty,
+            'master' => $row_master
         ];
     }
 
@@ -237,6 +254,7 @@ if ($operator == 'no_operator') {
                     $item->price = $row['price'];
                     $item->qty = $row['qty'];
                     $item->total = $row['total'];
+                    $item->id_master = ((int)$row['master'] > 0) ? (string)$row['master'] : '';
                     $item->save();
                     $orderPage->works->add($item);
                 }

@@ -65,13 +65,32 @@ if ($operator == 'no_operator') {
         }
     }
 
+    // Все мастера для селекта в строке работы
+    $all_masters = $pages->find("parent.name=mastera, template=master, sort=title");
+    $masters_json = [];
+    $valid_master_ids = [];
+    foreach ($all_masters as $m) {
+        $masters_json[] = ['id' => (int)$m->id, 'title' => $m->title];
+        $valid_master_ids[(int)$m->id] = true;
+    }
+    $masters_json_encoded = json_encode($masters_json, JSON_UNESCAPED_UNICODE);
+
     $works = [];
     if (count($orderPage->works)) {
         foreach ($orderPage->works as $item) {
+            $row_master = (int)$item->id_master;
+
+            // Мастера удалили из справочника — показываем «не выбран»,
+            // иначе селект молча встанет на первый пункт, а ID останется висеть
+            if ($row_master > 0 && !isset($valid_master_ids[$row_master])) {
+                $row_master = 0;
+            }
+
             $works[] = [
-                'name'  => $item->work,
-                'price' => $item->price,
-                'qty'   => max(1, (int)$item->qty)   // старые заявки без qty → 1
+                'name'   => $item->work,
+                'price'  => $item->price,
+                'qty'    => max(1, (int)$item->qty),   // старые заявки без qty → 1
+                'master' => $row_master
             ];
         }
     }
@@ -376,6 +395,7 @@ if ($operator == 'no_operator') {
                                             <input type="hidden" name="works[]" value="<?php echo orderClean($work['name']); ?>">
                                             <input type="hidden" name="works_prices[]" value="<?php echo orderClean($work['price']); ?>">
                                             <input type="hidden" name="works_qty[]" value="<?php echo (int)$work['qty']; ?>">
+                                            <input type="hidden" name="works_masters[]" value="<?php echo (int)$work['master']; ?>">
                                         </div>
                                     <?php } ?>
                                 <?php } else { ?>
@@ -643,6 +663,10 @@ if ($operator == 'no_operator') {
 </div>
 
 <script>
+window.ORDER_MASTERS = <?php echo $masters_json_encoded; ?>;
+</script>
+
+<script>
 document.addEventListener('DOMContentLoaded', function () {
 
     var editBtn = document.getElementById('client_edit_btn');
@@ -772,13 +796,23 @@ document.addEventListener('DOMContentLoaded', function () {
     function cartSnapshot() {
         if (!orderForm) return '';
         var items = [];
-        orderForm.querySelectorAll('#works_cart input[type="hidden"], #parts_cart input[type="hidden"]').forEach(function (inp) {
+        orderForm.querySelectorAll(
+            '#works_cart input[type="hidden"], #parts_cart input[type="hidden"], ' +
+            '#works_cart select[name="works_masters[]"]'
+        ).forEach(function (inp) {
             items.push(inp.name + '=' + inp.value);
         });
         return items.join('|');
     }
 
-    var cartInitial = cartSnapshot();
+    // Снимок берём отложенно: main.js перерисовывает корзину в своём
+    // обработчике DOMContentLoaded, и порядок обработчиков не гарантирован.
+    // Без setTimeout снимок мог попасть на разметку ДО перерисовки —
+    // тогда предупреждение всплывало бы на каждом переходе без причины.
+    var cartInitial = '';
+    setTimeout(function () {
+        cartInitial = cartSnapshot();
+    }, 0);
 
     function guardCartLink(link, what) {
         if (!link) return;

@@ -449,6 +449,12 @@ form button[type="submit"].uk-button-danger:hover {
 .cart-qty-input.cart-qty-changed {
     border-color: #f0a500;
     box-shadow: inset 0 0 0 1px #f0a500;}
+.order-cart-master {
+    margin-top: 6px;
+    width: 100%;}
+.order-cart-master .cart-master-select {
+    width: 100%;
+    max-width: 320px;}
 
 
 
