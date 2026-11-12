@@ -37,6 +37,7 @@ if ($operator == 'no_operator') {
     $parts_prices = $_POST['parts_prices'] ?? [];
     $parts_qty = $_POST['parts_qty'] ?? [];
     $parts_ids = $_POST['parts_ids'] ?? [];
+    $parts_on_print = $_POST['parts_print'] ?? [];
 
     $num_turbo = !empty($_POST['num_turbo'])?$_POST['num_turbo']:NULL;
     // Итоги считаем из строк корзины — ниже, после их сборки (чтобы шапка не разошлась с составом)
@@ -92,12 +93,17 @@ if ($operator == 'no_operator') {
             $row_qty = 1;
         }
 
+        // Галочка «в печать». Массива может не быть (старая форма в кэше браузера) —
+        // тогда 1, чтобы запчасти не выпали из печати молча.
+        $row_print = (int)($parts_on_print[$index] ?? 1) === 1 ? 1 : 0;
+
         $order_parts[] = [
             'name'    => $part_name,
             'price'   => $row_price,
             'part_id' => (int)($parts_ids[$index] ?? 0),
             'qty'     => $row_qty,
-            'total'   => $row_price * $row_qty
+            'total'   => $row_price * $row_qty,
+            'print'   => $row_print
         ];
     }
 
@@ -276,6 +282,7 @@ if ($operator == 'no_operator') {
                     $item->part_id  = (int)$row['part_id'];
                     $item->qty      = $row['qty'];
                     $item->total    = $row['total'];
+                    $item->on_print = (int)$row['print'];
                     $item->save();
                     $orderPage->autoparts->add($item);
                 }

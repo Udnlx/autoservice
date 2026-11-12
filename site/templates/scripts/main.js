@@ -243,6 +243,17 @@ document.addEventListener('DOMContentLoaded', function () {
             const qtyInput = cartItem.querySelector('input[name="parts_qty[]"]');
             const itemQty  = qtyInput ? (Number(qtyInput.value) || 1) : 1;
 
+            // Галочка «в печать» — PHP отрисовал её состояние из on_print
+            const printCheckbox = cartItem.querySelector('.part-print-checkbox');
+            const itemOnPrint = printCheckbox ? printCheckbox.checked : true;
+
+            // Позиция строки в повторителе autoparts — по ней печать строит skip.
+            // У новой запчасти её нет: в базе её ещё нет, индекс неизвестен.
+            const dbIndexRaw = cartItem.dataset.partIndex;
+            const itemDbIndex = (dbIndexRaw !== undefined && dbIndexRaw !== '')
+                ? Number(dbIndexRaw)
+                : null;
+
             selectedParts.push({
                 id: itemIdCounter++,
                 name: itemName,
@@ -250,7 +261,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 basePrice: itemPrice,
                 qty: itemQty,
                 partId: itemPartId,
-                fromDb: true   // пришла из базы, индекс в повторителе autoparts валиден
+                onPrint: itemOnPrint,
+                dbIndex: itemDbIndex,
+                fromDb: true
             });
         });
     }
@@ -337,7 +350,9 @@ document.addEventListener('DOMContentLoaded', function () {
             basePrice: itemPrice,
             qty: 1,
             partId: itemPartId,
-            masterId: 0
+            masterId: 0,
+            onPrint: true,   // новая позиция — в печать по умолчанию
+            dbIndex: null    // в базе её ещё нет — индекса печати не имеет
         };
 
         list.push(item);
@@ -456,15 +471,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             cartItem.dataset.id = item.id;
 
-            if (type === 'part' && allFromDb) {
-                cartItem.dataset.partIndex = idx;
+            // Индекс для печати берём из самой строки, а не считаем заново:
+            // тогда удаление и добавление соседей не сдвигает его у остальных.
+            if (type === 'part' && item.dbIndex !== null && item.dbIndex !== undefined) {
+                cartItem.dataset.partIndex = item.dbIndex;
             }
 
             cartItem.innerHTML = `
                 <div class="order-cart-item-main">
-                    ${type === 'part' && allFromDb ? `
+                    ${type === 'part' ? `
                         <label class="part-print-label" title="Печатать эту запчасть в документе">
-                            <input type="checkbox" class="part-print-checkbox" checked>
+                            <input type="checkbox" class="part-print-checkbox"${item.onPrint ? ' checked' : ''}>
                             <span class="part-print-label-text">в печать</span>
                         </label>
                     ` : ''}
@@ -533,6 +550,16 @@ document.addEventListener('DOMContentLoaded', function () {
                             type="hidden"
                             name="${hiddenIdName}"
                             value="${item.partId || 0}"
+                        >`
+                        : ''
+                }
+
+                ${
+                    type === 'part'
+                        ? `<input
+                            type="hidden"
+                            name="parts_print[]"
+                            value="${item.onPrint ? 1 : 0}"
                         >`
                         : ''
                 }
@@ -638,6 +665,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (masterRow) {
                     masterRow.masterId = Number(input.value) || 0;
                 }
+                return;
+            }
+
+            // Галочка «в печать» — запоминаем в строке и синхронизируем скрытое поле
+            if (input.classList.contains('part-print-checkbox')) {
+                const printRow = input.closest('.order-cart-item');
+                const printRowId = printRow ? Number(printRow.dataset.id) : 0;
+                const printItem = selectedParts.find(function (x) { return x.id === printRowId; });
+
+                if (printItem) {
+                    printItem.onPrint = input.checked;
+                }
+
+                const printHidden = printRow ? printRow.querySelector('input[name="parts_print[]"]') : null;
+                if (printHidden) {
+                    printHidden.value = input.checked ? 1 : 0;
+                }
+
                 return;
             }
 

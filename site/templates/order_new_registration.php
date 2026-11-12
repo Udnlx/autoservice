@@ -249,6 +249,7 @@ if ($operator == 'no_operator') {
             $item->part_id = (int)$row['part_id'];
             $item->qty = $row['qty'];
             $item->total = $row['total'];
+            $item->on_print = 1;   // новая заявка: все запчасти «в печать» по умолчанию
             $item->save();
             $orderPage->autoparts->add($item);
         }

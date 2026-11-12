@@ -102,7 +102,8 @@ if ($operator == 'no_operator') {
                 'name'    => $item->autopart,
                 'price'   => $item->price,
                 'part_id' => (int)$item->part_id,
-                'qty'     => max(1, (int)$item->qty)   // старые заявки без qty → 1
+                'qty'     => max(1, (int)$item->qty),  // старые заявки без qty → 1
+                'print'   => ((int)$item->on_print === 1)
             ];
         }
     }
@@ -468,7 +469,7 @@ if ($operator == 'no_operator') {
                                         <div class="order-cart-item uk-flex uk-flex-between uk-flex-middle" data-id="<?php echo orderClean($part_item_id); ?>" data-part-index="<?php echo (int)$part_index; ?>">
                                             <div>
                                                 <label class="part-print-label" title="Печатать эту запчасть в документе">
-                                                    <input type="checkbox" class="part-print-checkbox" checked>
+                                                    <input type="checkbox" class="part-print-checkbox"<?php echo $part['print'] ? ' checked' : ''; ?>>
                                                     <span class="part-print-label-text">в печать</span>
                                                 </label>
                                                 <strong><?php echo orderClean($part['name']); ?></strong>
@@ -485,6 +486,7 @@ if ($operator == 'no_operator') {
                                             <input type="hidden" name="parts_prices[]" value="<?php echo orderClean($part['price']); ?>">
                                             <input type="hidden" name="parts_qty[]" value="<?php echo (int)$part['qty']; ?>">
                                             <input type="hidden" name="parts_ids[]" value="<?php echo (int)$part['part_id']; ?>">
+                                            <input type="hidden" name="parts_print[]" value="<?php echo $part['print'] ? 1 : 0; ?>">
                                         </div>
                                     <?php } ?>
                                 <?php } else { ?>
