@@ -624,6 +624,9 @@ if ($operator == 'no_operator') {
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_updd">
                                         УПДД
                                     </button>
+                                    <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_defect">
+                                        Дефектовка турбокомпрессора
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -711,6 +714,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var printPdnBtn   = document.getElementById('print_pdn');
     var printPayBtn   = document.getElementById('print_payment');
     var printUpdBtn   = document.getElementById('print_updd');
+    var printDefBtn   = document.getElementById('print_defect');
     var printCompany  = document.getElementById('print_company');
 
     // Общая функция сборки skip-индексов для исключённых запчастей
@@ -787,6 +791,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // УПДД (skip нужен так же)
     printUpdBtn.addEventListener('click', function () {
         var url = buildPrintUrl('/pechat-updd/');
+        if (url) window.location.href = url;
+    });
+
+    // Дефектовка турбокомпрессора (бланк под заполнение, skip не используется)
+    printDefBtn.addEventListener('click', function () {
+        var url = buildPrintUrl('/pechat-defektovka-turbokompressora/');
         if (url) window.location.href = url;
     });
 
