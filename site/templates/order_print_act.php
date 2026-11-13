@@ -166,11 +166,17 @@ if ($operator == 'no_operator') {
         $company_inn     = '502770491281';
         $company_phone   = '8 985 816-10-10';
     }
-    if ($company == 'antikor_rf') {
-        $company_name    = 'Антикор РФ';
+    if ($company == 'center_anticora') {
+        $company_name    = 'Центр антикора';
         $company_address = 'Люберцы, Октябрьский проспект 259 стр 1';
         $company_inn     = '502770491281';
         $company_phone   = '8 985 816-10-10';
+    }
+    if ($company == 'slavova') {
+        $company_name    = 'ИП Славова Анна Юрьевна';
+        $company_address = 'Люберцы, Электрификации 29а кв 35';
+        $company_inn     = '502770491281';
+        $company_phone   = '8 926 140-62-62';
     }
 
     // ---------- Клиент ----------
@@ -435,7 +441,7 @@ if ($operator == 'no_operator') {
     $dompdf->render();
 
     // Вывод файла в браузер (раскомментировать когда надо):
-    // $dompdf->stream('Акт-' . $order_number . '.pdf');
+    $dompdf->stream('Акт-' . $order_number . '.pdf');
 ?>
 
 <div id="content" style="max-width: 700px;">

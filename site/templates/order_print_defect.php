@@ -269,7 +269,7 @@ if ($operator == 'no_operator') {
     $dompdf->render();
 
     // Вывод файла в браузер (раскомментировать когда надо):
-    // $dompdf->stream('Дефектовка-турбокомпрессора-' . $order_number . '.pdf');
+    $dompdf->stream('Дефектовка-турбокомпрессора-' . $order_number . '.pdf');
 ?>
 
 <div id="content" style="max-width: 700px;">

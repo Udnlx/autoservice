@@ -597,7 +597,8 @@ if ($operator == 'no_operator') {
                                     <select class="uk-select uk-margin-small-top" id="print_company">
                                         <option value="" disabled selected>— Выберите компанию для формирования документа —</option>
                                         <option value="turbina_plus">Турбина Плюс</option>
-                                        <option value="antikor_rf">Антикор РФ</option>
+                                        <option value="center_anticora">Центр антикора</option>
+                                        <option value="slavova">ИП Славова Анна Юрьевна</option>
                                     </select>
 
                                     <button type="button" class="uk-margin-small-top uk-button uk-button-default" id="print_btn_pred">
