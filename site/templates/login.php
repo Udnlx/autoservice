@@ -11,10 +11,22 @@ $_SESSION['operator'] = 'no_operator';
 $user_login = !empty($_POST['user_login'])?$_POST['user_login']:NULL;  
 $user_password = !empty($_POST['user_password'])?$_POST['user_password']:NULL;
 
-if($user_login === 'admin' && $user_password === '123') {
-    $login = 'on';
-    $_SESSION['operator'] = 'admin';
+$all_users_folder = $pages->get('template=users_system');
+if (count($all_users_folder->children()) > 0) {
+    $all_users = $all_users_folder->children();
+    foreach ($all_users as $user) {
+        if($user_login == $user->title && $user_password == $user->password) {
+            $login = 'on';
+            $_SESSION['operator'] = $user->title;
+            $_SESSION['access'] = $user->access->title;
+        }
+    }
 }
+
+// if($user_login === 'admin' && $user_password === '123') {
+//     $login = 'on';
+//     $_SESSION['operator'] = 'admin';
+// }
 
 $content = '';
 if ($login == 'on') {

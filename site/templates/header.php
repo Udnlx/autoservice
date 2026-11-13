@@ -6,14 +6,57 @@ if(isset($_SESSION['operator'])){
     $operator = 'no_operator';
 }
 
+$access = '';
+if(isset($_SESSION['access'])){
+    $access = $_SESSION['access'];
+}
+
 $url = $_SERVER['REQUEST_URI'];
 $url = explode('?', $url);
 $url = $url[0];
 //echo $url;
-$menu = '
-    <div class="uk-navbar-left" style="gap: 10px;">
-        <a href="#offcanvas-usage" uk-toggle><i class="fa-solid fa-bars"></i></a>
 
+$bmenu = '';
+if ($access == 'admin') {
+    $bmenu = '
+        <div id="offcanvas-usage" uk-offcanvas>
+            <div class="uk-offcanvas-bar">
+                <button class="uk-offcanvas-close" type="button" uk-close></button>
+                <br>
+                <a class="uk-margin-small uk-button uk-button-default" href="/">Домашняя страница</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-novyi/">Новый заказ-наряд</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-dvizhenie/">Движение</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/avtomobili-spravochnik/">Автомобили</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/klienty-spravochnik/">Клиенты</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/zapchasti-spravochnik/">Склад</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/spravochniki-meniu/">Справочники</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="">Отчёты</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="">Касса</a>
+            </div>
+        </div>
+    ';
+}
+if ($access == 'director') {
+    $bmenu = '
+        <div id="offcanvas-usage" uk-offcanvas>
+            <div class="uk-offcanvas-bar">
+                <button class="uk-offcanvas-close" type="button" uk-close></button>
+                <br>
+                <a class="uk-margin-small uk-button uk-button-default" href="/">Домашняя страница</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-novyi/">Новый заказ-наряд</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-dvizhenie/">Движение</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/avtomobili-spravochnik/">Автомобили</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/klienty-spravochnik/">Клиенты</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/zapchasti-spravochnik/">Склад</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="/spravochniki-meniu/">Справочники</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="">Отчёты</a>
+                <a class="uk-margin-small uk-button uk-button-default" href="">Касса</a>
+            </div>
+        </div>
+    ';
+}
+if ($access == 'mreceiver') {
+    $bmenu = '
         <div id="offcanvas-usage" uk-offcanvas>
             <div class="uk-offcanvas-bar">
                 <button class="uk-offcanvas-close" type="button" uk-close></button>
@@ -27,12 +70,21 @@ $menu = '
                 <a class="uk-margin-small uk-button uk-button-default" href="/spravochniki-meniu/">Справочники</a>
             </div>
         </div>
+    ';
+}
+
+$menu = '
+    <div class="uk-navbar-left" style="gap: 10px;">
+        <a href="#offcanvas-usage" uk-toggle><i class="fa-solid fa-bars"></i></a>
+
+        ' . $bmenu . '
 
         <a href="/"><i class="fa-solid fa-house"></i></a>
         <p class="uk-margin-remove uk-text-bold" style="font-size: 12px;">Оператор: ' . $operator . '</p>
         <a href="/login/?logout" title="Выход из системы"><i class="fa-solid fa-right-from-bracket"></i></a>
     </div>
    ';
+
 if ($url == '/login/') {
    $menu = '';
 }

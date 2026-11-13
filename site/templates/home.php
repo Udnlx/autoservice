@@ -6,6 +6,11 @@ if(isset($_SESSION['operator'])){
     $operator = 'no_operator';
 }
 
+$access = '';
+if(isset($_SESSION['access'])){
+    $access = $_SESSION['access'];
+}
+
 if ($operator == 'no_operator') {
 ?>
 
@@ -20,7 +25,31 @@ if ($operator == 'no_operator') {
 <?php    
 } else {
 $menu = '';
-if ($operator == 'admin') {
+if ($access == 'admin') {
+    $menu = '
+        <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-novyi/">Новый заказ-наряд</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-dvizhenie/">Движение</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/avtomobili-spravochnik/">Автомобили</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/klienty-spravochnik/">Клиенты</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/zapchasti-spravochnik/">Склад</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/spravochniki-meniu/">Справочники</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="">Отчёты</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="">Касса</a>
+    ';
+}
+if ($access == 'director') {
+    $menu = '
+        <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-novyi/">Новый заказ-наряд</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-dvizhenie/">Движение</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/avtomobili-spravochnik/">Автомобили</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/klienty-spravochnik/">Клиенты</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/zapchasti-spravochnik/">Склад</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/spravochniki-meniu/">Справочники</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="">Отчёты</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="">Касса</a>
+    ';
+}
+if ($access == 'mreceiver') {
     $menu = '
         <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-novyi/">Новый заказ-наряд</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/zakaz-dvizhenie/">Движение</a>
