@@ -524,6 +524,7 @@ if ($operator == 'no_operator') {
                         <select class="uk-select" id="payment_type" name="payment_type" required>
                             <option value="Наличный расчет" <?php if ($order['payment_type'] == 'Наличный расчет') echo 'selected'; ?>>Наличный расчет</option>
                             <option value="Безналичный расчет" <?php if ($order['payment_type'] == 'Безналичный расчет') echo 'selected'; ?>>Безналичный расчет</option>
+                            <option value="Карта" <?php if ($order['payment_type'] == 'Карта') echo 'selected'; ?>>Карта</option>
                         </select>
                     </div>
 

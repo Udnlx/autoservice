@@ -358,6 +358,7 @@ if ($operator == 'no_operator') {
                         <select class="uk-select" id="payment_type" name="payment_type" required>
                             <option value="Наличный расчет">Наличный расчет</option>
                             <option value="Безналичный расчет">Безналичный расчет</option>
+                            <option value="Карта">Карта</option>
                         </select>
                     </div>
 
