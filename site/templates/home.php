@@ -33,8 +33,8 @@ if ($access == 'admin') {
         <a class="uk-margin-small uk-button uk-button-default" href="/klienty-spravochnik/">Клиенты</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/zapchasti-spravochnik/">Склад</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/spravochniki-meniu/">Справочники</a>
-        <a class="uk-margin-small uk-button uk-button-default" href="">Отчёты</a>
-        <a class="uk-margin-small uk-button uk-button-default" href="">Касса</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/otchety/">Отчёты</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/kassa/">Касса</a>
     ';
 }
 if ($access == 'director') {
@@ -45,8 +45,8 @@ if ($access == 'director') {
         <a class="uk-margin-small uk-button uk-button-default" href="/klienty-spravochnik/">Клиенты</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/zapchasti-spravochnik/">Склад</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/spravochniki-meniu/">Справочники</a>
-        <a class="uk-margin-small uk-button uk-button-default" href="">Отчёты</a>
-        <a class="uk-margin-small uk-button uk-button-default" href="">Касса</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/otchety/">Отчёты</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/kassa/">Касса</a>
     ';
 }
 if ($access == 'mreceiver') {

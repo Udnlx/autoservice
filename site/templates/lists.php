@@ -22,6 +22,7 @@ if ($operator == 'no_operator') {
     $menu = '
         <a class="uk-margin-small uk-button uk-button-default" href="/raboty-spravochnik/">Справочник работ</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/mastera-spravochnik/">Справочник мастеров</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/">На главную</a>
     ';
 ?>
 
