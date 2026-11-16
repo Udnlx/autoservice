@@ -70,15 +70,64 @@ if ($operator == 'no_operator') {
     $search_client = trim($input->get->text('search_client'));
     $search_auto = trim($input->get->text('search_auto'));
 
+    // --- ПОИСК ПО ДИАПАЗОНУ ДАТ (по полю date_order) ---
+    $search_date_from = trim($input->get->text('search_date_from'));
+    $search_date_to   = trim($input->get->text('search_date_to'));
+
+    // Разбор даты: принимаем 16-11-2026, 16.11.2026 и 2026-11-16
+    if (!function_exists('orderParseDate')) {
+        function orderParseDate($value) {
+            $value = trim((string)$value);
+            if ($value === '') {
+                return null;
+            }
+
+            foreach (['d-m-Y', 'd.m.Y', 'Y-m-d', 'd/m/Y'] as $fmt) {
+                $dt = \DateTime::createFromFormat('!' . $fmt, $value);
+                if ($dt && $dt->format($fmt) === $value) {
+                    return $dt->getTimestamp();
+                }
+            }
+
+            return null;   // не разобрали — считаем пустой
+        }
+    }
+
+    $date_from_ts = orderParseDate($search_date_from);
+    $date_to_ts   = orderParseDate($search_date_to);
+
+    // Диапазон задаётся двумя датами: одно поле без второго непонятно, где граница
+    $date_error = '';
+    if ($search_date_from !== '' && $search_date_to === '') {
+        $date_error = 'Укажите дату «по» — диапазон задаётся двумя датами.';
+    } elseif ($search_date_from === '' && $search_date_to !== '') {
+        $date_error = 'Укажите дату «с» — диапазон задаётся двумя датами.';
+    } elseif ($search_date_from !== '' && $date_from_ts === null) {
+        $date_error = 'Дата «с» не распознана. Формат: 16-11-2026';
+    } elseif ($search_date_to !== '' && $date_to_ts === null) {
+        $date_error = 'Дата «по» не распознана. Формат: 16-11-2026';
+    } elseif ($date_from_ts !== null && $date_to_ts !== null && $date_from_ts > $date_to_ts) {
+        $date_error = 'Дата «с» позже даты «по» — проверьте диапазон.';
+    }
+
+    // «по» включается целиком: берём самый конец того дня
+    if ($date_to_ts !== null) {
+        $date_to_ts = strtotime('tomorrow', $date_to_ts) - 1;
+    }
+
+    $date_active = ($date_error === '' && $date_from_ts !== null && $date_to_ts !== null);
+
     $orders_page = $pages->get('template=orders');
 
     $selector = "template=order_item, parent=$orders_page, sort=-created";
 
-    $is_search = false;
+    $is_search = ($search_client !== '' || $search_auto !== ''
+                  || $search_date_from !== '' || $search_date_to !== '');
 
-    if ($search_client !== '' || $search_auto !== '') {
-        $is_search = true;
-
+    if ($date_error !== '') {
+        // Даты заданы с ошибкой — не ищем ничего, сообщение покажем в форме
+        $selector .= ", id=-1";
+    } elseif ($is_search) {
         if ($search_client !== '') {
             $value  = $sanitizer->selectorValue($search_client);
             $digits = $sanitizer->digits($search_client);
@@ -118,6 +167,29 @@ if ($operator == 'no_operator') {
 
     $orders_list = $pages->find($selector);
 
+    // --- ФИЛЬТР ПО ДИАПАЗОНУ ДАТ ---
+    // date_order — текст в формате дд-мм-гггг, в селекторе он сравнился бы
+    // посимвольно. Поэтому отбираем в PHP по timestamp.
+    if ($date_active) {
+        $filtered = new PageArray();
+
+        foreach ($orders_list as $candidate) {
+            $row_ts = orderParseDate($candidate->date_order);
+
+            if ($row_ts === null) {
+                continue;   // дата не разобралась — в диапазон не попадает
+            }
+
+            if ($row_ts < $date_from_ts || $row_ts > $date_to_ts) {
+                continue;
+            }
+
+            $filtered->add($candidate);
+        }
+
+        $orders_list = $filtered;
+    }
+
 ?>
 
 <div id="content">
@@ -153,6 +225,13 @@ if ($operator == 'no_operator') {
 
                 <!--ФОРМА ПОИСКА-->
                 <form class="uk-flex uk-flex-column uk-margin-small-top" id="orders_search_form" action="" method="get">
+                    <?php if ($date_error !== '') { ?>
+                        <div class="uk-alert-danger uk-margin-small-top" uk-alert>
+                            <a class="uk-alert-close" uk-close></a>
+                            <p class="uk-margin-remove"><?php echo orderClean($date_error); ?></p>
+                        </div>
+                    <?php } ?>
+
                     <div class="order-view-grid">
                         <div>
                             <label for="search_client">Клиент</label>
@@ -162,6 +241,23 @@ if ($operator == 'no_operator') {
                         <div>
                             <label for="search_auto">Автомобиль</label>
                             <input class="uk-input" id="search_auto" type="text" name="search_auto" value="<?php echo orderClean($search_auto); ?>" placeholder="Введите автомобиль" autocomplete="off">
+                        </div>
+
+                        <?php
+                        // Браузер покажет значение в date-поле только в формате Y-m-d.
+                        // Внутри храним как пришло, а для отрисовки переводим.
+                        $date_from_value = orderParseDate($search_date_from);
+                        $date_to_value   = orderParseDate($search_date_to);
+                        ?>
+
+                        <div>
+                            <label for="search_date_from">Дата создания с</label>
+                            <input class="uk-input" id="search_date_from" type="date" name="search_date_from" value="<?php echo $date_from_value ? date('Y-m-d', $date_from_value) : ''; ?>">
+                        </div>
+
+                        <div>
+                            <label for="search_date_to">Дата создания по</label>
+                            <input class="uk-input" id="search_date_to" type="date" name="search_date_to" value="<?php echo $date_to_value ? date('Y-m-d', $date_to_value) : ''; ?>">
                         </div>
                     </div>
 
