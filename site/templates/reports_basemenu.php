@@ -27,8 +27,7 @@ if ($operator == 'no_operator' || $page_access == false) {
 <?php    
 } else {
     $menu = '
-        <a class="uk-margin-small uk-button uk-button-default" href="">Отчет первый</a>
-        <a class="uk-margin-small uk-button uk-button-default" href="">Отчет второй</a>
+        <a class="uk-margin-small uk-button uk-button-default" href="/otchet-po-zakaz-nariadam/">Отчет по заказ-нарядам</a>
         <a class="uk-margin-small uk-button uk-button-default" href="/">На главную</a>
     ';
 ?>
